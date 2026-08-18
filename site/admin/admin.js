@@ -174,17 +174,9 @@
     });
   }
 
-  // ── 3. Renderizado de Estadísticas y Tabla ──
+  // ── 3. Renderizado del Dashboard y Tabla ──
   function renderDashboard() {
     if (!window.BlogStore) return;
-    const cases = window.BlogStore.getCases();
-
-    if (statTotal) statTotal.textContent = cases.length;
-    if (statFeatured) {
-      const featuredCount = cases.filter(c => c.featured).length;
-      statFeatured.textContent = featuredCount;
-    }
-
     renderTable();
   }
 
