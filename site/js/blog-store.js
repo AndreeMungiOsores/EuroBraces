@@ -316,13 +316,17 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
           const mapped = data.map(mapFromSupabase);
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(mapped));
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(mapped));
+          } catch (e) {}
 
           // Actualizar lista de categorías con las que vienen de Supabase
           const existingCats = this.getCategories();
           const supabaseCats = data.map(c => c.category).filter(c => c && c !== 'Sin etiqueta');
           const merged = Array.from(new Set([...existingCats, ...supabaseCats]));
-          localStorage.setItem(CATEGORIES_KEY, JSON.stringify(merged));
+          try {
+            localStorage.setItem(CATEGORIES_KEY, JSON.stringify(merged));
+          } catch (e) {}
 
           return mapped;
         } else {
@@ -394,12 +398,17 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
         cases.unshift(caseItem);
       }
 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(cases));
+      // Guardado seguro en caché local (sin bloquear si la cuota del navegador es excedida)
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(cases));
+      } catch (storageErr) {
+        console.warn('Advertencia: La cuota de localStorage fue superada. Se prioriza la persistencia en Supabase:', storageErr);
+      }
 
-      // Sincronización asíncrona con Supabase
+      // Sincronización directa con Supabase
       try {
         const payload = mapToSupabase(caseItem);
-        await fetch(`${SUPABASE_URL}/rest/v1/clinical_cases`, {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/clinical_cases`, {
           method: 'POST',
           headers: {
             'apikey': SUPABASE_ANON_KEY,
@@ -409,8 +418,15 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
           },
           body: JSON.stringify(payload)
         });
+
+        if (!res.ok) {
+          const errText = await res.text();
+          console.error('Error al guardar en Supabase:', res.status, errText);
+          throw new Error(`Error al guardar en la base de datos (${res.status}): ${errText}`);
+        }
       } catch (err) {
-        console.warn('Nota: Guardado local exitoso. Supabase sync diferido:', err);
+        console.error('Fallo en sincronización con Supabase:', err);
+        throw err;
       }
 
       return caseItem;

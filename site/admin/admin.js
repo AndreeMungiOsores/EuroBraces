@@ -268,27 +268,64 @@
     modeNormalBtn.addEventListener('click', () => setPhotoMode('gallery'));
   }
 
+  /**
+   * Optimiza y comprime imágenes del lado del cliente usando un Canvas off-screen.
+   * Convierte fotos de alta resolución a un tamaño web óptimo (máx 1280px, ~150KB) sin pérdida de nitidez clínica.
+   */
+  function optimizeImageFile(file, maxDimension = 1280, quality = 0.82) {
+    return new Promise((resolve, reject) => {
+      if (!file.type.startsWith('image/')) {
+        return reject(new Error('El archivo debe ser una imagen válida.'));
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          let width = img.naturalWidth || img.width;
+          let height = img.naturalHeight || img.height;
+
+          if (width > maxDimension || height > maxDimension) {
+            if (width > height) {
+              height = Math.round((height * maxDimension) / width);
+              width = maxDimension;
+            } else {
+              width = Math.round((width * maxDimension) / height);
+              height = maxDimension;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = () => reject(new Error('No se pudo procesar la imagen seleccionada.'));
+        img.src = e.target.result;
+      };
+      reader.onerror = () => reject(new Error('Error al leer el archivo de imagen.'));
+      reader.readAsDataURL(file);
+    });
+  }
+
   // Gestión de Fotos Antes / Después
   function setupFileInput(inputEl, urlInputEl, previewEl) {
     if (!inputEl) return;
-    inputEl.addEventListener('change', (e) => {
+    inputEl.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
 
-      if (!file.type.startsWith('image/')) {
-        showToast('El archivo debe ser una imagen válida.', 'error');
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = function (evt) {
-        const base64 = evt.target.result;
-        urlInputEl.value = base64;
-        previewEl.src = base64;
+      try {
+        const optimizedBase64 = await optimizeImageFile(file);
+        urlInputEl.value = optimizedBase64;
+        previewEl.src = optimizedBase64;
         previewEl.style.display = 'block';
-        showToast('Foto cargada correctamente.', 'success');
-      };
-      reader.readAsDataURL(file);
+        showToast('Foto cargada y optimizada con éxito.', 'success');
+      } catch (err) {
+        showToast(err.message || 'Error al procesar la imagen.', 'error');
+      }
+      inputEl.value = '';
     });
 
     urlInputEl.addEventListener('input', () => {
@@ -307,24 +344,25 @@
 
   // Gestión de Galería de Fotos Normales (Múltiples fotos)
   if (galleryFileInput) {
-    galleryFileInput.addEventListener('change', (e) => {
+    galleryFileInput.addEventListener('change', async (e) => {
       const files = Array.from(e.target.files);
       if (!files.length) return;
 
       let loadedCount = 0;
-      files.forEach(file => {
-        if (!file.type.startsWith('image/')) return;
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          galleryImages.push(evt.target.result);
+      for (const file of files) {
+        try {
+          const optimizedBase64 = await optimizeImageFile(file);
+          galleryImages.push(optimizedBase64);
           loadedCount++;
-          if (loadedCount === files.length) {
-            renderGalleryPreviews();
-            showToast(`${loadedCount} foto(s) adjuntada(s).`, 'success');
-          }
-        };
-        reader.readAsDataURL(file);
-      });
+        } catch (err) {
+          console.error('Error optimizando foto de galería:', err);
+        }
+      }
+
+      if (loadedCount > 0) {
+        renderGalleryPreviews();
+        showToast(`${loadedCount} foto(s) adjuntada(s) y optimizada(s).`, 'success');
+      }
       galleryFileInput.value = '';
     });
   }
@@ -542,6 +580,9 @@
   if (caseForm) {
     caseForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const submitBtn = caseForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn ? submitBtn.textContent : 'Guardar Publicación';
+
       try {
         const fullHtml = caseContentEditor ? caseContentEditor.innerHTML.trim() : '';
         const plainText = caseContentEditor ? caseContentEditor.textContent || '' : '';
@@ -584,12 +625,23 @@
           featured: true
         };
 
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Guardando en Supabase...';
+        }
+
         await window.BlogStore.saveCase(caseData);
-        showToast(caseData.id ? 'Publicación actualizada con éxito.' : 'Publicación creada con éxito.', 'success');
+        showToast(caseData.id ? 'Publicación actualizada y sincronizada en Supabase.' : 'Publicación creada y sincronizada en Supabase.', 'success');
         closeFormModal();
         renderDashboard();
       } catch (err) {
-        showToast(err.message || 'Error guardando la publicación.', 'error');
+        console.error('Error al guardar caso:', err);
+        showToast(err.message || 'Error guardando la publicación en Supabase.', 'error');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+        }
       }
     });
   }
