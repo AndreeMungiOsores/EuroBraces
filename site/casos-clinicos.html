@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Casos Clínicos y Blog · EuroBraces Center</title>
+  <meta name="description" content="Explora casos clínicos reales, antes y después documentados, técnicas de ortodoncia y artículos especializados de EuroBraces Center en Miraflores.">
+  <link rel="canonical" href="https://eurobraces.pe/casos-clinicos.html">
+  <link rel="icon" type="image/png" href="img/logo-navy.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="scroll-rail"><span id="scrollBar"></span></div>
+
+<!-- ══════════ NAV ══════════ -->
+<header class="nav" id="nav">
+  <a class="nav__brand" href="index.html#top" aria-label="EuroBraces Center — inicio">
+    <img src="img/logo-navy.png" alt="" class="nav__mark">
+    <span class="nav__word">EuroBraces<em>Center</em></span>
+  </a>
+  <nav class="nav__links" id="navLinks">
+    <a href="index.html#diagnostico">Diagnóstico</a>
+    <a href="index.html#tratamientos">Tratamientos</a>
+    <a href="index.html#resultados">Resultados</a>
+    <a href="casos-clinicos.html" style="color:var(--gold-300);font-weight:600">Casos Clínicos</a>
+    <a href="index.html#pacientes">Pacientes</a>
+    <a href="index.html#equipo">Equipo</a>
+    <a href="index.html#ubicacion">Ubicación</a>
+  </nav>
+  <a class="btn btn--ghost nav__cta" href="https://wa.me/51986186192?text=Hola%2C%20quiero%20una%20EVALUACI%C3%93N" target="_blank" rel="noopener">Agenda tu evaluación</a>
+  <button class="nav__burger" id="burger" aria-label="Menú" aria-expanded="false"><i></i><i></i></button>
+</header>
+
+<main id="main-content">
+  <!-- ══════════ HERO DE CASOS CLÍNICOS ══════════ -->
+  <section class="blog-hero">
+    <div class="grain" aria-hidden="true"></div>
+    <div class="wrap">
+      <header class="sec-head">
+        <p class="eyebrow">Publicaciones y Casos Documentados</p>
+        <h1 class="h2 h2--light">Casos Clínicos & <i>Blog Especializado.</i></h1>
+        <p class="sec-head__sub">Descubre procedimientos reales, diagnósticos paso a paso y la evolución de nuestros pacientes en Miraflores.</p>
+      </header>
+    </div>
+  </section>
+
+  <!-- ══════════ CATÁLOGO Y BUSCADOR ══════════ -->
+  <section class="blog-sec">
+    <div class="wrap">
+      <!-- Barra de Búsqueda -->
+      <div class="blog-toolbar">
+        <div class="blog-search-wrap">
+          <svg class="blog-search-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="search" id="blogSearch" class="blog-search-input" placeholder="Buscar por tratamiento, síntoma o diagnóstico (ej. apiñamiento, caninos, mordida)..." aria-label="Buscar casos clínicos">
+        </div>
+      </div>
+
+      <!-- Contenedor dinámico de Casos Clínicos -->
+      <div class="blog-grid" id="blogGrid" aria-live="polite">
+        <!-- Renderizado dinámico vía JavaScript -->
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ══════════ MODAL LECTOR DE CASO CLÍNICO ══════════ -->
+<div class="case-modal-overlay" id="caseModalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalCaseTitle" hidden>
+  <div class="case-modal" id="caseModal">
+    <button class="case-modal__close" id="modalCloseBtn" aria-label="Cerrar ventana de lectura">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+    </button>
+
+    <header class="case-modal__header">
+      <h2 class="case-modal__title" id="modalCaseTitle">Título del Caso</h2>
+      <div class="case-modal__meta-row">
+        <span id="modalDoctor">Dr. Anthony De Jesús</span>
+        <span>•</span>
+        <span id="modalDate">Fecha</span>
+        <span>•</span>
+        <span id="modalReadTime">4 min de lectura</span>
+      </div>
+    </header>
+
+    <div class="case-modal__body">
+      <!-- Comparativa fotográfica antes / después -->
+      <div class="case-modal__comparison" id="modalComparison">
+        <figure class="case-modal__fig">
+          <img id="modalBeforeImg" src="" alt="Estado inicial del caso">
+          <span class="case-modal__tag case-modal__tag--before">Inicio</span>
+        </figure>
+        <figure class="case-modal__fig">
+          <img id="modalAfterImg" src="" alt="Estado en progreso o final">
+          <span class="case-modal__tag case-modal__tag--after">Progreso / Final</span>
+        </figure>
+      </div>
+
+      <!-- Galería de Fotos Normales (Sin etiquetas antes / después) -->
+      <div class="case-modal__gallery" id="modalGallery" style="display:none"></div>
+
+      <!-- Contenido clínico estructurado -->
+      <div class="case-modal__text" id="modalContent"></div>
+    </div>
+
+    <footer class="case-modal__footer">
+      <div class="case-modal__doc-box">
+        <span class="case-modal__doc-name" id="modalDocSignature">Dr. Anthony De Jesús</span>
+        <span class="case-modal__doc-role" id="modalDocRole">Especialista en Ortodoncia · EuroBraces Center</span>
+      </div>
+      <a class="btn btn--gold" id="modalWACta" href="https://wa.me/51986186192?text=Hola%2C%20vi%20un%20caso%20cl%C3%ADnico%20y%20quiero%20una%20evaluaci%C3%B3n" target="_blank" rel="noopener">
+        Consultar por un caso similar
+      </a>
+    </footer>
+  </div>
+</div>
+
+<!-- ══════════ CTA ══════════ -->
+<section class="cta">
+  <div class="grain" aria-hidden="true"></div>
+  <div class="wrap cta__inner">
+    <h2>¿Tienes un caso similar?<br><i>Una evaluación te dará el plan exacto.</i></h2>
+    <a class="btn btn--gold btn--lg" href="https://wa.me/51986186192?text=Hola%2C%20quiero%20una%20EVALUACI%C3%93N" target="_blank" rel="noopener">Agenda tu evaluación</a>
+    <p>WhatsApp 986 186 192 · Elías Aguirre 126, Miraflores</p>
+  </div>
+</section>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="foot">
+  <div class="wrap foot__grid">
+    <div class="foot__brand">
+      <div class="foot__logo">
+        <img src="img/logo-cream.png" alt="EuroBraces Center" width="36" height="36">
+        <span>EuroBraces<em>Center</em></span>
+      </div>
+      <p class="foot__desc">Centro especializado en ortodoncia, estética dental y alineadores transparentes en Miraflores, Lima.</p>
+    </div>
+    <div class="foot__nav">
+      <h4>Navegación</h4>
+      <ul>
+        <li><a href="index.html#diagnostico">Diagnóstico</a></li>
+        <li><a href="index.html#tratamientos">Tratamientos</a></li>
+        <li><a href="index.html#resultados">Resultados</a></li>
+        <li><a href="casos-clinicos.html">Casos Clínicos & Blog</a></li>
+        <li><a href="index.html#pacientes">Pacientes</a></li>
+        <li><a href="index.html#equipo">Equipo</a></li>
+        <li><a href="index.html#ubicacion">Ubicación</a></li>
+      </ul>
+    </div>
+    <div class="foot__contact">
+      <h4>Atención y Citas</h4>
+      <p>Calle Elías Aguirre 126, Miraflores<br>Lima, Perú</p>
+      <p>Lunes a Sábado · Con Cita Previa</p>
+      <a class="foot__wa" href="https://wa.me/51986186192?text=Hola%2C%20quiero%20informaci%C3%B3n" target="_blank" rel="noopener">
+        WhatsApp: 986 186 192
+      </a>
+    </div>
+  </div>
+  <div class="wrap foot__bar">
+    <small>© <span id="year"></span> EuroBraces Center. Todos los derechos reservados.</small>
+    <small class="foot__auth">Directores Clínicos: Dr. Anthony De Jesús · Dra. Belén Torres</small>
+  </div>
+</footer>
+
+<!-- Botón Flotante WhatsApp -->
+<aside class="wa-float" aria-label="Contacto directo por WhatsApp">
+  <a class="wa" href="https://wa.me/51986186192?text=Hola%20EuroBraces%2C%20deseo%20agendar%20una%20cita" target="_blank" rel="noopener" aria-label="Abrir chat de WhatsApp">
+    <svg viewBox="0 0 24 24" width="27" height="27" aria-hidden="true"><path fill="currentColor" d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.47c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1s.9 2.44 1.03 2.61c.13.17 1.77 2.71 4.3 3.8 2.52 1.09 2.52.73 2.97.69.45-.04 1.47-.6 1.67-1.18.21-.59.21-1.09.15-1.19-.07-.1-.23-.16-.48-.28z"/></svg>
+  </a>
+</aside>
+
+<!-- Scripts -->
+<script src="js/blog-store.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => el.querySelectorAll(s);
+
+  const yearEl = $('#year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  // Mobile menu
+  const burger = $('#burger');
+  const navLinks = $('#navLinks');
+  if (burger && navLinks) {
+    burger.addEventListener('click', () => {
+      const open = navLinks.classList.toggle('open');
+      burger.classList.toggle('open', open);
+      burger.setAttribute('aria-expanded', String(open));
+    });
+  }
+
+  // Nav sticky state on scroll
+  const nav = $('#nav');
+  if (nav) {
+    const handleNavScroll = () => {
+      nav.classList.toggle('is-stuck', window.scrollY > 40);
+    };
+    window.addEventListener('scroll', handleNavScroll, { passive: true });
+    handleNavScroll();
+  }
+
+  // Scroll bar
+  const scrollBar = $('#scrollBar');
+  if (scrollBar) {
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = h > 0 ? (window.scrollY / h) * 100 : 0;
+      scrollBar.style.width = pct + '%';
+    }, { passive: true });
+  }
+
+  // Blog Rendering and Filtering
+  const blogGrid = $('#blogGrid');
+  const searchInput = $('#blogSearch');
+
+  let searchTerm = '';
+
+  function renderCases() {
+    if (!window.BlogStore || !blogGrid) return;
+    const allCases = window.BlogStore.getCases();
+    const query = searchTerm.toLowerCase().trim();
+
+    const filtered = allCases.filter(c => {
+      return !query || 
+        c.title.toLowerCase().includes(query) ||
+        (c.excerpt && c.excerpt.toLowerCase().includes(query)) ||
+        (c.content && c.content.toLowerCase().includes(query)) ||
+        (c.doctor && c.doctor.toLowerCase().includes(query));
+    });
+
+    if (filtered.length === 0) {
+      blogGrid.innerHTML = `
+        <div class="blog-empty">
+          <h3>No se encontraron casos clínicos</h3>
+          <p>Intenta con otros términos de búsqueda.</p>
+          <button class="btn btn--gold" id="resetSearchBtn">Ver todos los casos</button>
+        </div>
+      `;
+      const resetBtn = $('#resetSearchBtn');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          if (searchInput) searchInput.value = '';
+          searchTerm = '';
+          renderCases();
+        });
+      }
+      return;
+    }
+
+    blogGrid.innerHTML = filtered.map(c => {
+      const cover = c.coverImg || c.afterImg || 'img/caso1-progreso.jpg';
+      return `
+        <article class="blog-card" data-id="${c.id}" tabindex="0" role="button" aria-label="Leer caso clínico: ${c.title}">
+          <div class="blog-card__media">
+            <img src="${cover}" alt="${c.title}" loading="lazy">
+            <span class="blog-card__time">${c.readTime || '3 min'}</span>
+          </div>
+          <div class="blog-card__body">
+            <div class="blog-card__meta">
+              <span>${c.date ? new Date(c.date).toLocaleDateString('es-PE', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Reciente'}</span>
+            </div>
+            <h2 class="blog-card__title">${c.title}</h2>
+            <p class="blog-card__excerpt">${c.excerpt || ''}</p>
+            <div class="blog-card__foot">
+              <span class="blog-card__doc">${c.doctor || 'Dr. Anthony De Jesús'}</span>
+              <span class="blog-card__cta">
+                Ver caso <svg viewBox="0 0 24 24"><path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+              </span>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join('');
+
+    // Attach click events
+    $$('.blog-card', blogGrid).forEach(card => {
+      card.addEventListener('click', () => {
+        openModal(card.dataset.id);
+      });
+      card.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openModal(card.dataset.id);
+        }
+      });
+    });
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', e => {
+      searchTerm = e.target.value;
+      renderCases();
+    });
+  }
+
+  // Modal Logic
+  const modalOverlay = $('#caseModalOverlay');
+  const modalCloseBtn = $('#modalCloseBtn');
+  let lastFocusedElement = null;
+
+  function parseSimpleMarkdown(content) {
+    if (!content) return '';
+    // Si ya es HTML enriquecido desde el editor visual
+    if (/<(h2|h3|p|ul|li|strong|em|span|mark)/i.test(content)) {
+      return content;
+    }
+    return content
+      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+      .replace(/^## (.*$)/gim, '<h3>$1</h3>')
+      .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+      .replace(/^\- (.*$)/gim, '<li>$1</li>')
+      .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
+      .split('\n\n')
+      .map(p => {
+        if (p.includes('<li>')) return `<ul>${p}</ul>`;
+        if (p.startsWith('<h3>') || p.startsWith('<h2>')) return p;
+        return `<p>${p.replace(/\n/g, '<br>')}</p>`;
+      })
+      .join('');
+  }
+
+  function openModal(idOrSlug) {
+    if (!window.BlogStore) return;
+    const caseItem = window.BlogStore.getCaseById(idOrSlug);
+    if (!caseItem) return;
+
+    lastFocusedElement = document.activeElement;
+
+    $('#modalCaseTitle').textContent = caseItem.title;
+    $('#modalDoctor').textContent = caseItem.doctor || 'Dr. Anthony De Jesús';
+    $('#modalDate').textContent = caseItem.date
+      ? new Date(caseItem.date).toLocaleDateString('es-PE', { year: 'numeric', month: 'long', day: 'numeric' })
+      : 'Reciente';
+    $('#modalReadTime').textContent = caseItem.readTime || '3 min de lectura';
+
+    const comparisonEl = $('#modalComparison');
+    const galleryEl = $('#modalGallery');
+
+    const hasBeforeAfter = (caseItem.photoMode === 'beforeAfter' || (!caseItem.photoMode && caseItem.beforeImg && caseItem.afterImg)) && Boolean(caseItem.beforeImg && caseItem.afterImg);
+    const galleryList = Array.isArray(caseItem.images) && caseItem.images.length > 0
+      ? caseItem.images
+      : (caseItem.coverImg && !hasBeforeAfter ? [caseItem.coverImg] : []);
+
+    if (hasBeforeAfter) {
+      $('#modalBeforeImg').src = caseItem.beforeImg;
+      $('#modalAfterImg').src = caseItem.afterImg;
+      comparisonEl.style.display = 'grid';
+      if (galleryEl) {
+        galleryEl.style.display = 'none';
+        galleryEl.innerHTML = '';
+      }
+    } else if (galleryList.length > 0) {
+      comparisonEl.style.display = 'none';
+      if (galleryEl) {
+        galleryEl.style.display = 'grid';
+        galleryEl.className = galleryList.length === 1 ? 'case-modal__gallery case-modal__gallery--single' : 'case-modal__gallery';
+        galleryEl.innerHTML = galleryList.map((imgUrl, idx) => `
+          <figure class="case-modal__gallery-item">
+            <img src="${imgUrl}" alt="Fotografía clínica ${idx + 1}" loading="lazy">
+          </figure>
+        `).join('');
+      }
+    } else {
+      comparisonEl.style.display = 'none';
+      if (galleryEl) {
+        galleryEl.style.display = 'none';
+        galleryEl.innerHTML = '';
+      }
+    }
+
+    $('#modalContent').innerHTML = parseSimpleMarkdown(caseItem.content || caseItem.excerpt);
+
+    $('#modalDocSignature').textContent = caseItem.doctor || 'Dr. Anthony De Jesús';
+    $('#modalDocRole').textContent = (caseItem.doctorRole || 'Especialista en Ortodoncia') + ' · EuroBraces Center';
+
+    const waText = encodeURIComponent(`Hola, vi el caso clínico "${caseItem.title}" en su web y me gustaría agendar una evaluación.`);
+    $('#modalWACta').href = `https://wa.me/51986186192?text=${waText}`;
+
+    modalOverlay.hidden = false;
+    setTimeout(() => {
+      modalOverlay.classList.add('is-open');
+      modalCloseBtn.focus();
+    }, 10);
+
+    const url = new URL(window.location);
+    url.searchParams.set('caso', caseItem.slug || caseItem.id);
+    window.history.replaceState({}, '', url);
+  }
+
+  function closeModal() {
+    modalOverlay.classList.remove('is-open');
+    setTimeout(() => {
+      modalOverlay.hidden = true;
+      if (lastFocusedElement) lastFocusedElement.focus();
+      const url = new URL(window.location);
+      url.searchParams.delete('caso');
+      window.history.replaceState({}, '', url);
+    }, 350);
+  }
+
+  if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
+  if (modalOverlay) {
+    modalOverlay.addEventListener('click', e => {
+      if (e.target === modalOverlay) closeModal();
+    });
+  }
+
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modalOverlay.classList.contains('is-open')) {
+      closeModal();
+    }
+  });
+
+  // Render inicial instantáneo
+  renderCases();
+
+  // Revalidación en background con Supabase
+  if (window.BlogStore && typeof window.BlogStore.fetchCasesAsync === 'function') {
+    window.BlogStore.fetchCasesAsync().then(() => {
+      renderCases();
+    }).catch(err => {
+      console.warn('Fallback activo a caché local:', err);
+    });
+  }
+
+  // Comprobar parámetros URL para deep-linking de caso específico
+  const urlParams = new URLSearchParams(window.location.search);
+  const deepCase = urlParams.get('caso');
+  if (deepCase) {
+    openModal(deepCase);
+  }
+
+})();
+</script>
+</body>
+</html>
