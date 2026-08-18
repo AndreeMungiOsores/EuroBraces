@@ -28,7 +28,6 @@
   <nav class="nav__links" id="navLinks">
     <a href="index.html#diagnostico">Diagnóstico</a>
     <a href="index.html#tratamientos">Tratamientos</a>
-    <a href="index.html#resultados">Resultados</a>
     <a href="casos-clinicos.html" style="color:var(--gold-300);font-weight:600">Casos Clínicos</a>
     <a href="index.html#pacientes">Pacientes</a>
     <a href="index.html#equipo">Equipo</a>
@@ -133,46 +132,25 @@
 <!-- ══════════ FOOTER ══════════ -->
 <footer class="foot">
   <div class="wrap foot__grid">
-    <div class="foot__brand">
-      <div class="foot__logo">
-        <img src="img/logo-cream.png" alt="EuroBraces Center" width="36" height="36">
-        <span>EuroBraces<em>Center</em></span>
-      </div>
-      <p class="foot__desc">Centro especializado en ortodoncia, estética dental y alineadores transparentes en Miraflores, Lima.</p>
-    </div>
-    <div class="foot__nav">
-      <h4>Navegación</h4>
-      <ul>
-        <li><a href="index.html#diagnostico">Diagnóstico</a></li>
-        <li><a href="index.html#tratamientos">Tratamientos</a></li>
-        <li><a href="index.html#resultados">Resultados</a></li>
-        <li><a href="casos-clinicos.html">Casos Clínicos & Blog</a></li>
-        <li><a href="index.html#pacientes">Pacientes</a></li>
-        <li><a href="index.html#equipo">Equipo</a></li>
-        <li><a href="index.html#ubicacion">Ubicación</a></li>
-      </ul>
-    </div>
-    <div class="foot__contact">
-      <h4>Atención y Citas</h4>
-      <p>Calle Elías Aguirre 126, Miraflores<br>Lima, Perú</p>
-      <p>Lunes a Sábado · Con Cita Previa</p>
-      <a class="foot__wa" href="https://wa.me/51986186192?text=Hola%2C%20quiero%20informaci%C3%B3n" target="_blank" rel="noopener">
-        WhatsApp: 986 186 192
-      </a>
-    </div>
-  </div>
-  <div class="wrap foot__bar">
-    <small>© <span id="year"></span> EuroBraces Center. Todos los derechos reservados.</small>
-    <small class="foot__auth">Directores Clínicos: Dr. Anthony De Jesús · Dra. Belén Torres</small>
+    <a class="foot__logo" href="index.html#top" aria-label="EuroBraces Center — inicio">
+      <img src="img/logo-navy.png" alt="">
+      <span>EuroBraces<em>Center</em></span>
+    </a>
+    <nav class="foot__nav">
+      <a href="index.html#diagnostico">Diagnóstico</a><a href="index.html#tratamientos">Tratamientos</a>
+      <a href="casos-clinicos.html">Casos Clínicos</a><a href="index.html#pacientes">Pacientes</a>
+      <a href="index.html#equipo">Equipo</a><a href="index.html#ubicacion">Ubicación</a>
+    </nav>
+    <p class="foot__legal">
+      © <span id="year"></span> EuroBraces Center · Elías Aguirre 126, Miraflores 15074, Lima — Perú<br>
+      <small>Las imágenes de casos son referenciales; los resultados varían según cada paciente.</small>
+    </p>
   </div>
 </footer>
 
-<!-- Botón Flotante WhatsApp -->
-<aside class="wa-float" aria-label="Contacto directo por WhatsApp">
-  <a class="wa" href="https://wa.me/51986186192?text=Hola%20EuroBraces%2C%20deseo%20agendar%20una%20cita" target="_blank" rel="noopener" aria-label="Abrir chat de WhatsApp">
-    <svg viewBox="0 0 24 24" width="27" height="27" aria-hidden="true"><path fill="currentColor" d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.47c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1s.9 2.44 1.03 2.61c.13.17 1.77 2.71 4.3 3.8 2.52 1.09 2.52.73 2.97.69.45-.04 1.47-.6 1.67-1.18.21-.59.21-1.09.15-1.19-.07-.1-.23-.16-.48-.28z"/></svg>
-  </a>
-</aside>
+<a class="wa" href="https://wa.me/51986186192?text=Hola%2C%20quiero%20una%20EVALUACI%C3%93N" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23a8.2 8.2 0 0 1 8.24 8.24c0 4.54-3.7 8.23-8.24 8.23Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.15.16-.29.19-.53.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.71-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.12-.15.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.47c-.16 0-.43.06-.65.31-.23.24-.86.84-.86 2.05s.88 2.38 1 2.54c.13.16 1.74 2.65 4.2 3.72.59.25 1.05.4 1.4.52.59.18 1.13.16 1.55.1.47-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.11-.22-.17-.47-.29Z"/></svg>
+</a>
 
 <!-- Scripts -->
 <script src="js/blog-store.js"></script>
