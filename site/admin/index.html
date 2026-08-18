@@ -2,6 +2,12 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
+  <script>
+    // Garantizar que la ruta siempre termine en '/' para resolver correctamente CSS, JS e imágenes
+    if (window.location.pathname.endsWith('/admin')) {
+      window.location.replace(window.location.pathname + '/' + window.location.search + window.location.hash);
+    }
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Panel de Administración · EuroBraces Casos Clínicos</title>
   <link rel="icon" type="image/png" href="../img/logo-navy.png">
