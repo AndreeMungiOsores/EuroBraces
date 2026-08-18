@@ -152,28 +152,63 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
 
   function mapFromSupabase(row) {
     const computedReadTime = row.read_time || calculateReadTime((row.content || '') + ' ' + (row.excerpt || ''));
+
+    let photoMode = 'beforeAfter';
+    let images = [];
+    let beforeImg = row.before_img || '';
+    let afterImg = row.after_img || '';
+    let coverImg = row.cover_img || row.after_img || row.before_img || '';
+
+    if (beforeImg && beforeImg.startsWith('[GALLERY_MODE]')) {
+      photoMode = 'gallery';
+      try {
+        images = JSON.parse(afterImg || '[]');
+      } catch (e) {
+        images = coverImg ? [coverImg] : [];
+      }
+      beforeImg = '';
+      afterImg = '';
+      coverImg = coverImg || (images && images[0]) || '';
+    } else if (row.photo_mode === 'gallery' || (Array.isArray(row.images) && row.images.length > 0)) {
+      photoMode = 'gallery';
+      images = Array.isArray(row.images) ? row.images : [];
+    }
+
     return {
       id: row.id,
       slug: row.slug,
-      title: row.title,
+      title: row.title || '',
       category: row.category || 'Sin etiqueta',
-      excerpt: row.excerpt,
-      content: row.content,
-      doctor: row.doctor,
-      doctorRole: row.doctor_role,
-      date: row.date,
+      excerpt: row.excerpt || '',
+      content: row.content || '',
+      doctor: row.doctor || 'Dr. Anthony De Jesús',
+      doctorRole: row.doctor_role || 'Especialista en Ortodoncia',
+      date: row.date || new Date().toISOString().split('T')[0],
       readTime: computedReadTime,
-      photoMode: row.photo_mode || (row.images && row.images.length ? 'gallery' : 'beforeAfter'),
-      images: Array.isArray(row.images) ? row.images : [],
-      beforeImg: row.before_img || '',
-      afterImg: row.after_img || '',
-      coverImg: row.cover_img || row.after_img || (row.images && row.images[0]) || '',
-      tags: row.tags || [],
+      photoMode: photoMode,
+      images: images,
+      beforeImg: beforeImg,
+      afterImg: afterImg,
+      coverImg: coverImg,
+      tags: Array.isArray(row.tags) ? row.tags : [],
       featured: Boolean(row.featured)
     };
   }
 
   function mapToSupabase(item) {
+    const isGallery = item.photoMode === 'gallery' || (Array.isArray(item.images) && item.images.length > 0 && !item.beforeImg);
+
+    let beforeImgStr = item.beforeImg || '';
+    let afterImgStr = item.afterImg || '';
+    let coverImgStr = item.coverImg || item.afterImg || item.beforeImg || '';
+
+    if (isGallery) {
+      const imgs = Array.isArray(item.images) && item.images.length > 0 ? item.images : (coverImgStr ? [coverImgStr] : []);
+      beforeImgStr = '[GALLERY_MODE]';
+      afterImgStr = JSON.stringify(imgs);
+      coverImgStr = imgs[0] || coverImgStr || '';
+    }
+
     const payload = {
       slug: item.slug || slugify(item.title),
       title: item.title,
@@ -184,14 +219,13 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
       doctor_role: item.doctorRole || 'Especialista en Ortodoncia',
       date: item.date || new Date().toISOString().split('T')[0],
       read_time: item.readTime || '3 min',
-      before_img: item.beforeImg || '',
-      after_img: item.afterImg || '',
-      cover_img: item.coverImg || item.afterImg || (item.images && item.images[0]) || '',
-      photo_mode: item.photoMode || 'beforeAfter',
-      images: Array.isArray(item.images) ? item.images : [],
+      before_img: beforeImgStr,
+      after_img: afterImgStr,
+      cover_img: coverImgStr,
       tags: Array.isArray(item.tags) ? item.tags : [],
       featured: Boolean(item.featured)
     };
+
     if (item.id && !item.id.startsWith('caso-')) {
       payload.id = item.id;
     }
