@@ -27,9 +27,6 @@
   const casesTableBody = $('#casesTableBody');
   const tableSearch = $('#tableSearch');
 
-  const statTotal = $('#statTotal');
-  const statFeatured = $('#statFeatured');
-
   const newCaseBtn = $('#newCaseBtn');
 
   const formModalBackdrop = $('#formModalBackdrop');
