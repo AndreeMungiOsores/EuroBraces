@@ -792,29 +792,51 @@
         return;
       }
 
-      // Si se seleccionan MÚLTIPLES fotos: procesar, guardar y sincronizar automáticamente sin solicitar leyenda individual
+      // Si se seleccionan MÚLTIPLES fotos: procesar, guardar y sincronizar automáticamente mostrando estado de carga
+      const saveBtn = patientForm ? patientForm.querySelector('button[type="submit"]') : $('#savePatientBtn');
+      const cancelBtn = $('#cancelPatientBtn');
+      const originalText = saveBtn ? saveBtn.textContent : 'Guardar Foto';
+
       let count = 0;
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Guardando...';
+      }
+      if (cancelBtn) cancelBtn.disabled = true;
+
       showToast(`Procesando ${files.length} fotos...`, 'info');
 
-      for (const file of files) {
-        try {
-          const base64 = await optimizeImageFile(file);
-          await window.BlogStore.savePatientPhoto({
-            url: base64,
-            caption: 'Paciente EuroBraces Center'
-          });
-          count++;
-        } catch (err) {
-          console.error('Error al procesar foto de paciente:', err);
+      try {
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          try {
+            if (saveBtn && files.length > 1) {
+              saveBtn.textContent = `Guardando (${i + 1}/${files.length})...`;
+            }
+            const base64 = await optimizeImageFile(file);
+            await window.BlogStore.savePatientPhoto({
+              url: base64,
+              caption: 'Paciente EuroBraces Center'
+            });
+            count++;
+          } catch (err) {
+            console.error('Error al procesar foto de paciente:', err);
+          }
         }
-      }
 
-      if (count > 0) {
-        showToast(`${count} foto(s) de paciente subida(s) y sincronizada(s) con éxito.`, 'success');
-        closePatientModal();
-        renderPatientsGrid();
+        if (count > 0) {
+          showToast(`${count} foto(s) de paciente subida(s) y sincronizada(s) con éxito.`, 'success');
+          closePatientModal();
+          renderPatientsGrid();
+        }
+      } finally {
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.textContent = originalText;
+        }
+        if (cancelBtn) cancelBtn.disabled = false;
+        patientFileInput.value = '';
       }
-      patientFileInput.value = '';
     });
   }
 
