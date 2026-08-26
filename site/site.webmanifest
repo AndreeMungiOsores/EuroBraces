@@ -1,0 +1,27 @@
+{
+  "name": "EuroBraces Center — Ortodoncia en Miraflores",
+  "short_name": "EuroBraces",
+  "description": "Centro de ortodoncia y odontología integral en Miraflores, Lima.",
+  "lang": "es-PE",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#08152C",
+  "theme_color": "#0B1E3D",
+  "categories": ["health", "medical", "lifestyle"],
+  "icons": [
+    {
+      "src": "/img/logo-navy.png",
+      "sizes": "170x163",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/img/og-cover-square.jpg",
+      "sizes": "1080x1080",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+# robots.txt — EuroBraces Center
+# https://www.eurobraces.com/
+
+User-agent: *
+Allow: /
+
+# Panel privado: fuera del índice
+Disallow: /admin/
+Disallow: /admin.html
+
+# Recursos que Google necesita para renderizar la página (no bloquear nunca)
+Allow: /css/
+Allow: /js/
+Allow: /img/
+
+# Nota: las URLs con ?caso= NO se bloquean a propósito. Se dejan rastrear para que
+# Google lea su <link rel="canonical"> y las consolide en /casos-clinicos.html.
+# Bloquearlas impediría leer ese canonical y generaría "Detectada, actualmente sin indexar".
+
+# Rastreadores de IA / respuestas generativas — permitidos (visibilidad en AI Overviews)
+User-agent: Google-Extended
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+Sitemap: https://www.eurobraces.com/sitemap.xml

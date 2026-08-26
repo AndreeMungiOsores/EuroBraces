@@ -927,8 +927,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   margin: 0 !important;
   padding: 0 !important;
 }
- 
- 
+
+
 /* --- Carousel de Casos Clinicos --- */
 .case-carousel {
   display: flex;
@@ -1005,4 +1005,144 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .carousel-btn:disabled {
   opacity: 0;
   pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════
+   SEO / ACCESIBILIDAD — bloque añadido
+   ═══════════════════════════════════════════════ */
+
+/* Skip-link: accesible al tabular, invisible el resto del tiempo */
+.skip-link{
+  position:absolute;left:-9999px;top:0;z-index:999;
+  background:var(--navy-900);color:var(--gold-300);
+  padding:12px 20px;border-radius:0 0 10px 0;
+  font-family:var(--ff-sans);font-weight:600;font-size:.95rem;
+  text-decoration:none;
+}
+.skip-link:focus{left:0}
+
+/* ── Preguntas frecuentes ── */
+.faq{padding:var(--sec) 0;background:var(--bone)}
+.faq__list{
+  max-width:860px;margin:clamp(30px,4vw,48px) auto 0;
+  border-top:1px solid rgba(16,23,40,.14);
+}
+.faq__item{
+  border-bottom:1px solid rgba(16,23,40,.14);
+}
+.faq__item summary{
+  list-style:none;cursor:pointer;
+  display:flex;align-items:center;gap:18px;
+  padding:clamp(18px,2.4vw,26px) 46px clamp(18px,2.4vw,26px) 0;
+  position:relative;
+  transition:color .25s var(--ease);
+}
+.faq__item summary::-webkit-details-marker{display:none}
+.faq__item summary h3{
+  font-family:var(--ff-display);
+  font-size:clamp(1.02rem,1.55vw,1.24rem);
+  font-weight:500;line-height:1.35;color:var(--ink);
+  margin:0;
+}
+.faq__item summary::after{
+  content:"";position:absolute;right:6px;top:50%;
+  width:11px;height:11px;margin-top:-7px;
+  border-right:2px solid var(--gold-600);
+  border-bottom:2px solid var(--gold-600);
+  transform:rotate(45deg);
+  transition:transform .3s var(--ease);
+}
+.faq__item[open] summary::after{transform:rotate(-135deg);margin-top:-2px}
+.faq__item summary:hover h3{color:var(--gold-700)}
+.faq__item summary:focus-visible{outline:2px solid var(--gold-600);outline-offset:4px}
+.faq__answer{padding:0 46px clamp(20px,2.6vw,28px) 0}
+.faq__answer p{
+  font-family:var(--ff-sans);
+  font-size:clamp(.95rem,1.25vw,1.03rem);
+  line-height:1.72;color:var(--ink-60);margin:0;
+}
+.faq__answer a{color:var(--gold-700);font-weight:600;text-underline-offset:3px}
+
+@media (prefers-reduced-motion:reduce){
+  .faq__item summary,.faq__item summary::after{transition:none}
+}
+
+/* ── Migas de pan (breadcrumb) ── */
+.breadcrumb{margin:0 0 18px;font-family:var(--ff-sans)}
+.breadcrumb ol{
+  list-style:none;margin:0;padding:0;
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+  font-size:.82rem;letter-spacing:.04em;
+}
+.breadcrumb li{display:flex;align-items:center;gap:8px;color:var(--ink-60)}
+.breadcrumb li+li::before{
+  content:"";width:5px;height:5px;
+  border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;
+  transform:rotate(-45deg);opacity:.55;
+}
+.breadcrumb a{color:inherit;text-decoration:none;opacity:.8;transition:opacity .2s var(--ease)}
+.breadcrumb a:hover{opacity:1;text-decoration:underline;text-underline-offset:3px}
+.breadcrumb [aria-current="page"]{color:var(--gold-700);font-weight:600}
+
+/* Variante sobre fondo oscuro */
+.blog-hero .breadcrumb li,
+.breadcrumb--light li{color:var(--ink-sub)}
+.blog-hero .breadcrumb [aria-current="page"],
+.breadcrumb--light [aria-current="page"]{color:var(--gold-300)}
+
+/* ── Perfiles sociales en el pie ── */
+.foot__social{
+  grid-column:1/-1;
+  display:flex;flex-wrap:wrap;gap:10px;
+  margin-top:.4em;
+}
+.foot__social a{
+  width:38px;height:38px;border-radius:50%;
+  display:grid;place-items:center;
+  color:rgba(247,244,238,.72);
+  border:1px solid rgba(227,199,126,.22);
+  transition:color .3s var(--ease),border-color .3s var(--ease),background .3s var(--ease),transform .3s var(--ease);
+}
+.foot__social a:hover,
+.foot__social a:focus-visible{
+  color:var(--navy-900);
+  background:var(--grad-gold);
+  border-color:transparent;
+  transform:translateY(-2px);
+}
+.foot__social a:focus-visible{outline:2px solid var(--gold-300);outline-offset:3px}
+.foot__social svg{width:17px;height:17px;display:block}
+
+@media (prefers-reduced-motion:reduce){
+  .foot__social a{transition:none}
+  .foot__social a:hover{transform:none}
+}
+
+/* ── Bloque "dónde atiende" en la ficha del profesional ── */
+.dr-practice{padding:clamp(56px,7vw,84px) 0;background:var(--bone)}
+.dr-practice__grid{
+  display:grid;grid-template-columns:1.35fr 1fr;
+  gap:clamp(28px,4vw,56px);align-items:start;
+}
+.dr-practice__grid > div > p{
+  font-family:var(--ff-sans);font-size:clamp(.95rem,1.25vw,1.02rem);
+  line-height:1.75;color:var(--ink-60);margin:0 0 1em;
+}
+.dr-practice__grid a{color:var(--gold-700);font-weight:600;text-underline-offset:3px}
+.dr-practice__data{
+  background:#FFF;border:1px solid rgba(16,23,40,.12);
+  border-radius:16px;padding:clamp(22px,2.6vw,30px);
+  box-shadow:0 8px 26px -10px rgba(16,23,40,.14);
+}
+.dr-practice__data dl{margin:0;font-family:var(--ff-sans)}
+.dr-practice__data dt{
+  font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold-700);font-weight:600;margin-top:1.35em;
+}
+.dr-practice__data dt:first-child{margin-top:0}
+.dr-practice__data dd{
+  margin:.4em 0 0;font-size:.95rem;line-height:1.6;color:var(--ink-75);
+}
+@media (max-width:860px){
+  .dr-practice__grid{grid-template-columns:1fr}
 }
