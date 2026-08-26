@@ -945,125 +945,108 @@ input, select, textarea { font: inherit; color: inherit; }
   .admin-toolbar__left { min-width: 100%; flex-wrap: wrap; }
 }
 
-/* ══════════ YOUTUBE EMBEDS Y TARJETAS EN EDITOR WYSIWYG ══════════ */
-.yt-link-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  background: #FFF0F0;
-  border: 1px solid #FFCDCD;
-  border-radius: 8px;
-  color: #C00000;
-  font-weight: 600;
-  font-size: 0.88rem;
-  text-decoration: none;
-  margin: 6px 0;
-}
-.yt-embed-wrap {
-  position: relative;
-  width: 100%;
-  padding-bottom: 56.25%;
-  height: 0;
-  border-radius: 12px;
-  overflow: hidden;
-  margin: 16px 0;
-  background: #000;
-}
-.yt-embed-wrap iframe {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  border: 0;
-}
-.yt-card-preview {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: #FFFFFF;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 10px 14px;
-  margin: 14px 0;
-  text-decoration: none;
-  box-shadow: 0 3px 12px rgba(16, 23, 40, 0.05);
-}
-.yt-card-preview__thumb {
-  position: relative;
-  width: 110px;
-  height: 66px;
-  border-radius: 8px;
-  overflow: hidden;
-  flex-shrink: 0;
-  background: #000;
-}
-.yt-card-preview__thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.yt-card-preview__play {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.35);
-}
-.yt-card-preview__info {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.yt-card-preview__title {
-  font-weight: 600;
-  color: var(--navy-900);
-  font-size: 0.9rem;
-}
-.yt-card-preview__sub {
-  font-size: 0.8rem;
-  color: #DC2626;
-  font-weight: 600;
-}
-
-/* ══════════ BLOQUE ATÓMICO Y BOTÓN DE ELIMINACIÓN DE YOUTUBE ══════════ */
+/* ══════════ YOUTUBE PASTILLA COMPACTA EN EDITOR Y WEB ══════════ */
 .yt-editor-block {
-  position: relative !important;
-  display: block !important;
-  margin: 16px 0 !important;
-  padding: 4px !important;
-  user-select: none;
-  border-radius: 12px;
-}
-.wysiwyg-editor .yt-editor-block {
-  border: 2px dashed rgba(220, 38, 38, 0.4);
-  background: rgba(254, 242, 242, 0.3);
-}
-.wysiwyg-editor .yt-card-preview,
-.wysiwyg-editor .yt-link-badge,
-.wysiwyg-editor .yt-embed-wrap iframe {
-  pointer-events: none !important;
-}
-.yt-block-delete-btn {
-  position: absolute !important;
-  top: 8px !important;
-  right: 8px !important;
-  padding: 6px 12px !important;
-  border-radius: 6px !important;
-  background: #DC2626 !important;
-  color: #FFFFFF !important;
-  border: 1px solid #991B1B !important;
-  font-size: 0.82rem !important;
-  font-weight: 700 !important;
-  line-height: 1 !important;
-  cursor: pointer !important;
   display: inline-flex !important;
   align-items: center !important;
-  gap: 6px !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
-  z-index: 999 !important;
+  gap: 10px !important;
+  background: #FFFFFF !important;
+  border: 1.5px solid var(--border, #E2E8F0) !important;
+  border-radius: 100px !important;
+  padding: 4px 12px 4px 6px !important;
+  margin: 8px 6px 8px 0 !important;
+  vertical-align: middle !important;
+  max-width: 100% !important;
+  box-shadow: 0 2px 8px rgba(16, 23, 40, 0.06) !important;
+  user-select: none !important;
+  transition: border-color 0.2s, box-shadow 0.2s !important;
+}
+.wysiwyg-editor .yt-editor-block {
+  border-color: #FECACA !important;
+  background: #FEF2F2 !important;
+}
+.yt-editor-block--embed {
+  display: block !important;
+  border-radius: 14px !important;
+  padding: 8px !important;
+  position: relative !important;
+}
+.yt-card-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  text-decoration: none !important;
+  color: inherit !important;
+  max-width: 100% !important;
+}
+.wysiwyg-editor .yt-card-pill {
+  pointer-events: none !important;
+}
+.yt-card-pill__thumb {
+  position: relative !important;
+  width: 48px !important;
+  height: 32px !important;
+  border-radius: 50px !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+  background: #000000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.yt-card-pill__thumb img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+.yt-card-pill__play {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(0, 0, 0, 0.35) !important;
+  color: #FFFFFF !important;
+  font-size: 10px !important;
+}
+.yt-card-pill__text {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1px !important;
+  min-width: 0 !important;
+}
+.yt-card-pill__title {
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  color: var(--navy-900, #08152C) !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 240px !important;
+}
+.yt-card-pill__link {
+  font-size: 0.75rem !important;
+  color: #DC2626 !important;
+  font-weight: 600 !important;
+}
+.yt-block-delete-btn {
   pointer-events: auto !important;
-  transition: background 0.2s, transform 0.15s !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  background: #DC2626 !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  border-radius: 100px !important;
+  padding: 4px 10px !important;
+  font-size: 0.76rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  margin-left: 4px !important;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.3) !important;
+  transition: background 0.15s, transform 0.15s !important;
+  flex-shrink: 0 !important;
 }
 .yt-block-delete-btn:hover {
   background: #991B1B !important;
@@ -1073,8 +1056,7 @@ input, select, textarea { font: inherit; color: inherit; }
   display: none !important;
 }
 :not(.wysiwyg-editor) .yt-editor-block {
-  border: none !important;
-  background: transparent !important;
-  padding: 0 !important;
+  background: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
 }
 

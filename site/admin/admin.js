@@ -1121,36 +1121,47 @@
     try {
       const temp = document.createElement('div');
       temp.innerHTML = html;
-      const ytElements = temp.querySelectorAll('.yt-card-preview, .yt-embed-wrap, .yt-link-badge');
 
-      ytElements.forEach(el => {
-        let parentBlock = el.closest('.yt-editor-block');
-        if (!parentBlock) {
-          parentBlock = document.createElement('div');
-          parentBlock.className = 'yt-editor-block';
-          parentBlock.setAttribute('contenteditable', 'false');
+      // Convertir cualquier elemento de YouTube antiguo o suelto al nuevo formato pastilla compacta
+      const legacyCards = temp.querySelectorAll('.yt-card-preview, .yt-link-badge');
+      legacyCards.forEach(card => {
+        const href = card.getAttribute('href') || '#';
+        const titleText = card.querySelector('.yt-card-preview__title, span') ? card.querySelector('.yt-card-preview__title, span').textContent.trim() : 'Ver en YouTube';
+        const videoId = extractYouTubeId(href);
+        const thumbSrc = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : '';
 
+        const block = document.createElement('div');
+        block.className = 'yt-editor-block';
+        block.setAttribute('contenteditable', 'false');
+
+        if (videoId && thumbSrc) {
+          block.innerHTML = `<a href="${href}" target="_blank" rel="noopener" class="yt-card-pill"><div class="yt-card-pill__thumb"><img src="${thumbSrc}" alt="${titleText}"><div class="yt-card-pill__play">▶</div></div><div class="yt-card-pill__text"><strong class="yt-card-pill__title">${titleText}</strong><span class="yt-card-pill__link">Ver video en YouTube &rarr;</span></div></a><button type="button" class="yt-block-delete-btn" title="Eliminar este video" onclick="this.closest('.yt-editor-block').remove()"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg><span>Borrar</span></button>`;
+        } else {
+          block.innerHTML = `<a href="${href}" target="_blank" rel="noopener" class="yt-card-pill"><div class="yt-card-pill__thumb" style="background:#FF0000"><svg viewBox="0 0 24 24" width="18" height="18" fill="#FFF"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></div><div class="yt-card-pill__text"><strong class="yt-card-pill__title">${titleText}</strong><span class="yt-card-pill__link">Enlace de YouTube &rarr;</span></div></a><button type="button" class="yt-block-delete-btn" title="Eliminar este enlace" onclick="this.closest('.yt-editor-block').remove()"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg><span>Borrar</span></button>`;
+        }
+
+        const parentP = card.closest('p');
+        if (parentP && parentP.children.length === 1) {
+          parentP.parentNode.replaceChild(block, parentP);
+        } else {
+          card.parentNode.replaceChild(block, card);
+        }
+      });
+
+      // Asegurar que cualquier .yt-editor-block existente tenga contenteditable="false" y su botón Borrar
+      const blocks = temp.querySelectorAll('.yt-editor-block');
+      blocks.forEach(block => {
+        block.setAttribute('contenteditable', 'false');
+        if (!block.querySelector('.yt-block-delete-btn')) {
           const btn = document.createElement('button');
           btn.type = 'button';
           btn.className = 'yt-block-delete-btn';
-          btn.title = 'Eliminar este contenido de YouTube';
-          btn.innerHTML = '🗑️ Eliminar';
-
-          el.parentNode.insertBefore(parentBlock, el);
-          parentBlock.appendChild(btn);
-          parentBlock.appendChild(el);
-        } else {
-          parentBlock.setAttribute('contenteditable', 'false');
-          if (!parentBlock.querySelector('.yt-block-delete-btn')) {
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'yt-block-delete-btn';
-            btn.title = 'Eliminar este contenido de YouTube';
-            btn.innerHTML = '🗑️ Eliminar';
-            parentBlock.insertBefore(btn, parentBlock.firstChild);
-          }
+          btn.title = 'Eliminar este elemento';
+          btn.innerHTML = '<svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg><span>Borrar</span>';
+          block.appendChild(btn);
         }
       });
+
       return temp.innerHTML;
     } catch (e) {
       return html;
@@ -1277,11 +1288,14 @@
         e.preventDefault();
         e.stopPropagation();
         const block = delBtn.closest('.yt-editor-block');
-        if (block) block.remove();
+        if (block) {
+          block.remove();
+          showToast('Bloque de YouTube eliminado con éxito.', 'info');
+        }
         return;
       }
 
-      const link = e.target.closest('a') || e.target.closest('.yt-card-preview') || e.target.closest('.yt-embed-wrap');
+      const link = e.target.closest('a') || e.target.closest('.yt-card-pill') || e.target.closest('.yt-card-preview') || e.target.closest('.yt-embed-wrap');
       if (link) {
         e.preventDefault();
         e.stopPropagation();
@@ -1340,17 +1354,15 @@
 
       if (!url) return;
       const videoId = extractYouTubeId(url);
-      let contentHtml = '';
+      let htmlToInsert = '';
 
       if (mode === 'embed' && videoId) {
-        contentHtml = `<div class="yt-embed-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${videoId}" title="${titleText}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+        htmlToInsert = `<div class="yt-editor-block yt-editor-block--embed" contenteditable="false"><button type="button" class="yt-block-delete-btn" title="Eliminar reproductor de video" onclick="this.closest('.yt-editor-block').remove()"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg><span>Borrar Video</span></button><div class="yt-embed-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${videoId}" title="${titleText}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div></div>`;
       } else if (mode === 'card' && videoId) {
-        contentHtml = `<p><a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener" class="yt-card-preview"><div class="yt-card-preview__thumb"><img src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" alt="${titleText}"><div class="yt-card-preview__play"><svg viewBox="0 0 24 24" width="24" height="24" fill="#FFF"><path d="M8 5v14l11-7z"/></svg></div></div><div class="yt-card-preview__info"><span class="yt-card-preview__title">${titleText}</span><span class="yt-card-preview__sub">Ver video en YouTube &rarr;</span></div></a></p>`;
+        htmlToInsert = `<div class="yt-editor-block" contenteditable="false"><a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener" class="yt-card-pill"><div class="yt-card-pill__thumb"><img src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" alt="${titleText}"><div class="yt-card-pill__play">▶</div></div><div class="yt-card-pill__text"><strong class="yt-card-pill__title">${titleText}</strong><span class="yt-card-pill__link">Ver video en YouTube &rarr;</span></div></a><button type="button" class="yt-block-delete-btn" title="Eliminar este video" onclick="this.closest('.yt-editor-block').remove()"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg><span>Borrar</span></button></div>`;
       } else {
-        contentHtml = `<p><a href="${url}" target="_blank" rel="noopener" class="yt-link-badge"><svg viewBox="0 0 24 24" width="16" height="16" fill="#FF0000" style="vertical-align:-2px"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg><span>${titleText}</span></a></p>`;
+        htmlToInsert = `<div class="yt-editor-block" contenteditable="false"><a href="${url}" target="_blank" rel="noopener" class="yt-card-pill"><div class="yt-card-pill__thumb" style="background:#FF0000"><svg viewBox="0 0 24 24" width="18" height="18" fill="#FFF"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></div><div class="yt-card-pill__text"><strong class="yt-card-pill__title">${titleText}</strong><span class="yt-card-pill__link">Enlace de YouTube &rarr;</span></div></a><button type="button" class="yt-block-delete-btn" title="Eliminar este enlace" onclick="this.closest('.yt-editor-block').remove()"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg><span>Borrar</span></button></div>`;
       }
-
-      const htmlToInsert = `<div class="yt-editor-block" contenteditable="false"><button type="button" class="yt-block-delete-btn" title="Eliminar este contenido de YouTube">🗑️ Eliminar</button>${contentHtml}</div>`;
 
       if (currentTargetEditor) {
         restoreCaretPosition();
