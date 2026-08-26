@@ -743,6 +743,7 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
         photoMode: caseData.photoMode || (caseData.images && caseData.images.length ? 'gallery' : 'beforeAfter'),
         images: Array.isArray(caseData.images) ? caseData.images : [],
         beforeImg: caseData.beforeImg || '',
+        duringImg: caseData.duringImg || '',
         afterImg: caseData.afterImg || '',
         coverImg: caseData.coverImg || caseData.afterImg || (caseData.images && caseData.images[0]) || '',
         tags: Array.isArray(caseData.tags)
