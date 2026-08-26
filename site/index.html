@@ -51,7 +51,7 @@
 <link rel="preload" as="image" href="img/hero-portada.webp" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=6">
+<link rel="stylesheet" href="css/style.css?v=7">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap"></noscript>
 <script>document.documentElement.classList.add('js');</script>
@@ -217,7 +217,7 @@
 <!-- ══════════ NAV ══════════ -->
 <header class="nav" id="nav">
   <a class="nav__brand" href="#top" aria-label="EuroBraces Center — inicio">
-    <img src="img/logo-navy.png" alt="" class="nav__mark" width="170" height="163">
+    <img src="img/logo-navy.png" alt="" class="nav__mark">
     <span class="nav__word">EuroBraces<em>Center</em></span>
   </a>
   <nav class="nav__links" id="navLinks">
@@ -327,8 +327,8 @@
 
     <figure class="diag__stage reveal">
       <div class="compare" id="compare">
-        <img class="compare__after"  id="cmpAfter"  src="img/ba-apinados-despues.jpg" alt="Después del tratamiento" width="960" height="720">
-        <img class="compare__before" id="cmpBefore" src="img/ba-apinados-antes.jpg" alt="Antes del tratamiento" width="960" height="720">
+        <img class="compare__after"  id="cmpAfter"  src="img/ba-apinados-despues.jpg" alt="Después del tratamiento">
+        <img class="compare__before" id="cmpBefore" src="img/ba-apinados-antes.jpg" alt="Antes del tratamiento">
         <span class="compare__tag compare__tag--a">Antes</span>
         <span class="compare__tag compare__tag--b">Después</span>
         <div class="compare__handle" id="cmpHandle" role="slider" tabindex="0"
@@ -395,11 +395,11 @@
             <div class="case-carousel" style="display:flex; flex-direction:row; flex-wrap:nowrap; aspect-ratio:16/9; background:var(--navy-900); border-radius:12px; overflow-x:auto; overflow-y:hidden; scroll-snap-type: x mandatory; width:100%;">
               <div class="case-carousel__item" style="flex: 0 0 100%; width: 100%; height: 100%; position: relative; scroll-snap-align: center;">
                 <span class="case-carousel__tag">Antes</span>
-                <img src="img/caso1-inicio.jpg" alt="Caso 1 al inicio del tratamiento" loading="lazy" decoding="async" width="329" height="190">
+                <img src="img/caso1-inicio.jpg" alt="Caso 1 al inicio del tratamiento" loading="lazy" decoding="async">
               </div>
               <div class="case-carousel__item" style="flex: 0 0 100%; width: 100%; height: 100%; position: relative; scroll-snap-align: center;">
                 <span class="case-carousel__tag">Después</span>
-                <img src="img/caso1-progreso.jpg" alt="Caso 1 en fase de alineación y progreso" loading="lazy" decoding="async" width="329" height="190">
+                <img src="img/caso1-progreso.jpg" alt="Caso 1 en fase de alineación y progreso" loading="lazy" decoding="async">
               </div>
             </div>
             <button class="carousel-btn carousel-btn--next" onclick="this.parentElement.querySelector('.case-carousel').scrollBy({left: 300, behavior: 'smooth'}); event.stopPropagation();" aria-label="Siguiente">
@@ -428,11 +428,11 @@
             <div class="case-carousel" style="display:flex; flex-direction:row; flex-wrap:nowrap; aspect-ratio:16/9; background:var(--navy-900); border-radius:12px; overflow-x:auto; overflow-y:hidden; scroll-snap-type: x mandatory; width:100%;">
               <div class="case-carousel__item" style="flex: 0 0 100%; width: 100%; height: 100%; position: relative; scroll-snap-align: center;">
                 <span class="case-carousel__tag">Antes</span>
-                <img src="img/caso2-inicio.jpg" alt="Caso 2 al inicio del tratamiento" loading="lazy" decoding="async" width="329" height="190">
+                <img src="img/caso2-inicio.jpg" alt="Caso 2 al inicio del tratamiento" loading="lazy" decoding="async">
               </div>
               <div class="case-carousel__item" style="flex: 0 0 100%; width: 100%; height: 100%; position: relative; scroll-snap-align: center;">
                 <span class="case-carousel__tag">Después</span>
-                <img src="img/caso2-progreso.jpg" alt="Caso 2 en fase de alineación y progreso" loading="lazy" decoding="async" width="329" height="190">
+                <img src="img/caso2-progreso.jpg" alt="Caso 2 en fase de alineación y progreso" loading="lazy" decoding="async">
               </div>
             </div>
             <button class="carousel-btn carousel-btn--next" onclick="this.parentElement.querySelector('.case-carousel').scrollBy({left: 300, behavior: 'smooth'}); event.stopPropagation();" aria-label="Siguiente">
@@ -479,19 +479,19 @@
   <div class="rail-container">
     <div class="rail rail--patients" id="rail-pacientes" tabindex="0" role="region" aria-label="Galería fotográfica de pacientes">
       <figure class="pac-card reveal">
-        <img src="img/pac-3.jpg" alt="Paciente atendido en EuroBraces Center" loading="lazy" decoding="async" width="640" height="800">
+        <img src="img/pac-3.jpg" alt="Paciente atendido en EuroBraces Center" loading="lazy" decoding="async">
       </figure>
       <figure class="pac-card reveal">
-        <img src="img/pac-1.jpg" alt="Pacientes de EuroBraces Center" loading="lazy" decoding="async" width="640" height="800">
+        <img src="img/pac-1.jpg" alt="Pacientes de EuroBraces Center" loading="lazy" decoding="async">
       </figure>
       <figure class="pac-card reveal">
-        <img src="img/pac-4.jpg" alt="Paciente de EuroBraces Center" loading="lazy" decoding="async" width="640" height="800">
+        <img src="img/pac-4.jpg" alt="Paciente de EuroBraces Center" loading="lazy" decoding="async">
       </figure>
       <figure class="pac-card reveal">
-        <img src="img/pac-5.jpg" alt="Paciente en consulta EuroBraces" loading="lazy" decoding="async" width="640" height="800">
+        <img src="img/pac-5.jpg" alt="Paciente en consulta EuroBraces" loading="lazy" decoding="async">
       </figure>
       <figure class="pac-card reveal">
-        <img src="img/pac-2.jpg" alt="Paciente de EuroBraces Center" loading="lazy" decoding="async" width="640" height="800">
+        <img src="img/pac-2.jpg" alt="Paciente de EuroBraces Center" loading="lazy" decoding="async">
       </figure>
     </div>
   </div>
@@ -511,7 +511,7 @@
     </header>
     <div class="team__grid">
       <a href="dr-anthony-de-jesus.html" class="member reveal member--link" style="text-decoration:none;cursor:pointer" aria-label="Ver perfil completo del Dr. Anthony De Jesús">
-        <img src="img/dr-anthony.jpg?v=3" alt="Dr. Anthony De Jesús, especialista en ortodoncia" width="560" height="560">
+        <img src="img/dr-anthony.jpg?v=3" alt="Dr. Anthony De Jesús, especialista en ortodoncia">
         <figcaption><span class="member__role">Especialista en Ortodoncia</span>
           <h3>Dr. Anthony <i>De Jesús</i></h3>
           <p>Atención profesional y cercana para tu sonrisa.</p>
@@ -519,7 +519,7 @@
         </figcaption>
       </a>
       <figure class="member reveal">
-        <img src="img/dra-belen.jpg?v=3" alt="Dra. Belén Torres, odontóloga" width="560" height="560">
+        <img src="img/dra-belen.jpg?v=3" alt="Dra. Belén Torres, odontóloga">
         <figcaption><span class="member__role">Odontóloga</span>
           <h3>Dra. Belén <i>Torres</i></h3>
           <p>Atención integral con calidez y profesionalismo.</p></figcaption>
@@ -699,7 +699,7 @@
 <footer class="foot">
   <div class="wrap foot__grid">
     <a class="foot__logo" href="#top" aria-label="EuroBraces Center — inicio">
-      <img src="img/logo-navy.png" alt="" width="170" height="163">
+      <img src="img/logo-navy.png" alt="">
       <span>EuroBraces<em>Center</em></span>
     </a>
     <nav class="foot__nav">
