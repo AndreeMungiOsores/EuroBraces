@@ -944,3 +944,85 @@ input, select, textarea { font: inherit; color: inherit; }
   .admin-toolbar { flex-direction: column; align-items: stretch; }
   .admin-toolbar__left { min-width: 100%; flex-wrap: wrap; }
 }
+
+/* ══════════ YOUTUBE EMBEDS Y TARJETAS EN EDITOR WYSIWYG ══════════ */
+.yt-link-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: #FFF0F0;
+  border: 1px solid #FFCDCD;
+  border-radius: 8px;
+  color: #C00000;
+  font-weight: 600;
+  font-size: 0.88rem;
+  text-decoration: none;
+  margin: 6px 0;
+}
+.yt-embed-wrap {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  height: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 16px 0;
+  background: #000;
+}
+.yt-embed-wrap iframe {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border: 0;
+}
+.yt-card-preview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin: 14px 0;
+  text-decoration: none;
+  box-shadow: 0 3px 12px rgba(16, 23, 40, 0.05);
+}
+.yt-card-preview__thumb {
+  position: relative;
+  width: 110px;
+  height: 66px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #000;
+}
+.yt-card-preview__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.yt-card-preview__play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+}
+.yt-card-preview__info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.yt-card-preview__title {
+  font-weight: 600;
+  color: var(--navy-900);
+  font-size: 0.9rem;
+}
+.yt-card-preview__sub {
+  font-size: 0.8rem;
+  color: #DC2626;
+  font-weight: 600;
+}
+

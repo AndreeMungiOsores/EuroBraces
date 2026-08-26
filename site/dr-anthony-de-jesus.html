@@ -329,7 +329,7 @@
 
   function parseSimpleMarkdown(content) {
     if (!content) return '';
-    if (/<(h2|h3|p|ul|li|strong|em|span)/i.test(content)) {
+    if (/<(h2|h3|p|ul|li|strong|em|span|div|a|iframe)/i.test(content)) {
       return content;
     }
     return content

@@ -219,6 +219,10 @@
             <button type="button" class="editor-btn btn-dr-list" data-target="drAdminAcademicEditor" title="Lista con viñetas">
               <span>• Lista</span>
             </button>
+            <button type="button" class="editor-btn btn-dr-youtube" data-target="drAdminAcademicEditor" title="Insertar Enlace o Video de YouTube">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="#FF0000" style="vertical-align:-2px"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              <span>YouTube</span>
+            </button>
           </div>
           <div id="drAdminAcademicEditor" class="wysiwyg-editor" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Formación académica y especialización" data-placeholder="Detalles de títulos, diplomados y estudios..."></div>
         </div>
@@ -241,6 +245,10 @@
             <button type="button" class="editor-btn btn-dr-list" data-target="drAdminClinicalEditor" title="Lista con viñetas">
               <span>• Lista</span>
             </button>
+            <button type="button" class="editor-btn btn-dr-youtube" data-target="drAdminClinicalEditor" title="Insertar Enlace o Video de YouTube">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="#FF0000" style="vertical-align:-2px"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              <span>YouTube</span>
+            </button>
           </div>
           <div id="drAdminClinicalEditor" class="wysiwyg-editor" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Enfoque clínico y casos complejos" data-placeholder="Tipos de maloclusiones y técnicas avanzadas..."></div>
         </div>
@@ -262,6 +270,10 @@
             </button>
             <button type="button" class="editor-btn btn-dr-list" data-target="drAdminTeachingEditor" title="Lista con viñetas">
               <span>• Lista</span>
+            </button>
+            <button type="button" class="editor-btn btn-dr-youtube" data-target="drAdminTeachingEditor" title="Insertar Enlace o Video de YouTube">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="#FF0000" style="vertical-align:-2px"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              <span>YouTube</span>
             </button>
           </div>
           <div id="drAdminTeachingEditor" class="wysiwyg-editor" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Docencia, divulgación y proyectos" data-placeholder="El Arte de Doblar, OrthoTube y conferencias..."></div>
@@ -340,6 +352,10 @@
             </button>
             <button type="button" class="editor-btn" id="btnFormatList" title="Lista con viñetas">
               <span>• Lista</span>
+            </button>
+            <button type="button" class="editor-btn btn-dr-youtube" data-target="caseContentEditor" title="Insertar Enlace o Video de YouTube">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="#FF0000" style="vertical-align:-2px"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              <span>YouTube</span>
             </button>
 
             <div class="editor-divider" aria-hidden="true"></div>
@@ -517,6 +533,47 @@
       <button type="button" class="btn-secondary" id="cancelDelBatchPatientBtn">Cancelar</button>
       <button type="button" class="btn-danger" id="confirmDelBatchPatientBtn">Sí, eliminar todas</button>
     </div>
+  </div>
+</div>
+
+<!-- ══════════ MODAL DE INSERCIÓN Y CONFIGURACIÓN DE YOUTUBE ══════════ -->
+<div class="modal-backdrop" id="youtubeModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="ytModalTitleHeader">
+  <div class="admin-modal" style="width:520px">
+    <div class="admin-modal__head" style="background:var(--navy-900)">
+      <h3 id="ytModalTitleHeader" style="color:#FFF;display:flex;align-items:center;gap:8px;margin:0;font-size:1.1rem">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        Insertar Contenido de YouTube
+      </h3>
+      <button class="admin-modal__close" id="closeYtModalBtn" aria-label="Cerrar modal">&times;</button>
+    </div>
+
+    <form id="youtubeForm">
+      <div class="admin-modal__body" style="display:flex;flex-direction:column;gap:16px">
+        <div class="form-group">
+          <label for="ytModalUrl">Enlace o URL de YouTube *</label>
+          <input type="url" id="ytModalUrl" class="form-ctrl" placeholder="Ej: https://www.youtube.com/watch?v=dQw4w9WgXcQ" required>
+        </div>
+
+        <div class="form-group">
+          <label for="ytModalText">Título o Texto del Enlace / Video *</label>
+          <input type="text" id="ytModalText" class="form-ctrl" placeholder="Ej: Ver canal de OrthoTube en YouTube" required>
+        </div>
+
+        <div class="form-group">
+          <label for="ytModalPreviewMode">Formato de Presentación (Preview en la Web) *</label>
+          <select id="ytModalPreviewMode" class="form-ctrl" required style="cursor:pointer">
+            <option value="card">1. Tarjeta Elegante con Miniatura (Video Card Preview)</option>
+            <option value="embed">2. Reproductor de Video Incrustado (16:9 Player)</option>
+            <option value="link">3. Enlace Clickeable con Ícono (Botón Badge)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="admin-modal__foot">
+        <button type="button" class="btn-secondary" id="cancelYtModalBtn">Cancelar</button>
+        <button type="submit" class="btn-primary" id="confirmYtModalBtn">+ Insertar en la Descripción</button>
+      </div>
+    </form>
   </div>
 </div>
 

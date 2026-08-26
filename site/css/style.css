@@ -823,3 +823,103 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   .hero__title .line>span{transform:none}
   .hero__arc path{stroke-dashoffset:0}
 }
+/* ══════════ ELEMENTOS DE YOUTUBE (ENLACES, REPRODUCTOR Y TARJETAS PREVIEW) ══════════ */
+.yt-link-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #FFF0F0;
+  border: 1px solid #FFCDCD;
+  border-radius: 8px;
+  color: #C00000;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  margin: 8px 0;
+  transition: background 0.2s, transform 0.2s;
+}
+.yt-link-badge:hover {
+  background: #FFE2E2;
+  transform: translateY(-1px);
+  color: #990000;
+}
+.yt-embed-wrap {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+  height: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  margin: 20px 0;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+  background: #000000;
+}
+.yt-embed-wrap iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.yt-card-preview {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #FFFFFF;
+  border: 1px solid var(--border, #E2E8F0);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 16px 0;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(16, 23, 40, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+.yt-card-preview:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(16, 23, 40, 0.1);
+  border-color: #FF0000;
+}
+.yt-card-preview__thumb {
+  position: relative;
+  width: 120px;
+  height: 72px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #000000;
+}
+.yt-card-preview__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.yt-card-preview__play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  transition: background 0.2s;
+}
+.yt-card-preview:hover .yt-card-preview__play {
+  background: rgba(220, 38, 38, 0.85);
+}
+.yt-card-preview__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.yt-card-preview__title {
+  font-weight: 600;
+  color: var(--navy-900, #08152C);
+  font-size: 0.94rem;
+  line-height: 1.35;
+}
+.yt-card-preview__sub {
+  font-size: 0.82rem;
+  color: #DC2626;
+  font-weight: 600;
+}
