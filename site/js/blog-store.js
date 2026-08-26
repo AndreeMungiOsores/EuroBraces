@@ -396,10 +396,225 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
     return payload;
   }
 
+  /* ═══════════════════════════════════════════════════════════════
+     ALMACENAMIENTO DE IMÁGENES (Supabase Storage)
+
+     Antes las fotos se guardaban como cadenas `data:image/jpeg;base64,...`
+     dentro de la propia fila. Eso tenía dos costes graves:
+
+       · Peso — 12 imágenes inflaban el DOM de la home a 2,2 MB, hundiendo el
+         LCP en móvil, que es una de las métricas de Core Web Vitals que Google
+         usa para posicionar.
+       · Invisibilidad — una URL `data:` no se puede rastrear ni indexar, así
+         que las fotos de casos clínicos no existían para Google Imágenes.
+
+     Ahora el binario va a Supabase Storage y en la fila queda sólo una URL
+     pública, rastreable y cacheable por el CDN.
+
+     Requisito: el bucket debe existir y permitir INSERT a `anon`.
+     Los pasos están en SEO.md, punto 5.
+     ═══════════════════════════════════════════════════════════════ */
+
+  const STORAGE_BUCKET = 'casos';
+  const STORAGE_API = SUPABASE_URL + '/storage/v1';
+  const PUBLIC_BASE = STORAGE_API + '/object/public/' + STORAGE_BUCKET + '/';
+
+  /** ¿Es una imagen embebida en base64 (o un blob local), es decir, no rastreable? */
+  function isEmbeddedImage(url) {
+    return typeof url === 'string' && /^(data:|blob:)/i.test(url);
+  }
+
+  /** Extensión a partir del MIME, con jpg por defecto. */
+  function extFromMime(mime) {
+    const map = { 'image/jpeg': 'jpg', 'image/jpg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif' };
+    return map[String(mime || '').toLowerCase()] || 'jpg';
+  }
+
+  /** Nombre de archivo estable y seguro para URL. */
+  function buildObjectName(prefix, mime) {
+    const clean = String(prefix || 'img')
+      .toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '')
+      .slice(0, 48) || 'img';
+    const stamp = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    return clean + '-' + stamp + '.' + extFromMime(mime);
+  }
+
+  /** Convierte un data:URL en Blob sin pasar por la red. */
+  function dataUrlToBlob(dataUrl) {
+    const parts = String(dataUrl).split(',');
+    const mime = (parts[0].match(/data:([^;]+)/) || [, 'image/jpeg'])[1];
+    const binary = atob(parts[1]);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new Blob([bytes], { type: mime });
+  }
+
   const BlogStore = {
     config: {
       supabaseUrl: SUPABASE_URL,
-      supabaseKey: SUPABASE_ANON_KEY
+      supabaseKey: SUPABASE_ANON_KEY,
+      storageBucket: STORAGE_BUCKET,
+      storagePublicBase: PUBLIC_BASE
+    },
+
+    isEmbeddedImage: isEmbeddedImage,
+
+    /**
+     * Sube una imagen a Supabase Storage y devuelve su URL pública.
+     *
+     * @param {Blob|File|string} source  Blob, File o data:URL.
+     * @param {string} [nameHint]        Base del nombre de archivo (ej. el slug del caso).
+     * @returns {Promise<string>}        URL pública absoluta.
+     * @throws  Si el bucket no existe o la política RLS rechaza la subida.
+     */
+    uploadImage: async function (source, nameHint) {
+      let blob = source;
+      if (typeof source === 'string') {
+        if (!isEmbeddedImage(source)) return source;   // ya es una URL: nada que hacer
+        blob = dataUrlToBlob(source);
+      }
+      if (!blob || typeof blob.size !== 'number') {
+        throw new Error('Origen de imagen no válido.');
+      }
+
+      const objectName = buildObjectName(nameHint, blob.type);
+      const res = await fetch(STORAGE_API + '/object/' + STORAGE_BUCKET + '/' + objectName, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': blob.type || 'image/jpeg',
+          'Cache-Control': 'public, max-age=31536000, immutable',
+          'x-upsert': 'true'
+        },
+        body: blob
+      });
+
+      if (!res.ok) {
+        // Storage responde 400 con el código real dentro del cuerpo, así que hay
+        // que mirar el body y no sólo res.status para distinguir los casos.
+        let body = {};
+        try { body = await res.json(); } catch (e) { /* respuesta no JSON */ }
+        const detail = body.message || '';
+        const code = String(body.statusCode || body.code || res.status);
+
+        if (code === '404' || /bucket not found/i.test(detail)) {
+          throw new Error(
+            `El bucket "${STORAGE_BUCKET}" no existe todavía en Supabase. ` +
+            'Créalo en Storage → New bucket (público) y añade la política de INSERT. Pasos en SEO.md, punto 5.'
+          );
+        }
+        if (/row-level security|violates|unauthorized|403/i.test(detail + code)) {
+          throw new Error(
+            `El bucket "${STORAGE_BUCKET}" existe pero rechaza la subida: falta la política que permite ` +
+            'INSERT al rol anon. Pasos en SEO.md, punto 5.'
+          );
+        }
+        if (code === '413' || /too large|exceeded/i.test(detail)) {
+          throw new Error('La imagen supera el límite de tamaño del bucket. Sube el límite o reduce la foto.');
+        }
+        throw new Error(`Error ${code} al subir la imagen. ${detail}`);
+      }
+
+      return PUBLIC_BASE + objectName;
+    },
+
+    /**
+     * Sustituye por URLs públicas todas las imágenes embebidas en base64 que
+     * queden en los registros ya guardados (casos, fotos de pacientes y perfil
+     * del doctor). Es idempotente: lo ya migrado se ignora.
+     *
+     * @param {(info:{done:number,total:number,label:string}) => void} [onProgress]
+     * @returns {Promise<{migradas:number, fallidas:number, errores:string[]}>}
+     */
+    migrateEmbeddedImages: async function (onProgress) {
+      const CASE_FIELDS = ['beforeImg', 'duringImg', 'afterImg', 'coverImg'];
+      const jobs = [];
+
+      const cases = this.getCases();
+      cases.forEach((c) => {
+        CASE_FIELDS.forEach((f) => {
+          if (isEmbeddedImage(c[f])) {
+            jobs.push({ kind: 'case', record: c, field: f, hint: (c.slug || c.id) + '-' + f });
+          }
+        });
+        // En modo galería las fotos viven en `images` (array de URLs); `beforeImg`
+        // lleva el centinela '[GALLERY_MODE]', que isEmbeddedImage ya ignora.
+        if (Array.isArray(c.images)) {
+          c.images.forEach((g, i) => {
+            const url = typeof g === 'string' ? g : g && g.url;
+            if (isEmbeddedImage(url)) {
+              jobs.push({ kind: 'caseGallery', record: c, list: c.images, index: i, hint: (c.slug || c.id) + '-g' + (i + 1) });
+            }
+          });
+        }
+      });
+
+      const photos = this.getPatientPhotos();
+      photos.forEach((p, i) => {
+        if (isEmbeddedImage(p.url)) {
+          jobs.push({ kind: 'patient', record: p, field: 'url', hint: 'paciente-' + (p.id || i + 1) });
+        }
+      });
+
+      const profile = this.getDrAnthonyProfile();
+      if (isEmbeddedImage(profile.photoUrl)) {
+        jobs.push({ kind: 'profile', record: profile, field: 'photoUrl', hint: 'dr-anthony-retrato' });
+      }
+      if (Array.isArray(profile.galleryPhotos)) {
+        profile.galleryPhotos.forEach((g, i) => {
+          if (isEmbeddedImage(g && g.url)) {
+            jobs.push({ kind: 'profileGallery', record: g, field: 'url', hint: 'dr-anthony-g' + (i + 1) });
+          }
+        });
+      }
+
+      const total = jobs.length;
+      const errores = [];
+      let migradas = 0;
+      const tocados = { cases: new Set(), patients: [], profile: false };
+
+      for (let i = 0; i < jobs.length; i++) {
+        const job = jobs[i];
+        if (onProgress) onProgress({ done: i, total, label: job.hint });
+        try {
+          if (job.kind === 'caseGallery') {
+            const item = job.list[job.index];
+            const src = typeof item === 'string' ? item : item.url;
+            const url = await this.uploadImage(src, job.hint);
+            if (typeof item === 'string') job.list[job.index] = url;
+            else item.url = url;
+            tocados.cases.add(job.record);
+          } else {
+            job.record[job.field] = await this.uploadImage(job.record[job.field], job.hint);
+            if (job.kind === 'case') tocados.cases.add(job.record);
+            else if (job.kind === 'patient') tocados.patients.push(job.record);
+            else tocados.profile = true;
+          }
+          migradas++;
+        } catch (err) {
+          errores.push(job.hint + ': ' + (err.message || err));
+          // Un fallo aislado no debe abortar el resto; si es el bucket lo que
+          // falta, todos fallarán igual y el mensaje lo dejará claro.
+        }
+      }
+
+      // Persistir sólo lo que efectivamente cambió
+      for (const c of tocados.cases) {
+        try { await this.saveCase(c); } catch (err) { errores.push('guardar ' + (c.slug || c.id) + ': ' + err.message); }
+      }
+      for (const p of tocados.patients) {
+        try { await this.savePatientPhoto(p); } catch (err) { errores.push('guardar foto ' + p.id + ': ' + err.message); }
+      }
+      if (tocados.profile) {
+        try { await this.saveDrAnthonyProfile(profile); } catch (err) { errores.push('guardar perfil: ' + err.message); }
+      }
+
+      if (onProgress) onProgress({ done: total, total, label: 'listo' });
+      return { migradas, fallidas: errores.length, errores };
     },
 
     // ── GESTIÓN DE CATEGORÍAS ──

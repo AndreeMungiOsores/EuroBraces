@@ -1066,3 +1066,30 @@ input, select, textarea { font: inherit; color: inherit; }
   border-color: #E2E8F0 !important;
 }
 
+/* ── Botón "Migrar imágenes" en la cabecera ──
+   Es un <button> usando la clase de los enlaces, así que necesita el reset
+   propio de los botones; sin nowrap el icono y el texto se parten en dos
+   líneas y descuadran la fila de acciones. */
+.admin-nav__actions .admin-nav__link {
+  background: none;
+  border: 0;
+  padding: 6px 0;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.admin-nav__actions .admin-nav__link:disabled {
+  opacity: .55;
+  cursor: progress;
+}
+.admin-nav__actions .admin-nav__link svg { flex-shrink: 0; }
+
+/* La cabecera puede quedarse sin sitio en portátiles y pantallas partidas */
+.admin-nav__actions { flex-wrap: wrap; row-gap: 6px; }
+
+@media (max-width: 1080px) {
+  .admin-nav__actions .admin-nav__link { font-size: 0.8rem; }
+  .admin-nav__actions { gap: 10px; }
+}
