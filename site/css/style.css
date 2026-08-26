@@ -484,7 +484,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .team__grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4vw,60px)}
 .member{margin:0;text-align:center}
 .member img{
-  width:clamp(180px,22vw,260px);aspect-ratio:1/1;object-fit:cover;
+  /* height:auto es deliberado: sin el, un atributo height="" en el HTML
+     se aplica como presentational hint y anula el aspect-ratio, deformando
+     el circulo en un ovalo. */
+  width:clamp(180px,22vw,260px);height:auto;aspect-ratio:1/1;object-fit:cover;
   border-radius:50%;display:block;margin:0 auto;background:#fff;
   border:3px solid var(--gold-300);
   box-shadow:0 0 0 7px rgba(240,214,149,.18),0 24px 46px -18px rgba(8,21,44,.55);
