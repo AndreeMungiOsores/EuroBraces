@@ -1146,6 +1146,22 @@
   }
 
   let currentTargetEditor = null;
+  let savedYouTubeRange = null;
+
+  // Escuchar cambios de selección en tiempo real para recordar la posición exacta del cursor
+  document.addEventListener('selectionchange', () => {
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0) {
+      const activeEl = document.activeElement;
+      if (activeEl && activeEl.classList && activeEl.classList.contains('wysiwyg-editor')) {
+        const range = sel.getRangeAt(0);
+        if (activeEl.contains(range.commonAncestorContainer)) {
+          currentTargetEditor = activeEl;
+          savedYouTubeRange = range.cloneRange();
+        }
+      }
+    }
+  });
 
   function extractYouTubeId(url) {
     if (!url) return null;
@@ -1154,8 +1170,39 @@
     return (match && match[2].length === 11) ? match[2] : null;
   }
 
-  function openYouTubeModal(targetEl) {
+  function saveCaretPosition(targetEl) {
     currentTargetEditor = targetEl;
+    const sel = window.getSelection();
+
+    if (sel && sel.rangeCount > 0) {
+      const range = sel.getRangeAt(0);
+      if (targetEl.contains(range.commonAncestorContainer)) {
+        savedYouTubeRange = range.cloneRange();
+        return;
+      }
+    }
+
+    // Si no había selección guardada dentro del editor objetivo, colocar al FINAL del contenido
+    const range = document.createRange();
+    range.selectNodeContents(targetEl);
+    range.collapse(false);
+    savedYouTubeRange = range;
+  }
+
+  function restoreCaretPosition() {
+    if (!currentTargetEditor) return;
+    currentTargetEditor.focus();
+    const sel = window.getSelection();
+
+    if (savedYouTubeRange) {
+      sel.removeAllRanges();
+      sel.addRange(savedYouTubeRange);
+    }
+  }
+
+  function openYouTubeModal(targetEl) {
+    saveCaretPosition(targetEl);
+
     const ytModalBackdrop = $('#youtubeModalBackdrop');
     const ytModalUrl = $('#ytModalUrl');
     const ytModalText = $('#ytModalText');
@@ -1200,8 +1247,22 @@
       }
 
       if (currentTargetEditor) {
-        currentTargetEditor.focus();
-        document.execCommand('insertHTML', false, htmlToInsert);
+        restoreCaretPosition();
+        if (!document.execCommand('insertHTML', false, htmlToInsert)) {
+          const sel = window.getSelection();
+          if (sel && sel.rangeCount > 0) {
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            const div = document.createElement('div');
+            div.innerHTML = htmlToInsert;
+            const frag = document.createDocumentFragment();
+            let node;
+            while ((node = div.firstChild)) {
+              frag.appendChild(node);
+            }
+            range.insertNode(frag);
+          }
+        }
       }
 
       closeYouTubeModal();
