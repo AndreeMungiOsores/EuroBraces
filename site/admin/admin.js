@@ -1122,11 +1122,18 @@
       const temp = document.createElement('div');
       temp.innerHTML = html;
 
-      // Convertir cualquier elemento de YouTube antiguo o suelto al nuevo formato pastilla compacta
-      const legacyCards = temp.querySelectorAll('.yt-card-preview, .yt-link-badge');
+      // Convertir cualquier elemento de YouTube antiguo o suelto al nuevo formato pastilla limpios
+      const legacyCards = temp.querySelectorAll('.yt-card-preview, .yt-link-badge, .yt-card-pill');
       legacyCards.forEach(card => {
-        const href = card.getAttribute('href') || '#';
-        const titleText = card.querySelector('.yt-card-preview__title, span') ? card.querySelector('.yt-card-preview__title, span').textContent.trim() : 'Ver en YouTube';
+        const linkEl = card.matches('a') ? card : card.querySelector('a');
+        const href = (linkEl ? linkEl.getAttribute('href') : card.getAttribute('href')) || '#';
+        const titleEl = card.querySelector('.yt-card-pill__title, .yt-card-preview__title, strong');
+        let titleText = titleEl ? titleEl.textContent.trim() : '';
+
+        if (!titleText || titleText === 'Ver en YouTube') {
+          titleText = card.textContent.replace(/Ver video en YouTube.*|Ver en YouTube.*|Enlace de YouTube.*/gi, '').trim() || 'Ver video';
+        }
+
         const videoId = extractYouTubeId(href);
         const thumbSrc = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : '';
 
@@ -1135,17 +1142,13 @@
         block.setAttribute('contenteditable', 'false');
 
         if (videoId && thumbSrc) {
-          block.innerHTML = `<a href="${href}" target="_blank" rel="noopener" class="yt-card-pill"><div class="yt-card-pill__thumb"><img src="${thumbSrc}" alt="${titleText}"><div class="yt-card-pill__play">▶</div></div><div class="yt-card-pill__text"><strong class="yt-card-pill__title">${titleText}</strong><span class="yt-card-pill__link">Ver video en YouTube &rarr;</span></div></a><button type="button" class="yt-block-delete-btn" title="Eliminar este video" onclick="this.closest('.yt-editor-block').remove()"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg><span>Borrar</span></button>`;
+          block.innerHTML = `<a href="${href}" target="_blank" rel="noopener" class="yt-card-pill"><div class="yt-card-pill__thumb"><img src="${thumbSrc}" alt="${titleText}"></div><div class="yt-card-pill__text"><strong class="yt-card-pill__title">${titleText}</strong></div></a><button type="button" class="yt-block-delete-btn" title="Eliminar este video" onclick="this.closest('.yt-editor-block').remove()"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg><span>Borrar</span></button>`;
         } else {
-          block.innerHTML = `<a href="${href}" target="_blank" rel="noopener" class="yt-card-pill"><div class="yt-card-pill__thumb" style="background:#FF0000"><svg viewBox="0 0 24 24" width="18" height="18" fill="#FFF"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></div><div class="yt-card-pill__text"><strong class="yt-card-pill__title">${titleText}</strong><span class="yt-card-pill__link">Enlace de YouTube &rarr;</span></div></a><button type="button" class="yt-block-delete-btn" title="Eliminar este enlace" onclick="this.closest('.yt-editor-block').remove()"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg><span>Borrar</span></button>`;
+          block.innerHTML = `<a href="${href}" target="_blank" rel="noopener" class="yt-card-pill"><div class="yt-card-pill__thumb" style="background:#FF0000"><svg viewBox="0 0 24 24" width="18" height="18" fill="#FFF"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></div><div class="yt-card-pill__text"><strong class="yt-card-pill__title">${titleText}</strong></div></a><button type="button" class="yt-block-delete-btn" title="Eliminar este enlace" onclick="this.closest('.yt-editor-block').remove()"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg><span>Borrar</span></button>`;
         }
 
-        const parentP = card.closest('p');
-        if (parentP && parentP.children.length === 1) {
-          parentP.parentNode.replaceChild(block, parentP);
-        } else {
-          card.parentNode.replaceChild(block, card);
-        }
+        const topContainer = card.closest('.yt-editor-block') || card;
+        topContainer.parentNode.replaceChild(block, topContainer);
       });
 
       // Asegurar que cualquier .yt-editor-block existente tenga contenteditable="false" y su botón Borrar
@@ -1390,9 +1393,9 @@
       if (mode === 'embed' && videoId) {
         htmlToInsert = `<div class="yt-editor-block yt-editor-block--embed" contenteditable="false"><button type="button" class="yt-block-delete-btn" title="Eliminar reproductor de video" onclick="this.closest('.yt-editor-block').remove()"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg><span>Borrar Video</span></button><div class="yt-embed-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${videoId}" title="${titleText}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div></div>`;
       } else if (mode === 'card' && videoId) {
-        htmlToInsert = `<div class="yt-editor-block" contenteditable="false"><a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener" class="yt-card-pill"><div class="yt-card-pill__thumb"><img src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" alt="${titleText}"><div class="yt-card-pill__play">▶</div></div><div class="yt-card-pill__text"><strong class="yt-card-pill__title">${titleText}</strong><span class="yt-card-pill__link">Ver video en YouTube &rarr;</span></div></a><button type="button" class="yt-block-delete-btn" title="Eliminar este video" onclick="this.closest('.yt-editor-block').remove()"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg><span>Borrar</span></button></div>`;
+        htmlToInsert = `<div class="yt-editor-block" contenteditable="false"><a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener" class="yt-card-pill"><div class="yt-card-pill__thumb"><img src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" alt="${titleText}"></div><div class="yt-card-pill__text"><strong class="yt-card-pill__title">${titleText}</strong></div></a><button type="button" class="yt-block-delete-btn" title="Eliminar este video" onclick="this.closest('.yt-editor-block').remove()"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg><span>Borrar</span></button></div>`;
       } else {
-        htmlToInsert = `<div class="yt-editor-block" contenteditable="false"><a href="${url}" target="_blank" rel="noopener" class="yt-card-pill"><div class="yt-card-pill__thumb" style="background:#FF0000"><svg viewBox="0 0 24 24" width="18" height="18" fill="#FFF"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></div><div class="yt-card-pill__text"><strong class="yt-card-pill__title">${titleText}</strong><span class="yt-card-pill__link">Enlace de YouTube &rarr;</span></div></a><button type="button" class="yt-block-delete-btn" title="Eliminar este enlace" onclick="this.closest('.yt-editor-block').remove()"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg><span>Borrar</span></button></div>`;
+        htmlToInsert = `<div class="yt-editor-block" contenteditable="false"><a href="${url}" target="_blank" rel="noopener" class="yt-card-pill"><div class="yt-card-pill__thumb" style="background:#FF0000"><svg viewBox="0 0 24 24" width="18" height="18" fill="#FFF"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></div><div class="yt-card-pill__text"><strong class="yt-card-pill__title">${titleText}</strong></div></a><button type="button" class="yt-block-delete-btn" title="Eliminar este enlace" onclick="this.closest('.yt-editor-block').remove()"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg><span>Borrar</span></button></div>`;
       }
 
       insertHtmlAtCaret(htmlToInsert);
