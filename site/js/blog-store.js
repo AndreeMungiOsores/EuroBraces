@@ -24,26 +24,9 @@
     shortBio: 'Odontólogo egresado de la Universidad Rómulo Gallegos con especialización en Ortodoncia por la Universidad Privada San Juan Bautista. Experto en la resolución clínica de casos de alta complejidad con enfoque biomecánico, funcional y 3D.',
     philosophy: 'Diagnóstico preciso · Biomecánica inteligente · Función · Experiencia clínica · Educación',
     photoUrl: 'img/dr-anthony.jpg?v=3',
-    academicContent: `• Odontólogo – Universidad Rómulo Gallegos.
-• Especialización en Ortodoncia – Universidad Privada San Juan Bautista.
-• Diplomado Internacional en Ortodoncia Cráneo-Mandibular – Con la Dra. Paola Caballero (posición mandibular, oclusión, ATM y planificación ortodóncica).
-• Tomografía y Diagnóstico 3D – Con el Dr. Luis Tapia (análisis de imágenes tridimensionales).
-• Formación Internacional en Ortodoncia Cráneo-Mandibular y Filosofía MEAW/GEAW – Con el Dr. Roberto Velásquez Torres y el Dr. Akiyoshi Shirasu.
-• Entrenamiento en Microimplantes y Manejo de Sonrisa Gingival – Con la Dra. Patricia Vergara Villarreal.
-• Residencia Clínica en Ortodoncia (MEAW y Bioprogresiva de Ricketts) – Bajo la tutoría del Dr. Luis Fernando Pérez Vargas.`,
-    clinicalFocusContent: `Especialista en el diagnóstico integral y la resolución biomecánica de maloclusiones de alta complejidad:
-
-• Maloclusiones Clase II y Clase III severas.
-• Asimetrías dentofaciales y laterodesviaciones mandibulares.
-• Alteraciones severas del plano oclusal y dimensión vertical.
-• Mordida abierta anterior y colapso de arcada.
-• Ortodoncia Cráneo-Mandibular y manejo de la articulación temporomandibular (ATM).
-• Biomecánica avanzada con técnicas MEAW, GEAW, Bioprogresiva y MBT.
-• Anclaje esquelético avanzado con microimplantes (MARPE, Microtornillos).
-• Diagnóstico funcional 3D y tomografía tridimensional.`,
-    teachingContent: `• Conferencista Nacional e Internacional: Expositor en congresos académicos compartiendo protocolos de resolución de casos complejos, manejo del plano oclusal y biomecánica avanzada.
-• Creador y Speaker Principal de "El Arte de Doblar": Programa de formación profesional en ortodoncia enfocado en biomecánica aplicada, dobleces de arcos, MEAW, GEAW y estrategias clínicas.
-• Fundador de "OrthoTube": Canal educativo en YouTube dedicado a la divulgación científica y enseñanza clínica de la ortodoncia para odontólogos y especialistas de Latinoamérica.`,
+    academicContent: `<ul><li><strong>Odontólogo</strong> – Universidad Rómulo Gallegos.</li><li><strong>Especialización en Ortodoncia</strong> – Universidad Privada San Juan Bautista.</li><li><strong>Diplomado Internacional en Ortodoncia Cráneo-Mandibular</strong> – Con la Dra. Paola Caballero (posición mandibular, oclusión, ATM y planificación ortodóncica).</li><li><strong>Tomografía y Diagnóstico 3D</strong> – Con el Dr. Luis Tapia (análisis de imágenes tridimensionales).</li><li><strong>Formación Internacional en Ortodoncia Cráneo-Mandibular y Filosofía MEAW/GEAW</strong> – Con el Dr. Roberto Velásquez Torres y el Dr. Akiyoshi Shirasu.</li><li><strong>Entrenamiento en Microimplantes y Manejo de Sonrisa Gingival</strong> – Con la Dra. Patricia Vergara Villarreal.</li><li><strong>Residencia Clínica en Ortodoncia (MEAW y Bioprogresiva de Ricketts)</strong> – Bajo la tutoría del Dr. Luis Fernando Pérez Vargas.</li></ul>`,
+    clinicalFocusContent: `<p>Especialista en el diagnóstico integral y la resolución biomecánica de maloclusiones de alta complejidad:</p><ul><li>Maloclusiones Clase II y Clase III severas.</li><li>Asimetrías dentofaciales y laterodesviaciones mandibulares.</li><li>Alteraciones severas del plano oclusal y dimensión vertical.</li><li>Mordida abierta anterior y colapso de arcada.</li><li>Ortodoncia Cráneo-Mandibular y manejo de la articulación temporomandibular (ATM).</li><li>Biomecánica avanzada con técnicas MEAW, GEAW, Bioprogresiva y MBT.</li><li>Anclaje esquelético avanzado con microimplantes (MARPE, Microtornillos).</li><li>Diagnóstico funcional 3D y tomografía tridimensional.</li></ul>`,
+    teachingContent: `<ul><li><strong>Conferencista Nacional e Internacional</strong>: Expositor en congresos académicos compartiendo protocolos de resolución de casos complejos, manejo del plano oclusal y biomecánica avanzada.</li><li><strong>Creador y Speaker Principal de "El Arte de Doblar"</strong>: Programa de formación profesional en ortodoncia enfocado en biomecánica aplicada, dobleces de arcos, MEAW, GEAW y estrategias clínicas.</li><li><strong>Fundador de "OrthoTube"</strong>: Canal educativo en YouTube dedicado a la divulgación científica y enseñanza clínica de la ortodoncia para odontólogos y especialistas de Latinoamérica.</li></ul>`,
     galleryPhotos: [
       { id: 'dr-g1', url: 'img/pac-3.jpg', caption: 'Conferencia y Docencia Clínica en Ortodoncia' },
       { id: 'dr-g2', url: 'img/pac-1.jpg', caption: 'Programa Formativo El Arte de Doblar' },

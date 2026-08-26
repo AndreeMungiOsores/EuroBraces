@@ -1086,9 +1086,9 @@
   const drAdminTitle = $('#drAdminTitle');
   const drAdminPhilosophy = $('#drAdminPhilosophy');
   const drAdminShortBio = $('#drAdminShortBio');
-  const drAdminAcademic = $('#drAdminAcademic');
-  const drAdminClinical = $('#drAdminClinical');
-  const drAdminTeaching = $('#drAdminTeaching');
+  const drAdminAcademicEditor = $('#drAdminAcademicEditor');
+  const drAdminClinicalEditor = $('#drAdminClinicalEditor');
+  const drAdminTeachingEditor = $('#drAdminTeachingEditor');
   const drAdminPhotoPreview = $('#drAdminPhotoPreview');
   const drAdminPhotoInput = $('#drAdminPhotoInput');
   const drAdminPhotoFileInput = $('#drAdminPhotoFileInput');
@@ -1096,6 +1096,25 @@
   const drAdminGalleryGrid = $('#drAdminGalleryGrid');
 
   let currentDrGallery = [];
+
+  function formatRawToWysiwygHtml(str) {
+    if (!str) return '';
+    if (/<(h2|h3|p|ul|li|strong|em|span)/i.test(str)) return str;
+    return str
+      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+      .replace(/^## (.*$)/gim, '<h3>$1</h3>')
+      .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+      .replace(/^\• (.*$)/gim, '<li>$1</li>')
+      .replace(/^\- (.*$)/gim, '<li>$1</li>')
+      .split('\n\n')
+      .map(p => {
+        if (p.includes('<li>')) return `<ul>${p}</ul>`;
+        if (p.startsWith('<h3>') || p.startsWith('<h2>')) return p;
+        return `<p>${p.replace(/\n/g, '<br>')}</p>`;
+      })
+      .join('');
+  }
 
   function renderDrAnthonyAdminForm() {
     if (!window.BlogStore) return;
@@ -1105,9 +1124,10 @@
     if (drAdminTitle) drAdminTitle.value = p.title || '';
     if (drAdminPhilosophy) drAdminPhilosophy.value = p.philosophy || '';
     if (drAdminShortBio) drAdminShortBio.value = p.shortBio || '';
-    if (drAdminAcademic) drAdminAcademic.value = p.academicContent || '';
-    if (drAdminClinical) drAdminClinical.value = p.clinicalFocusContent || '';
-    if (drAdminTeaching) drAdminTeaching.value = p.teachingContent || '';
+    
+    if (drAdminAcademicEditor) drAdminAcademicEditor.innerHTML = formatRawToWysiwygHtml(p.academicContent);
+    if (drAdminClinicalEditor) drAdminClinicalEditor.innerHTML = formatRawToWysiwygHtml(p.clinicalFocusContent);
+    if (drAdminTeachingEditor) drAdminTeachingEditor.innerHTML = formatRawToWysiwygHtml(p.teachingContent);
 
     const rawPhoto = p.photoUrl || 'img/dr-anthony.jpg?v=3';
     const previewSrc = rawPhoto.startsWith('data:') ? rawPhoto : (rawPhoto.startsWith('img/') ? '../' + rawPhoto : rawPhoto);
@@ -1129,52 +1149,42 @@
     $$('.btn-dr-bold').forEach(btn => {
       btn.onclick = () => {
         const targetEl = $('#' + btn.dataset.target);
-        applyTextareaFormatting(targetEl, 'bold');
+        if (targetEl) {
+          targetEl.focus();
+          document.execCommand('bold', false, null);
+        }
       };
     });
 
     $$('.btn-dr-italic').forEach(btn => {
       btn.onclick = () => {
         const targetEl = $('#' + btn.dataset.target);
-        applyTextareaFormatting(targetEl, 'italic');
+        if (targetEl) {
+          targetEl.focus();
+          document.execCommand('italic', false, null);
+        }
       };
     });
 
     $$('.btn-dr-heading').forEach(btn => {
       btn.onclick = () => {
         const targetEl = $('#' + btn.dataset.target);
-        applyTextareaFormatting(targetEl, 'heading');
+        if (targetEl) {
+          targetEl.focus();
+          document.execCommand('formatBlock', false, '<h3>');
+        }
       };
     });
 
     $$('.btn-dr-list').forEach(btn => {
       btn.onclick = () => {
         const targetEl = $('#' + btn.dataset.target);
-        applyTextareaFormatting(targetEl, 'list');
+        if (targetEl) {
+          targetEl.focus();
+          document.execCommand('insertUnorderedList', false, null);
+        }
       };
     });
-  }
-
-  function applyTextareaFormatting(textarea, type) {
-    if (!textarea) return;
-    textarea.focus();
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selected = textarea.value.substring(start, end) || 'texto';
-    let replacement = '';
-
-    if (type === 'bold') {
-      replacement = `<strong>${selected}</strong>`;
-    } else if (type === 'italic') {
-      replacement = `<em>${selected}</em>`;
-    } else if (type === 'heading') {
-      replacement = `\n<h3>${selected}</h3>\n`;
-    } else if (type === 'list') {
-      replacement = `\n• ${selected}\n`;
-    }
-
-    textarea.setRangeText(replacement, start, end, 'select');
   }
 
   function renderDrGalleryAdminGrid() {
@@ -1277,9 +1287,9 @@
           title: drAdminTitle ? drAdminTitle.value.trim() : '',
           philosophy: drAdminPhilosophy ? drAdminPhilosophy.value.trim() : '',
           shortBio: drAdminShortBio ? drAdminShortBio.value.trim() : '',
-          academicContent: drAdminAcademic ? drAdminAcademic.value.trim() : '',
-          clinicalFocusContent: drAdminClinical ? drAdminClinical.value.trim() : '',
-          teachingContent: drAdminTeaching ? drAdminTeaching.value.trim() : '',
+          academicContent: drAdminAcademicEditor ? drAdminAcademicEditor.innerHTML.trim() : '',
+          clinicalFocusContent: drAdminClinicalEditor ? drAdminClinicalEditor.innerHTML.trim() : '',
+          teachingContent: drAdminTeachingEditor ? drAdminTeachingEditor.innerHTML.trim() : '',
           photoUrl: drAdminPhotoInput && drAdminPhotoInput.value ? drAdminPhotoInput.value : 'img/dr-anthony.jpg?v=3',
           galleryPhotos: currentDrGallery
         };
