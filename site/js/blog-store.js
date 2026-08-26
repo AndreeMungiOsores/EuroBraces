@@ -206,18 +206,27 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
         headers: {
           'apikey': SUPABASE_ANON_KEY,
           'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
         },
         body: JSON.stringify({ content: JSON.stringify(photos) })
       });
 
-      if (!patchRes.ok || patchRes.status === 404) {
+      let updatedRows = [];
+      if (patchRes.ok) {
+        try {
+          updatedRows = await patchRes.json();
+        } catch (e) {}
+      }
+
+      if (!Array.isArray(updatedRows) || updatedRows.length === 0) {
         await fetch(`${SUPABASE_URL}/rest/v1/clinical_cases`, {
           method: 'POST',
           headers: {
             'apikey': SUPABASE_ANON_KEY,
             'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates,return=representation'
           },
           body: JSON.stringify(payload)
         });
@@ -251,22 +260,32 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
         headers: {
           'apikey': SUPABASE_ANON_KEY,
           'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
         },
         body: JSON.stringify({
           title: payload.title,
           excerpt: payload.excerpt,
-          content: payload.content
+          content: payload.content,
+          date: payload.date
         })
       });
 
-      if (!patchRes.ok || patchRes.status === 404) {
+      let updatedRows = [];
+      if (patchRes.ok) {
+        try {
+          updatedRows = await patchRes.json();
+        } catch (e) {}
+      }
+
+      if (!Array.isArray(updatedRows) || updatedRows.length === 0) {
         await fetch(`${SUPABASE_URL}/rest/v1/clinical_cases`, {
           method: 'POST',
           headers: {
             'apikey': SUPABASE_ANON_KEY,
             'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates,return=representation'
           },
           body: JSON.stringify(payload)
         });
