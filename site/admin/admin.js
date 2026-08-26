@@ -166,6 +166,55 @@
     });
   }
 
+  /* ── Migración de imágenes incrustadas a Supabase Storage ──
+     Acción manual y puntual: reescribe registros ya publicados, así que se pide
+     confirmación y se informa del resultado en detalle. Es idempotente: volver a
+     pulsarla sobre datos ya migrados no hace nada. */
+  const migrateImagesBtn = $('#migrateImagesBtn');
+  if (migrateImagesBtn) {
+    migrateImagesBtn.addEventListener('click', async () => {
+      if (!window.BlogStore || typeof window.BlogStore.migrateEmbeddedImages !== 'function') {
+        return showToast('BlogStore no expone la migración. Recarga la página.', 'error');
+      }
+
+      const ok = window.confirm(
+        'Se subirán a Supabase Storage las fotos que hoy están incrustadas en base64 ' +
+        'dentro de los registros, y se reemplazarán por su URL pública.\n\n' +
+        'Los registros afectados se vuelven a guardar. ¿Continuar?'
+      );
+      if (!ok) return;
+
+      const label = $('#migrateImagesLabel') || migrateImagesBtn;
+      const originalText = label.textContent;
+      migrateImagesBtn.disabled = true;
+
+      try {
+        const res = await window.BlogStore.migrateEmbeddedImages(({ done, total }) => {
+          label.textContent = total ? `Migrando ${done}/${total}…` : 'Migrando…';
+        });
+
+        if (res.migradas === 0 && res.fallidas === 0) {
+          showToast('No hay imágenes incrustadas: todo apunta ya a una URL pública.', 'info');
+        } else if (res.fallidas === 0) {
+          showToast(`${res.migradas} imagen(es) migrada(s) a Supabase Storage.`, 'success');
+        } else {
+          console.error('Fallos de migración:', res.errores);
+          showToast(
+            `${res.migradas} migrada(s), ${res.fallidas} con error. ` +
+            (res.errores[0] || '') + ' Revisa la consola para el detalle.',
+            'error'
+          );
+        }
+      } catch (err) {
+        console.error(err);
+        showToast(err.message || 'La migración no pudo completarse.', 'error');
+      } finally {
+        migrateImagesBtn.disabled = false;
+        label.textContent = originalText;
+      }
+    });
+  }
+
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
       sessionStorage.removeItem(SESSION_KEY);
@@ -272,12 +321,12 @@
   }
 
   /**
-   * Optimiza y comprime imágenes del lado del cliente usando un Canvas off-screen.
-   * Convierte fotos de alta resolución a un tamaño web óptimo (máx 1280px, ~150KB) sin pérdida de nitidez clínica.
+   * Redimensiona y comprime una imagen en un Canvas off-screen.
+   * Devuelve un Canvas listo para exportar a Blob o a data:URL.
    */
-  function optimizeImageFile(file, maxDimension = 1280, quality = 0.82) {
+  function drawOptimized(file, maxDimension) {
     return new Promise((resolve, reject) => {
-      if (!file.type.startsWith('image/')) {
+      if (!file.type || !file.type.startsWith('image/')) {
         return reject(new Error('El archivo debe ser una imagen válida.'));
       }
       const reader = new FileReader();
@@ -300,9 +349,8 @@
           const canvas = document.createElement('canvas');
           canvas.width = width;
           canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-          resolve(canvas.toDataURL('image/jpeg', quality));
+          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+          resolve(canvas);
         };
         img.onerror = () => reject(new Error('No se pudo procesar la imagen seleccionada.'));
         img.src = e.target.result;
@@ -310,6 +358,52 @@
       reader.onerror = () => reject(new Error('Error al leer el archivo de imagen.'));
       reader.readAsDataURL(file);
     });
+  }
+
+  let storageWarningShown = false;
+
+  /**
+   * Punto único de entrada para cualquier imagen que entre por el panel.
+   *
+   * Optimiza el archivo, lo sube a Supabase Storage y devuelve una URL pública.
+   * Esa URL es rastreable por Google, se sirve desde el CDN y pesa unos bytes en
+   * la fila, en lugar de los cientos de KB que ocupaba el base64 incrustado.
+   *
+   * Si la subida falla (bucket sin crear, sin conexión, política RLS), cae de
+   * vuelta al data:URL de siempre: el panel nunca se queda sin poder guardar.
+   * En ese caso avisa una vez, para que el problema no pase inadvertido.
+   *
+   * @param {File} file
+   * @param {{maxDimension?:number, quality?:number, nameHint?:string}} [opts]
+   * @returns {Promise<string>} URL pública, o data:URL si no se pudo subir.
+   */
+  async function prepareImage(file, opts = {}) {
+    const maxDimension = opts.maxDimension || 1280;
+    const quality = opts.quality || 0.82;
+    const canvas = await drawOptimized(file, maxDimension);
+
+    const blob = await new Promise((resolve) => {
+      if (canvas.toBlob) canvas.toBlob(resolve, 'image/jpeg', quality);
+      else resolve(null);
+    });
+
+    if (blob && window.BlogStore && typeof window.BlogStore.uploadImage === 'function') {
+      try {
+        return await window.BlogStore.uploadImage(blob, opts.nameHint || file.name);
+      } catch (err) {
+        console.warn('Subida a Supabase Storage fallida, se guarda incrustada:', err);
+        if (!storageWarningShown) {
+          storageWarningShown = true;
+          showToast(
+            'La foto se guardó incrustada en el registro porque falló la subida a Supabase Storage. ' +
+            (err.message || ''),
+            'error'
+          );
+        }
+      }
+    }
+
+    return canvas.toDataURL('image/jpeg', quality);
   }
 
   // Gestión de Fotos Antes / Después
@@ -320,9 +414,9 @@
       if (!file) return;
 
       try {
-        const optimizedBase64 = await optimizeImageFile(file);
-        urlInputEl.value = optimizedBase64;
-        previewEl.src = optimizedBase64;
+        const imageUrl = await prepareImage(file, { nameHint: inputEl.id.replace('FileInput', '') });
+        urlInputEl.value = imageUrl;
+        previewEl.src = imageUrl;
         previewEl.style.display = 'block';
         showToast('Foto cargada y optimizada con éxito.', 'success');
       } catch (err) {
@@ -355,8 +449,8 @@
       let loadedCount = 0;
       for (const file of files) {
         try {
-          const optimizedBase64 = await optimizeImageFile(file);
-          galleryImages.push(optimizedBase64);
+          const imageUrl = await prepareImage(file, { nameHint: 'caso-galeria' });
+          galleryImages.push(imageUrl);
           loadedCount++;
         } catch (err) {
           console.error('Error optimizando foto de galería:', err);
@@ -895,10 +989,10 @@
       // Si se selecciona 1 sola foto: cargar en vista previa para opcionalmente cambiar la leyenda
       if (files.length === 1) {
         try {
-          const optimizedBase64 = await optimizeImageFile(files[0]);
-          if (patientImgUrlInput) patientImgUrlInput.value = optimizedBase64;
+          const imageUrl = await prepareImage(files[0], { nameHint: 'paciente' });
+          if (patientImgUrlInput) patientImgUrlInput.value = imageUrl;
           if (patientPreview) {
-            patientPreview.src = optimizedBase64;
+            patientPreview.src = imageUrl;
             patientPreview.style.display = 'block';
           }
           showToast('Foto cargada y optimizada.', 'success');
@@ -930,9 +1024,9 @@
             if (saveBtn && files.length > 1) {
               saveBtn.textContent = `Guardando (${i + 1}/${files.length})...`;
             }
-            const base64 = await optimizeImageFile(file);
+            const imageUrl = await prepareImage(file, { nameHint: 'paciente' });
             await window.BlogStore.savePatientPhoto({
-              url: base64,
+              url: imageUrl,
               caption: 'Paciente EuroBraces Center'
             });
             count++;
@@ -1517,9 +1611,9 @@
       if (!file) return;
 
       try {
-        const base64 = await optimizeImageFile(file, 1000, 0.85);
-        if (drAdminPhotoInput) drAdminPhotoInput.value = base64;
-        if (drAdminPhotoPreview) drAdminPhotoPreview.src = base64;
+        const imageUrl = await prepareImage(file, { maxDimension: 1000, quality: 0.85, nameHint: 'dr-anthony-retrato' });
+        if (drAdminPhotoInput) drAdminPhotoInput.value = imageUrl;
+        if (drAdminPhotoPreview) drAdminPhotoPreview.src = imageUrl;
         showToast('Foto de perfil cargada y optimizada.', 'success');
       } catch (err) {
         showToast(err.message || 'Error al procesar foto de perfil.', 'error');
@@ -1539,10 +1633,10 @@
 
       for (const file of files) {
         try {
-          const base64 = await optimizeImageFile(file, 1280, 0.82);
+          const imageUrl = await prepareImage(file, { nameHint: 'dr-anthony-galeria' });
           currentDrGallery.push({
             id: 'dr-g-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
-            url: base64,
+            url: imageUrl,
             caption: 'Dr. Anthony De Jesús'
           });
           added++;

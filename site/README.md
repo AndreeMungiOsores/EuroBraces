@@ -13,6 +13,11 @@ python -m http.server 5599 --directory site
 
 Luego entra a `http://localhost:5599`.
 
+## SEO e indexacion
+
+Ver [SEO.md](SEO.md): que se implemento, que falta confirmar antes de publicar
+y los pasos para enviar el sitio a Google Search Console.
+
 ## Estructura
 
 ```
@@ -20,6 +25,10 @@ index.html      todo el contenido
 css/style.css   sistema visual (colores, tipografía, secciones)
 js/main.js      nav, comparador antes/después, mitos, galería
 img/            recortes tomados de las piezas gráficas originales
+js/seo-casos.js capa SEO de casos clínicos (ItemList + metadatos por caso)
+robots.txt      reglas de rastreo
+sitemap.xml     mapa del sitio + sitemap de imágenes
+404.html        página de error
 ```
 
 ## Dónde editar lo que más cambia

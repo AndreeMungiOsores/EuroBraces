@@ -155,21 +155,21 @@
         let items = `
           <div class="case-carousel__item" style="flex: 0 0 100%; width: 100%; height: 100%; position: relative; scroll-snap-align: center;">
             <span class="case-carousel__tag">Antes</span>
-            <img src="${c.beforeImg}" alt="${c.title} al inicio" loading="lazy" onerror="this.src='img/caso1-inicio.jpg'" style="width:100%; height:100%; object-fit:cover; display:block;">
+            <img src="${c.beforeImg}" alt="${c.title} al inicio" loading="lazy" decoding="async" onerror="this.src='img/caso1-inicio.jpg'" style="width:100%; height:100%; object-fit:cover; display:block;">
           </div>
         `;
         if (c.duringImg) {
           items += `
             <div class="case-carousel__item" style="flex: 0 0 100%; width: 100%; height: 100%; position: relative; scroll-snap-align: center;">
               <span class="case-carousel__tag">Durante</span>
-              <img src="${c.duringImg}" alt="${c.title} durante" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;">
+              <img src="${c.duringImg}" alt="${c.title} durante" loading="lazy" decoding="async" style="width:100%; height:100%; object-fit:cover; display:block;">
             </div>
           `;
         }
         items += `
           <div class="case-carousel__item" style="flex: 0 0 100%; width: 100%; height: 100%; position: relative; scroll-snap-align: center;">
             <span class="case-carousel__tag">Después</span>
-            <img src="${c.afterImg}" alt="${c.title} en progreso" loading="lazy" onerror="this.src='img/caso1-progreso.jpg'" style="width:100%; height:100%; object-fit:cover; display:block;">
+            <img src="${c.afterImg}" alt="${c.title} en progreso" loading="lazy" decoding="async" onerror="this.src='img/caso1-progreso.jpg'" style="width:100%; height:100%; object-fit:cover; display:block;">
           </div>
         `;
         mediaHtml = `
@@ -192,7 +192,7 @@
         mediaHtml = `
           <div class="case-card__single-media">
             <figure class="case-card__fig" style="aspect-ratio:16/9">
-              <img src="${singleImg}" alt="${c.title}" loading="lazy" onerror="this.src='img/caso1-progreso.jpg'">
+              <img src="${singleImg}" alt="${c.title}" loading="lazy" decoding="async" onerror="this.src='img/caso1-progreso.jpg'">
             </figure>
           </div>
         `;
@@ -234,7 +234,7 @@
 
     railPacientes.innerHTML = photos.map(p => `
       <figure class="pac-card reveal in">
-        <img src="${p.url}" alt="${p.caption || 'Paciente de EuroBraces Center'}" loading="lazy" onerror="this.src='img/pac-1.jpg'">
+        <img src="${p.url}" alt="${p.caption || 'Paciente de EuroBraces Center'}" loading="lazy" decoding="async" onerror="this.src='img/pac-1.jpg'">
       </figure>
     `).join('');
   }
