@@ -162,6 +162,51 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
     return `${Math.max(1, minutes)} min`;
   }
 
+  async function syncPatientPhotosToSupabase(photos) {
+    try {
+      const payload = {
+        slug: 'system-patient-photos',
+        title: 'System Patient Photos Data',
+        category: 'System',
+        excerpt: 'Persistencia de fotos de pacientes',
+        content: JSON.stringify(photos),
+        doctor: 'System',
+        doctor_role: 'System',
+        date: new Date().toISOString().split('T')[0],
+        read_time: '1 min',
+        before_img: '',
+        after_img: '',
+        cover_img: '',
+        tags: ['system'],
+        featured: false
+      };
+
+      const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/clinical_cases?slug=eq.system-patient-photos`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ content: JSON.stringify(photos) })
+      });
+
+      if (!patchRes.ok || patchRes.status === 404) {
+        await fetch(`${SUPABASE_URL}/rest/v1/clinical_cases`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+      }
+    } catch (err) {
+      console.warn('Nota: Sincronización diferida de fotos de pacientes:', err);
+    }
+  }
+
   function mapFromSupabase(row) {
     const computedReadTime = row.read_time || calculateReadTime((row.content || '') + ' ' + (row.excerpt || ''));
 
@@ -400,38 +445,8 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
         localStorage.setItem(PATIENT_PHOTOS_KEY, JSON.stringify(photos));
       } catch (e) {}
 
-      // Sincronización en Supabase
-      try {
-        const payload = {
-          slug: 'system-patient-photos',
-          title: 'System Patient Photos Data',
-          category: 'System',
-          excerpt: 'Persistencia de fotos de pacientes',
-          content: JSON.stringify(photos),
-          doctor: 'System',
-          doctor_role: 'System',
-          date: new Date().toISOString().split('T')[0],
-          read_time: '1 min',
-          before_img: '',
-          after_img: '',
-          cover_img: '',
-          tags: ['system'],
-          featured: false
-        };
-
-        await fetch(`${SUPABASE_URL}/rest/v1/clinical_cases`, {
-          method: 'POST',
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json',
-            'Prefer': 'resolution=merge-duplicates'
-          },
-          body: JSON.stringify(payload)
-        });
-      } catch (err) {
-        console.warn('Nota: Guardado local de foto de paciente exitoso:', err);
-      }
+      // Sincronización robusta en Supabase (PATCH primero, fallback a POST)
+      await syncPatientPhotosToSupabase(photos);
 
       return newItem;
     },
@@ -444,38 +459,8 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
         localStorage.setItem(PATIENT_PHOTOS_KEY, JSON.stringify(filtered));
       } catch (e) {}
 
-      // Sincronización en Supabase
-      try {
-        const payload = {
-          slug: 'system-patient-photos',
-          title: 'System Patient Photos Data',
-          category: 'System',
-          excerpt: 'Persistencia de fotos de pacientes',
-          content: JSON.stringify(filtered),
-          doctor: 'System',
-          doctor_role: 'System',
-          date: new Date().toISOString().split('T')[0],
-          read_time: '1 min',
-          before_img: '',
-          after_img: '',
-          cover_img: '',
-          tags: ['system'],
-          featured: false
-        };
-
-        await fetch(`${SUPABASE_URL}/rest/v1/clinical_cases`, {
-          method: 'POST',
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json',
-            'Prefer': 'resolution=merge-duplicates'
-          },
-          body: JSON.stringify(payload)
-        });
-      } catch (err) {
-        console.warn('Nota: Eliminado local de foto de paciente exitoso:', err);
-      }
+      // Sincronización robusta en Supabase (PATCH primero, fallback a POST)
+      await syncPatientPhotosToSupabase(filtered);
 
       return filtered;
     },
