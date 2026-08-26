@@ -303,6 +303,7 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
     let beforeImg = row.before_img || '';
     let afterImg = row.after_img || '';
     let coverImg = row.cover_img || row.after_img || row.before_img || '';
+    let duringImg = '';
 
     if (beforeImg && beforeImg.startsWith('[GALLERY_MODE]')) {
       photoMode = 'gallery';
@@ -317,6 +318,17 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
     } else if (row.photo_mode === 'gallery' || (Array.isArray(row.images) && row.images.length > 0)) {
       photoMode = 'gallery';
       images = Array.isArray(row.images) ? row.images : [];
+    } else if (afterImg && afterImg.startsWith('{')) {
+      try {
+        const parsed = JSON.parse(afterImg);
+        if (parsed.url !== undefined) {
+          afterImg = parsed.url;
+          duringImg = parsed.during || '';
+          if (coverImg === row.after_img) {
+            coverImg = parsed.url;
+          }
+        }
+      } catch (e) {}
     }
 
     return {
@@ -333,6 +345,7 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
       photoMode: photoMode,
       images: images,
       beforeImg: beforeImg,
+      duringImg: duringImg,
       afterImg: afterImg,
       coverImg: coverImg,
       tags: Array.isArray(row.tags) ? row.tags : [],
@@ -352,6 +365,12 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
       beforeImgStr = '[GALLERY_MODE]';
       afterImgStr = JSON.stringify(imgs);
       coverImgStr = imgs[0] || coverImgStr || '';
+    } else if (item.duringImg) {
+      // Serialize duringImg together with afterImg to avoid adding new columns
+      afterImgStr = JSON.stringify({
+        url: item.afterImg || '',
+        during: item.duringImg
+      });
     }
 
     const payload = {

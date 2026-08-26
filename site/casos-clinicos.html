@@ -12,8 +12,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- CSS Principal -->
+  <link rel="stylesheet" href="css/style.css?v=5">
 </head>
 <body>
 
@@ -89,16 +90,9 @@
     </header>
 
     <div class="case-modal__body">
-      <!-- Comparativa fotográfica antes / después -->
+      <!-- Comparativa fotográfica antes / después / durante -->
       <div class="case-modal__comparison" id="modalComparison">
-        <figure class="case-modal__fig">
-          <img id="modalBeforeImg" src="" alt="Estado inicial del caso">
-          <span class="case-modal__tag case-modal__tag--before">Inicio</span>
-        </figure>
-        <figure class="case-modal__fig">
-          <img id="modalAfterImg" src="" alt="Estado en progreso o final">
-          <span class="case-modal__tag case-modal__tag--after">Progreso / Final</span>
-        </figure>
+        <!-- Renderizado dinámicamente con JS (.case-carousel) -->
       </div>
 
       <!-- Galería de Fotos Normales (Sin etiquetas antes / después) -->
@@ -235,12 +229,51 @@
     }
 
     blogGrid.innerHTML = filtered.map(c => {
-      const cover = c.coverImg || c.afterImg || 'img/caso1-progreso.jpg';
+      let mediaContent = '';
+      const hasBeforeAfter = (c.photoMode === 'beforeAfter' || (!c.photoMode && c.beforeImg && c.afterImg)) && Boolean(c.beforeImg && c.afterImg);
+      
+      if (hasBeforeAfter) {
+        let items = `
+          <div class="case-carousel__item" style="flex: 0 0 100%; width: 100%; height: 100%; position: relative; scroll-snap-align: center;">
+            <span class="case-carousel__tag">Antes</span>
+            <img src="${c.beforeImg}" alt="${c.title} antes" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;">
+          </div>
+        `;
+        if (c.duringImg) {
+          items += `
+            <div class="case-carousel__item" style="flex: 0 0 100%; width: 100%; height: 100%; position: relative; scroll-snap-align: center;">
+              <span class="case-carousel__tag">Durante</span>
+              <img src="${c.duringImg}" alt="${c.title} durante" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;">
+            </div>
+          `;
+        }
+        items += `
+          <div class="case-carousel__item" style="flex: 0 0 100%; width: 100%; height: 100%; position: relative; scroll-snap-align: center;">
+            <span class="case-carousel__tag">Después</span>
+            <img src="${c.afterImg}" alt="${c.title} después" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;">
+          </div>
+        `;
+        mediaContent = `
+          <div class="case-carousel-wrap">
+            <button class="carousel-btn carousel-btn--prev" onclick="this.parentElement.querySelector('.case-carousel').scrollBy({left: -300, behavior: 'smooth'}); event.stopPropagation();" aria-label="Anterior">
+              <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+            </button>
+            <div class="case-carousel" style="display:flex; flex-direction:row; flex-wrap:nowrap; width:100%; height:100%; overflow-x:auto; overflow-y:hidden; scroll-snap-type: x mandatory;">${items}</div>
+            <button class="carousel-btn carousel-btn--next" onclick="this.parentElement.querySelector('.case-carousel').scrollBy({left: 300, behavior: 'smooth'}); event.stopPropagation();" aria-label="Siguiente">
+              <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+            </button>
+          </div>
+        `;
+      } else {
+        const cover = c.coverImg || c.afterImg || 'img/caso1-progreso.jpg';
+        mediaContent = `<img src="${cover}" alt="${c.title}" loading="lazy">`;
+      }
+
       return `
         <article class="blog-card" data-id="${c.id}" tabindex="0" role="button" aria-label="Leer caso clínico: ${c.title}">
           <div class="blog-card__media">
-            <img src="${cover}" alt="${c.title}" loading="lazy">
-            <span class="blog-card__time">${c.readTime || '3 min'}</span>
+            ${mediaContent}
+            <span class="blog-card__time" style="z-index: 10;">${c.readTime || '3 min'}</span>
           </div>
           <div class="blog-card__body">
             <div class="blog-card__meta">
@@ -330,9 +363,40 @@
       : (caseItem.coverImg && !hasBeforeAfter ? [caseItem.coverImg] : []);
 
     if (hasBeforeAfter) {
-      $('#modalBeforeImg').src = caseItem.beforeImg;
-      $('#modalAfterImg').src = caseItem.afterImg;
-      comparisonEl.style.display = 'grid';
+      let items = `
+        <div class="case-carousel__item" style="flex: 0 0 100%; width: 100%; height: 100%; position: relative; scroll-snap-align: center;">
+          <span class="case-carousel__tag">Antes</span>
+          <img src="${caseItem.beforeImg}" alt="${caseItem.title} al inicio" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;">
+        </div>
+      `;
+      if (caseItem.duringImg) {
+        items += `
+          <div class="case-carousel__item" style="flex: 0 0 100%; width: 100%; height: 100%; position: relative; scroll-snap-align: center;">
+            <span class="case-carousel__tag">Durante</span>
+            <img src="${caseItem.duringImg}" alt="${caseItem.title} durante" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;">
+          </div>
+        `;
+      }
+      items += `
+        <div class="case-carousel__item" style="flex: 0 0 100%; width: 100%; height: 100%; position: relative; scroll-snap-align: center;">
+          <span class="case-carousel__tag">Después</span>
+          <img src="${caseItem.afterImg}" alt="${caseItem.title} en progreso" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;">
+        </div>
+      `;
+      
+      comparisonEl.innerHTML = `
+        <div class="case-carousel-wrap">
+          <button class="carousel-btn carousel-btn--prev" onclick="this.parentElement.querySelector('.case-carousel').scrollBy({left: -300, behavior: 'smooth'}); event.stopPropagation();" aria-label="Anterior">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+          </button>
+          <div class="case-carousel" style="display:flex; flex-direction:row; flex-wrap:nowrap; aspect-ratio:16/10; border-radius:12px; background:var(--navy-900); overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; width:100%; height:100%;">${items}</div>
+          <button class="carousel-btn carousel-btn--next" onclick="this.parentElement.querySelector('.case-carousel').scrollBy({left: 300, behavior: 'smooth'}); event.stopPropagation();" aria-label="Siguiente">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+          </button>
+        </div>
+      `;
+      comparisonEl.style.display = 'block';
+
       if (galleryEl) {
         galleryEl.style.display = 'none';
         galleryEl.innerHTML = '';

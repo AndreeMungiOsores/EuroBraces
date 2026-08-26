@@ -927,3 +927,82 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   margin: 0 !important;
   padding: 0 !important;
 }
+ 
+ 
+/* --- Carousel de Casos Clinicos --- */
+.case-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  width: 100%;
+  height: 100%;
+}
+.case-carousel::-webkit-scrollbar { display: none; }
+.case-carousel__item {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.case-carousel__item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.case-carousel__tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  color: var(--navy-900);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  z-index: 10;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.case-carousel-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--navy-900);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: background 0.2s, opacity 0.2s;
+}
+.carousel-btn:hover {
+  background: #fff;
+}
+.carousel-btn--prev {
+  left: 8px;
+}
+.carousel-btn--next {
+  right: 8px;
+}
+.carousel-btn:disabled {
+  opacity: 0;
+  pointer-events: none;
+}

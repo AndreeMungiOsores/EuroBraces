@@ -545,7 +545,12 @@ input, select, textarea { font: inherit; color: inherit; }
 .form-grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 1rem;
+}
+.form-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
 }
 .form-ctrl {
   width: 100%;
@@ -941,6 +946,7 @@ input, select, textarea { font: inherit; color: inherit; }
 
 @media (max-width: 680px) {
   .form-grid-2 { grid-template-columns: 1fr; }
+  .form-grid-3 { grid-template-columns: 1fr; }
   .admin-toolbar { flex-direction: column; align-items: stretch; }
   .admin-toolbar__left { min-width: 100%; flex-wrap: wrap; }
 }

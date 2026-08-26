@@ -49,12 +49,15 @@
   const panelBeforeAfter = $('#panelBeforeAfter');
   const panelNormalGallery = $('#panelNormalGallery');
 
-  // Fotos Antes / Después
+  // Fotos Antes / Durante / Después
   const beforeImgUrlInput = $('#beforeImgUrl');
+  const duringImgUrlInput = $('#duringImgUrl');
   const afterImgUrlInput = $('#afterImgUrl');
   const beforeFileInput = $('#beforeFileInput');
+  const duringFileInput = $('#duringFileInput');
   const afterFileInput = $('#afterFileInput');
   const beforePreview = $('#beforePreview');
+  const duringPreview = $('#duringPreview');
   const afterPreview = $('#afterPreview');
 
   // Fotos Galería Normal
@@ -340,6 +343,7 @@
   }
 
   setupFileInput(beforeFileInput, beforeImgUrlInput, beforePreview);
+  setupFileInput(duringFileInput, duringImgUrlInput, duringPreview);
   setupFileInput(afterFileInput, afterImgUrlInput, afterPreview);
 
   // Gestión de Galería de Fotos Normales (Múltiples fotos)
@@ -497,9 +501,12 @@
 
     // Limpiar fotos previas
     beforeImgUrlInput.value = '';
+    duringImgUrlInput.value = '';
     afterImgUrlInput.value = '';
     beforePreview.src = '';
     beforePreview.style.display = 'none';
+    duringPreview.src = '';
+    duringPreview.style.display = 'none';
     afterPreview.src = '';
     afterPreview.style.display = 'none';
 
@@ -536,8 +543,10 @@
         : (item.coverImg ? [item.coverImg] : []);
       renderGalleryPreviews();
       beforeImgUrlInput.value = '';
+      duringImgUrlInput.value = '';
       afterImgUrlInput.value = '';
       beforePreview.style.display = 'none';
+      duringPreview.style.display = 'none';
       afterPreview.style.display = 'none';
     } else {
       setPhotoMode('beforeAfter');
@@ -545,6 +554,7 @@
       renderGalleryPreviews();
 
       beforeImgUrlInput.value = item.beforeImg || '';
+      duringImgUrlInput.value = item.duringImg || '';
       afterImgUrlInput.value = item.afterImg || '';
 
       if (item.beforeImg) {
@@ -553,6 +563,14 @@
         beforePreview.style.display = 'block';
       } else {
         beforePreview.style.display = 'none';
+      }
+
+      if (item.duringImg) {
+        const mImg = item.duringImg;
+        duringPreview.src = mImg.startsWith('data:') ? mImg : (mImg.startsWith('img/') ? '../' + mImg : mImg);
+        duringPreview.style.display = 'block';
+      } else {
+        duringPreview.style.display = 'none';
       }
 
       if (item.afterImg) {
@@ -595,6 +613,7 @@
         }
 
         let beforeImgVal = '';
+        let duringImgVal = '';
         let afterImgVal = '';
         let coverImgVal = '';
         let imagesArray = [];
@@ -604,8 +623,9 @@
           coverImgVal = galleryImages[0] || '';
         } else {
           beforeImgVal = beforeImgUrlInput.value.trim();
+          duringImgVal = duringImgUrlInput.value.trim();
           afterImgVal = afterImgUrlInput.value.trim();
-          coverImgVal = afterImgVal || beforeImgVal || '';
+          coverImgVal = afterImgVal || duringImgVal || beforeImgVal || '';
         }
 
         const caseData = {
@@ -619,6 +639,7 @@
           content: fullHtml,
           photoMode: currentPhotoMode,
           beforeImg: beforeImgVal,
+          duringImg: duringImgVal,
           afterImg: afterImgVal,
           coverImg: coverImgVal,
           images: imagesArray,

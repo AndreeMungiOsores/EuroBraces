@@ -399,26 +399,36 @@
           </div>
         </div>
 
-        <!-- 1. Panel de Comparativa Antes / Después -->
-        <div class="form-grid-2" id="panelBeforeAfter">
+        <!-- 1. Panel de Comparativa Antes / Durante / Después -->
+        <div class="form-grid-3" id="panelBeforeAfter">
           <div class="form-group">
-            <label for="beforeImgUrl">Foto de Inicio / Antes</label>
+            <label>Foto de Inicio / Antes</label>
             <div class="file-upload-row">
-              <input type="text" id="beforeImgUrl" class="form-ctrl" placeholder="Ruta o URL ej: img/caso1-inicio.jpg">
+              <input type="hidden" id="beforeImgUrl">
               <input type="file" id="beforeFileInput" accept="image/*" style="display:none">
-              <button type="button" class="btn-secondary" onclick="document.getElementById('beforeFileInput').click()">Subir</button>
+              <button type="button" class="btn-secondary" style="width: 100%; justify-content: center;" onclick="document.getElementById('beforeFileInput').click()">Subir Imagen</button>
             </div>
-            <img id="beforePreview" class="file-upload-preview" src="" alt="Vista previa Antes" style="display:none">
+            <img id="beforePreview" class="file-upload-preview" src="" alt="Vista previa Antes" style="display:none; margin-top: 8px;">
           </div>
 
           <div class="form-group">
-            <label for="afterImgUrl">Foto de Progreso / Después</label>
+            <label>Foto Intermedia / Durante</label>
             <div class="file-upload-row">
-              <input type="text" id="afterImgUrl" class="form-ctrl" placeholder="Ruta o URL ej: img/caso1-progreso.jpg">
-              <input type="file" id="afterFileInput" accept="image/*" style="display:none">
-              <button type="button" class="btn-secondary" onclick="document.getElementById('afterFileInput').click()">Subir</button>
+              <input type="hidden" id="duringImgUrl">
+              <input type="file" id="duringFileInput" accept="image/*" style="display:none">
+              <button type="button" class="btn-secondary" style="width: 100%; justify-content: center;" onclick="document.getElementById('duringFileInput').click()">Subir Imagen (Opcional)</button>
             </div>
-            <img id="afterPreview" class="file-upload-preview" src="" alt="Vista previa Después" style="display:none">
+            <img id="duringPreview" class="file-upload-preview" src="" alt="Vista previa Durante" style="display:none; margin-top: 8px;">
+          </div>
+
+          <div class="form-group">
+            <label>Foto de Progreso / Después</label>
+            <div class="file-upload-row">
+              <input type="hidden" id="afterImgUrl">
+              <input type="file" id="afterFileInput" accept="image/*" style="display:none">
+              <button type="button" class="btn-secondary" style="width: 100%; justify-content: center;" onclick="document.getElementById('afterFileInput').click()">Subir Imagen</button>
+            </div>
+            <img id="afterPreview" class="file-upload-preview" src="" alt="Vista previa Después" style="display:none; margin-top: 8px;">
           </div>
         </div>
 

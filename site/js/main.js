@@ -152,16 +152,39 @@
 
       let mediaHtml = '';
       if (hasBeforeAfter) {
+        let items = `
+          <div class="case-carousel__item" style="flex: 0 0 100%; width: 100%; height: 100%; position: relative; scroll-snap-align: center;">
+            <span class="case-carousel__tag">Antes</span>
+            <img src="${c.beforeImg}" alt="${c.title} al inicio" loading="lazy" onerror="this.src='img/caso1-inicio.jpg'" style="width:100%; height:100%; object-fit:cover; display:block;">
+          </div>
+        `;
+        if (c.duringImg) {
+          items += `
+            <div class="case-carousel__item" style="flex: 0 0 100%; width: 100%; height: 100%; position: relative; scroll-snap-align: center;">
+              <span class="case-carousel__tag">Durante</span>
+              <img src="${c.duringImg}" alt="${c.title} durante" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;">
+            </div>
+          `;
+        }
+        items += `
+          <div class="case-carousel__item" style="flex: 0 0 100%; width: 100%; height: 100%; position: relative; scroll-snap-align: center;">
+            <span class="case-carousel__tag">Después</span>
+            <img src="${c.afterImg}" alt="${c.title} en progreso" loading="lazy" onerror="this.src='img/caso1-progreso.jpg'" style="width:100%; height:100%; object-fit:cover; display:block;">
+          </div>
+        `;
         mediaHtml = `
-          <div class="case-card__pair">
-            <figure class="case-card__fig">
-              <img src="${c.beforeImg}" alt="${c.title} al inicio" loading="lazy" onerror="this.src='img/caso1-inicio.jpg'">
-              <span class="case-card__tag case-card__tag--before">Inicio</span>
-            </figure>
-            <figure class="case-card__fig">
-              <img src="${c.afterImg}" alt="${c.title} en progreso" loading="lazy" onerror="this.src='img/caso1-progreso.jpg'">
-              <span class="case-card__tag case-card__tag--progress">Progreso</span>
-            </figure>
+          <div class="case-card__single-media" style="margin-bottom:16px;">
+            <div class="case-carousel-wrap">
+              <button class="carousel-btn carousel-btn--prev" onclick="this.parentElement.querySelector('.case-carousel').scrollBy({left: -300, behavior: 'smooth'}); event.stopPropagation();" aria-label="Anterior">
+                <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+              </button>
+              <div class="case-carousel" style="display:flex; flex-direction:row; flex-wrap:nowrap; aspect-ratio:16/9; background:var(--navy-900); border-radius:12px; overflow-x:auto; overflow-y:hidden; scroll-snap-type: x mandatory; width:100%; height:100%;">
+                ${items}
+              </div>
+              <button class="carousel-btn carousel-btn--next" onclick="this.parentElement.querySelector('.case-carousel').scrollBy({left: 300, behavior: 'smooth'}); event.stopPropagation();" aria-label="Siguiente">
+                <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+              </button>
+            </div>
           </div>
         `;
       } else {
