@@ -1109,8 +1109,16 @@
     if (drAdminClinical) drAdminClinical.value = p.clinicalFocusContent || '';
     if (drAdminTeaching) drAdminTeaching.value = p.teachingContent || '';
 
-    if (drAdminPhotoPreview) drAdminPhotoPreview.src = p.photoUrl || '../img/dr-anthony.jpg?v=3';
-    if (drAdminPhotoInput) drAdminPhotoInput.value = p.photoUrl || '';
+    const rawPhoto = p.photoUrl || 'img/dr-anthony.jpg?v=3';
+    const previewSrc = rawPhoto.startsWith('data:') ? rawPhoto : (rawPhoto.startsWith('img/') ? '../' + rawPhoto : rawPhoto);
+
+    if (drAdminPhotoPreview) {
+      drAdminPhotoPreview.src = previewSrc;
+      drAdminPhotoPreview.onerror = function() {
+        this.src = '../img/dr-anthony.jpg?v=3';
+      };
+    }
+    if (drAdminPhotoInput) drAdminPhotoInput.value = rawPhoto;
 
     currentDrGallery = Array.isArray(p.galleryPhotos) ? [...p.galleryPhotos] : [];
     renderDrGalleryAdminGrid();
