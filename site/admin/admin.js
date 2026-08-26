@@ -1122,6 +1122,59 @@
 
     currentDrGallery = Array.isArray(p.galleryPhotos) ? [...p.galleryPhotos] : [];
     renderDrGalleryAdminGrid();
+    setupDrTextareaFormatters();
+  }
+
+  function setupDrTextareaFormatters() {
+    $$('.btn-dr-bold').forEach(btn => {
+      btn.onclick = () => {
+        const targetEl = $('#' + btn.dataset.target);
+        applyTextareaFormatting(targetEl, 'bold');
+      };
+    });
+
+    $$('.btn-dr-italic').forEach(btn => {
+      btn.onclick = () => {
+        const targetEl = $('#' + btn.dataset.target);
+        applyTextareaFormatting(targetEl, 'italic');
+      };
+    });
+
+    $$('.btn-dr-heading').forEach(btn => {
+      btn.onclick = () => {
+        const targetEl = $('#' + btn.dataset.target);
+        applyTextareaFormatting(targetEl, 'heading');
+      };
+    });
+
+    $$('.btn-dr-list').forEach(btn => {
+      btn.onclick = () => {
+        const targetEl = $('#' + btn.dataset.target);
+        applyTextareaFormatting(targetEl, 'list');
+      };
+    });
+  }
+
+  function applyTextareaFormatting(textarea, type) {
+    if (!textarea) return;
+    textarea.focus();
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selected = textarea.value.substring(start, end) || 'texto';
+    let replacement = '';
+
+    if (type === 'bold') {
+      replacement = `<strong>${selected}</strong>`;
+    } else if (type === 'italic') {
+      replacement = `<em>${selected}</em>`;
+    } else if (type === 'heading') {
+      replacement = `\n<h3>${selected}</h3>\n`;
+    } else if (type === 'list') {
+      replacement = `\n• ${selected}\n`;
+    }
+
+    textarea.setRangeText(replacement, start, end, 'select');
   }
 
   function renderDrGalleryAdminGrid() {
