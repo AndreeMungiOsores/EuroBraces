@@ -1027,49 +1027,54 @@ input, select, textarea { font: inherit; color: inherit; }
 }
 
 /* ══════════ BLOQUE ATÓMICO Y BOTÓN DE ELIMINACIÓN DE YOUTUBE ══════════ */
-/* ══════════ BLOQUE ATÓMICO Y BOTÓN DE ELIMINACIÓN DE YOUTUBE ══════════ */
 .yt-editor-block {
-  position: relative;
-  display: block;
-  margin: 16px 0;
+  position: relative !important;
+  display: block !important;
+  margin: 16px 0 !important;
+  padding: 4px !important;
   user-select: none;
+  border-radius: 12px;
+}
+.wysiwyg-editor .yt-editor-block {
+  border: 2px dashed rgba(220, 38, 38, 0.4);
+  background: rgba(254, 242, 242, 0.3);
 }
 .wysiwyg-editor .yt-card-preview,
 .wysiwyg-editor .yt-link-badge,
 .wysiwyg-editor .yt-embed-wrap iframe {
-  pointer-events: none; /* Inhabilita navegación accidental al hacer clic en el editor */
-}
-.wysiwyg-editor .yt-editor-block:hover {
-  outline: 2px dashed rgba(220, 38, 38, 0.5);
-  border-radius: 12px;
+  pointer-events: none !important;
 }
 .yt-block-delete-btn {
-  pointer-events: auto !important; /* Habilita interacción exclusiva del botón de borrado */
-  position: absolute;
-  top: -12px;
-  right: -10px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #DC2626;
-  color: #FFFFFF;
-  border: 2px solid #FFFFFF;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
-  z-index: 50;
-  transition: transform 0.2s, background 0.2s;
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+  padding: 6px 12px !important;
+  border-radius: 6px !important;
+  background: #DC2626 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #991B1B !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+  z-index: 999 !important;
+  pointer-events: auto !important;
+  transition: background 0.2s, transform 0.15s !important;
 }
 .yt-block-delete-btn:hover {
-  background: #991B1B;
-  transform: scale(1.15);
+  background: #991B1B !important;
+  transform: scale(1.05) !important;
 }
 :not(.wysiwyg-editor) .yt-block-delete-btn {
   display: none !important;
+}
+:not(.wysiwyg-editor) .yt-editor-block {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
 }
 
