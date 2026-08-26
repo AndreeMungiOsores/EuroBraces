@@ -1227,6 +1227,27 @@
   if (closeYtModalBtn) closeYtModalBtn.addEventListener('click', closeYouTubeModal);
   if (cancelYtModalBtn) cancelYtModalBtn.addEventListener('click', closeYouTubeModal);
 
+  // Prevenir navegación por clic en enlaces o tarjetas dentro de los editores de administración
+  document.addEventListener('click', (e) => {
+    const editor = e.target.closest('.wysiwyg-editor');
+    if (editor) {
+      const delBtn = e.target.closest('.yt-block-delete-btn');
+      if (delBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const block = delBtn.closest('.yt-editor-block');
+        if (block) block.remove();
+        return;
+      }
+
+      const link = e.target.closest('a') || e.target.closest('.yt-card-preview') || e.target.closest('.yt-embed-wrap');
+      if (link) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }
+  }, true);
+
   // Escuchar teclas Backspace y Delete para eliminación limpia y atómica de bloques de YouTube
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Backspace' && e.key !== 'Delete') return;
