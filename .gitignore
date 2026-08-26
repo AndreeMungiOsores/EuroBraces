@@ -21,3 +21,10 @@ service-account*.json
 *_ed25519
 .supabase-token
 .netrc
+
+# ── Copias de seguridad de la base de datos ──
+# Contienen fotos de pacientes identificables. Este repositorio es PUBLICO:
+# publicarlas seria una brecha de datos personales, no solo un descuido.
+backups/
+*.dump
+*.sql.gz
