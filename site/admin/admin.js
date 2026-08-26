@@ -720,6 +720,7 @@
   const patientFileInput = $('#patientFileInput');
   const patientPreview = $('#patientPreview');
   const patientCaptionInput = $('#patientCaptionInput');
+  const patientModalTitle = $('#patientModalTitle');
 
   const deletePatientModalBackdrop = $('#deletePatientModalBackdrop');
   const cancelDelPatientBtn = $('#cancelDelPatientBtn');
@@ -746,11 +747,20 @@
           <img src="${imgSrc}" class="patient-card-admin__img" alt="${p.caption || 'Paciente'}" onerror="this.src='../img/pac-1.jpg'">
           <div class="patient-card-admin__body">
             <span class="patient-card-admin__title" title="${p.caption || 'Paciente EuroBraces'}">${p.caption || 'Paciente EuroBraces'}</span>
-            <button type="button" class="action-btn action-btn--del del-patient-btn" data-id="${p.id}" title="Eliminar foto">Eliminar</button>
+            <div class="action-btns">
+              <button type="button" class="action-btn action-btn--edit edit-patient-btn" data-id="${p.id}" title="Editar leyenda o reemplazar foto">Editar</button>
+              <button type="button" class="action-btn action-btn--del del-patient-btn" data-id="${p.id}" title="Eliminar foto">Eliminar</button>
+            </div>
           </div>
         </div>
       `;
     }).join('');
+
+    $$('.edit-patient-btn', patientsAdminGrid).forEach(btn => {
+      btn.addEventListener('click', () => {
+        openEditPatientModal(btn.dataset.id);
+      });
+    });
 
     $$('.del-patient-btn', patientsAdminGrid).forEach(btn => {
       btn.addEventListener('click', () => {
@@ -759,15 +769,81 @@
     });
   }
 
-  // Upload handler para foto de paciente con compresión Canvas
-  setupFileInput(patientFileInput, patientImgUrlInput, patientPreview);
+  // Upload handler para fotos de paciente (soporta 1 foto con edición o múltiples fotos automáticas)
+  if (patientFileInput) {
+    patientFileInput.addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files);
+      if (!files.length) return;
+
+      // Si se selecciona 1 sola foto: cargar en vista previa para opcionalmente cambiar la leyenda
+      if (files.length === 1) {
+        try {
+          const optimizedBase64 = await optimizeImageFile(files[0]);
+          if (patientImgUrlInput) patientImgUrlInput.value = optimizedBase64;
+          if (patientPreview) {
+            patientPreview.src = optimizedBase64;
+            patientPreview.style.display = 'block';
+          }
+          showToast('Foto cargada y optimizada.', 'success');
+        } catch (err) {
+          showToast(err.message || 'Error al procesar la foto.', 'error');
+        }
+        patientFileInput.value = '';
+        return;
+      }
+
+      // Si se seleccionan MÚLTIPLES fotos: procesar, guardar y sincronizar automáticamente sin solicitar leyenda individual
+      let count = 0;
+      showToast(`Procesando ${files.length} fotos...`, 'info');
+
+      for (const file of files) {
+        try {
+          const base64 = await optimizeImageFile(file);
+          await window.BlogStore.savePatientPhoto({
+            url: base64,
+            caption: 'Paciente EuroBraces Center'
+          });
+          count++;
+        } catch (err) {
+          console.error('Error al procesar foto de paciente:', err);
+        }
+      }
+
+      if (count > 0) {
+        showToast(`${count} foto(s) de paciente subida(s) y sincronizada(s) con éxito.`, 'success');
+        closePatientModal();
+        renderPatientsGrid();
+      }
+      patientFileInput.value = '';
+    });
+  }
 
   function openNewPatientModal() {
     if (patientForm) patientForm.reset();
+    if (patientModalTitle) patientModalTitle.textContent = 'Agregar Fotos de Paciente';
     if (patientPhotoIdInput) patientPhotoIdInput.value = '';
     if (patientImgUrlInput) patientImgUrlInput.value = '';
     if (patientPreview) { patientPreview.src = ''; patientPreview.style.display = 'none'; }
     if (patientCaptionInput) patientCaptionInput.value = '';
+    if (patientModalBackdrop) patientModalBackdrop.classList.add('is-open');
+  }
+
+  function openEditPatientModal(id) {
+    if (!window.BlogStore) return;
+    const photos = window.BlogStore.getPatientPhotos();
+    const item = photos.find(p => p.id === id);
+    if (!item) return;
+
+    if (patientForm) patientForm.reset();
+    if (patientModalTitle) patientModalTitle.textContent = 'Editar Foto de Paciente';
+    if (patientPhotoIdInput) patientPhotoIdInput.value = item.id;
+    if (patientImgUrlInput) patientImgUrlInput.value = item.url;
+    if (patientCaptionInput) patientCaptionInput.value = item.caption || '';
+    if (patientPreview) {
+      const imgSrc = item.url.startsWith('data:') ? item.url : (item.url.startsWith('img/') ? '../' + item.url : item.url);
+      patientPreview.src = imgSrc;
+      patientPreview.style.display = 'block';
+    }
     if (patientModalBackdrop) patientModalBackdrop.classList.add('is-open');
   }
 
@@ -788,7 +864,7 @@
       try {
         const urlVal = patientImgUrlInput ? patientImgUrlInput.value.trim() : '';
         if (!urlVal) {
-          showToast('La fotografía del paciente es obligatoria.', 'error');
+          showToast('Debes seleccionar al menos una fotografía.', 'error');
           return;
         }
 
