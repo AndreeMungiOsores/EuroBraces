@@ -1345,6 +1345,37 @@
     }
   });
 
+  function insertHtmlAtCaret(html) {
+    if (!currentTargetEditor) return;
+    restoreCaretPosition();
+
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount) return;
+
+    const range = sel.getRangeAt(0);
+    range.deleteContents();
+
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    const frag = document.createDocumentFragment();
+    let lastNode = null;
+    let child;
+    while ((child = div.firstChild)) {
+      lastNode = frag.appendChild(child);
+    }
+
+    range.insertNode(frag);
+
+    if (lastNode) {
+      const newRange = document.createRange();
+      newRange.setStartAfter(lastNode);
+      newRange.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(newRange);
+      currentTargetEditor.focus();
+    }
+  }
+
   if (youtubeForm) {
     youtubeForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -1364,24 +1395,7 @@
         htmlToInsert = `<div class="yt-editor-block" contenteditable="false"><a href="${url}" target="_blank" rel="noopener" class="yt-card-pill"><div class="yt-card-pill__thumb" style="background:#FF0000"><svg viewBox="0 0 24 24" width="18" height="18" fill="#FFF"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></div><div class="yt-card-pill__text"><strong class="yt-card-pill__title">${titleText}</strong><span class="yt-card-pill__link">Enlace de YouTube &rarr;</span></div></a><button type="button" class="yt-block-delete-btn" title="Eliminar este enlace" onclick="this.closest('.yt-editor-block').remove()"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg><span>Borrar</span></button></div>`;
       }
 
-      if (currentTargetEditor) {
-        restoreCaretPosition();
-        if (!document.execCommand('insertHTML', false, htmlToInsert)) {
-          const sel = window.getSelection();
-          if (sel && sel.rangeCount > 0) {
-            const range = sel.getRangeAt(0);
-            range.deleteContents();
-            const div = document.createElement('div');
-            div.innerHTML = htmlToInsert;
-            const frag = document.createDocumentFragment();
-            let node;
-            while ((node = div.firstChild)) {
-              frag.appendChild(node);
-            }
-            range.insertNode(frag);
-          }
-        }
-      }
+      insertHtmlAtCaret(htmlToInsert);
 
       closeYouTubeModal();
       showToast('Enlace de YouTube insertado con éxito.', 'success');
