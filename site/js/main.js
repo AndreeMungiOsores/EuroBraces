@@ -202,6 +202,27 @@
   /* ══════════════════════════════════════════
      GALERÍA — Pacientes
      ══════════════════════════════════════════ */
+  const railPacientes = $('#rail-pacientes');
+
+  function renderPatientPhotos() {
+    if (!railPacientes || !window.BlogStore) return;
+    const photos = window.BlogStore.getPatientPhotos();
+    if (!Array.isArray(photos) || photos.length === 0) return;
+
+    railPacientes.innerHTML = photos.map(p => `
+      <figure class="pac-card reveal in">
+        <img src="${p.url}" alt="${p.caption || 'Paciente de EuroBraces Center'}" loading="lazy" onerror="this.src='img/pac-1.jpg'">
+      </figure>
+    `).join('');
+  }
+
+  renderPatientPhotos();
+  if (window.BlogStore && typeof window.BlogStore.fetchPatientPhotosAsync === 'function') {
+    window.BlogStore.fetchPatientPhotosAsync().then(() => {
+      renderPatientPhotos();
+    }).catch(() => {});
+  }
+
   $$('.pacs__nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const targetId = btn.dataset.target;

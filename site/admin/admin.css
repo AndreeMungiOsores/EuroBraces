@@ -214,6 +214,82 @@ input, select, textarea { font: inherit; color: inherit; }
   align-items: center;
   gap: 14px;
 }
+
+/* Pestañas de Navegación del Panel Admin */
+.admin-nav__tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.admin-nav__tab {
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ink-light);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+  display: inline-flex;
+  align-items: center;
+}
+.admin-nav__tab:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
+}
+.admin-nav__tab.is-active {
+  background: rgba(240, 214, 149, 0.16);
+  color: var(--gold-300);
+  border-color: rgba(240, 214, 149, 0.35);
+  font-weight: 600;
+}
+
+/* Grilla Administrativa de Pacientes */
+.patients-admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+.patient-card-admin {
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(16, 23, 40, 0.06);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s var(--ease), box-shadow 0.25s;
+}
+.patient-card-admin:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(16, 23, 40, 0.12);
+}
+.patient-card-admin__img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  background: #08152C;
+}
+.patient-card-admin__body {
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: #FFFFFF;
+}
+.patient-card-admin__title {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--navy-900);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0;
+}
+
 .admin-nav__link {
   font-size: 0.85rem;
   color: var(--ink-light);

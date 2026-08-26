@@ -676,10 +676,167 @@
   // Cerrar modales con Escape
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      if (formModalBackdrop.classList.contains('is-open')) closeFormModal();
-      if (deleteModalBackdrop.classList.contains('is-open')) closeDeleteModal();
+      if (formModalBackdrop && formModalBackdrop.classList.contains('is-open')) closeFormModal();
+      if (deleteModalBackdrop && deleteModalBackdrop.classList.contains('is-open')) closeDeleteModal();
+      if (patientModalBackdrop && patientModalBackdrop.classList.contains('is-open')) closePatientModal();
+      if (deletePatientModalBackdrop && deletePatientModalBackdrop.classList.contains('is-open')) closeDeletePatientModal();
     }
   });
+
+  // ── 8. Conmutación de Pestañas (Casos Clínicos vs Fotos de Pacientes) ──
+  const tabCasesBtn = $('#tabCasesBtn');
+  const tabPatientsBtn = $('#tabPatientsBtn');
+  const viewCasesPanel = $('#viewCasesPanel');
+  const viewPatientsPanel = $('#viewPatientsPanel');
+
+  function switchAdminTab(targetView) {
+    if (targetView === 'patients') {
+      if (tabCasesBtn) { tabCasesBtn.classList.remove('is-active'); tabCasesBtn.setAttribute('aria-selected', 'false'); }
+      if (tabPatientsBtn) { tabPatientsBtn.classList.add('is-active'); tabPatientsBtn.setAttribute('aria-selected', 'true'); }
+      if (viewCasesPanel) viewCasesPanel.style.display = 'none';
+      if (viewPatientsPanel) viewPatientsPanel.style.display = 'block';
+      renderPatientsGrid();
+    } else {
+      if (tabPatientsBtn) { tabPatientsBtn.classList.remove('is-active'); tabPatientsBtn.setAttribute('aria-selected', 'false'); }
+      if (tabCasesBtn) { tabCasesBtn.classList.add('is-active'); tabCasesBtn.setAttribute('aria-selected', 'true'); }
+      if (viewPatientsPanel) viewPatientsPanel.style.display = 'none';
+      if (viewCasesPanel) viewCasesPanel.style.display = 'block';
+      renderTable();
+    }
+  }
+
+  if (tabCasesBtn) tabCasesBtn.addEventListener('click', () => switchAdminTab('cases'));
+  if (tabPatientsBtn) tabPatientsBtn.addEventListener('click', () => switchAdminTab('patients'));
+
+  // ── 9. Renderizado y Gestión de Fotos de Pacientes ──
+  const patientsAdminGrid = $('#patientsAdminGrid');
+  const newPatientPhotoBtn = $('#newPatientPhotoBtn');
+  const patientModalBackdrop = $('#patientModalBackdrop');
+  const closePatientModalBtn = $('#closePatientModalBtn');
+  const cancelPatientBtn = $('#cancelPatientBtn');
+  const patientForm = $('#patientForm');
+  const patientPhotoIdInput = $('#patientPhotoId');
+  const patientImgUrlInput = $('#patientImgUrlInput');
+  const patientFileInput = $('#patientFileInput');
+  const patientPreview = $('#patientPreview');
+  const patientCaptionInput = $('#patientCaptionInput');
+
+  const deletePatientModalBackdrop = $('#deletePatientModalBackdrop');
+  const cancelDelPatientBtn = $('#cancelDelPatientBtn');
+  const confirmDelPatientBtn = $('#confirmDelPatientBtn');
+  let patientToDeleteId = null;
+
+  function renderPatientsGrid() {
+    if (!patientsAdminGrid || !window.BlogStore) return;
+    const photos = window.BlogStore.getPatientPhotos();
+
+    if (photos.length === 0) {
+      patientsAdminGrid.innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;padding:48px 20px;background:#FFF;border-radius:12px;border:1px solid var(--border);color:var(--ink-60)">
+          No hay fotografías de pacientes aún. Haz clic en <strong>+ Subir Foto de Paciente</strong> para agregar una.
+        </div>
+      `;
+      return;
+    }
+
+    patientsAdminGrid.innerHTML = photos.map(p => {
+      const imgSrc = p.url.startsWith('data:') ? p.url : (p.url.startsWith('img/') ? '../' + p.url : p.url);
+      return `
+        <div class="patient-card-admin">
+          <img src="${imgSrc}" class="patient-card-admin__img" alt="${p.caption || 'Paciente'}" onerror="this.src='../img/pac-1.jpg'">
+          <div class="patient-card-admin__body">
+            <span class="patient-card-admin__title" title="${p.caption || 'Paciente EuroBraces'}">${p.caption || 'Paciente EuroBraces'}</span>
+            <button type="button" class="action-btn action-btn--del del-patient-btn" data-id="${p.id}" title="Eliminar foto">Eliminar</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    $$('.del-patient-btn', patientsAdminGrid).forEach(btn => {
+      btn.addEventListener('click', () => {
+        openDeletePatientModal(btn.dataset.id);
+      });
+    });
+  }
+
+  // Upload handler para foto de paciente con compresión Canvas
+  setupFileInput(patientFileInput, patientImgUrlInput, patientPreview);
+
+  function openNewPatientModal() {
+    if (patientForm) patientForm.reset();
+    if (patientPhotoIdInput) patientPhotoIdInput.value = '';
+    if (patientImgUrlInput) patientImgUrlInput.value = '';
+    if (patientPreview) { patientPreview.src = ''; patientPreview.style.display = 'none'; }
+    if (patientCaptionInput) patientCaptionInput.value = '';
+    if (patientModalBackdrop) patientModalBackdrop.classList.add('is-open');
+  }
+
+  function closePatientModal() {
+    if (patientModalBackdrop) patientModalBackdrop.classList.remove('is-open');
+  }
+
+  if (newPatientPhotoBtn) newPatientPhotoBtn.addEventListener('click', openNewPatientModal);
+  if (closePatientModalBtn) closePatientModalBtn.addEventListener('click', closePatientModal);
+  if (cancelPatientBtn) cancelPatientBtn.addEventListener('click', closePatientModal);
+
+  if (patientForm) {
+    patientForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = patientForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn ? submitBtn.textContent : 'Guardar Foto';
+
+      try {
+        const urlVal = patientImgUrlInput ? patientImgUrlInput.value.trim() : '';
+        if (!urlVal) {
+          showToast('La fotografía del paciente es obligatoria.', 'error');
+          return;
+        }
+
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Guardando...';
+        }
+
+        await window.BlogStore.savePatientPhoto({
+          id: patientPhotoIdInput ? patientPhotoIdInput.value : undefined,
+          url: urlVal,
+          caption: patientCaptionInput ? patientCaptionInput.value.trim() : 'Paciente EuroBraces Center'
+        });
+
+        showToast('Foto de paciente guardada y sincronizada.', 'success');
+        closePatientModal();
+        renderPatientsGrid();
+      } catch (err) {
+        showToast(err.message || 'Error al guardar foto de paciente.', 'error');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+        }
+      }
+    });
+  }
+
+  function openDeletePatientModal(id) {
+    patientToDeleteId = id;
+    if (deletePatientModalBackdrop) deletePatientModalBackdrop.classList.add('is-open');
+  }
+
+  function closeDeletePatientModal() {
+    if (deletePatientModalBackdrop) deletePatientModalBackdrop.classList.remove('is-open');
+    patientToDeleteId = null;
+  }
+
+  if (cancelDelPatientBtn) cancelDelPatientBtn.addEventListener('click', closeDeletePatientModal);
+  if (confirmDelPatientBtn) {
+    confirmDelPatientBtn.addEventListener('click', async () => {
+      if (!patientToDeleteId || !window.BlogStore) return;
+      await window.BlogStore.deletePatientPhoto(patientToDeleteId);
+      showToast('Foto de paciente eliminada correctamente.', 'success');
+      closeDeletePatientModal();
+      renderPatientsGrid();
+    });
+  }
 
   // Revalidación asíncrona con Supabase al abrir el dashboard
   if (window.BlogStore && typeof window.BlogStore.fetchCasesAsync === 'function') {
@@ -690,6 +847,14 @@
     }).catch(err => {
       console.warn('Nota: Usando caché local:', err);
     });
+  }
+
+  if (window.BlogStore && typeof window.BlogStore.fetchPatientPhotosAsync === 'function') {
+    window.BlogStore.fetchPatientPhotosAsync().then(() => {
+      if (sessionStorage.getItem(SESSION_KEY) === 'true' && tabPatientsBtn && tabPatientsBtn.classList.contains('is-active')) {
+        renderPatientsGrid();
+      }
+    }).catch(() => {});
   }
 
   // Inicializar autenticación

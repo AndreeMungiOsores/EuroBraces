@@ -12,6 +12,18 @@
   const SUPABASE_ANON_KEY = 'sb_publishable_uQttPnSYcDP9kjAD79TG6w_ZfcnGxJj';
   const STORAGE_KEY = 'eurobraces_clinical_cases';
   const CATEGORIES_KEY = 'eurobraces_categories';
+  const PATIENT_PHOTOS_KEY = 'eurobraces_patient_photos';
+
+  /**
+   * Fotos de pacientes iniciales por defecto (Seed).
+   */
+  const DEFAULT_PATIENT_PHOTOS = [
+    { id: 'pac-3', url: 'img/pac-3.jpg', caption: 'Paciente atendido en EuroBraces Center' },
+    { id: 'pac-1', url: 'img/pac-1.jpg', caption: 'Pacientes de EuroBraces Center' },
+    { id: 'pac-4', url: 'img/pac-4.jpg', caption: 'Paciente de EuroBraces Center' },
+    { id: 'pac-5', url: 'img/pac-5.jpg', caption: 'Paciente en consulta EuroBraces' },
+    { id: 'pac-2', url: 'img/pac-2.jpg', caption: 'Paciente de EuroBraces Center' }
+  ];
 
   /**
    * Categorías iniciales por defecto.
@@ -315,6 +327,159 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
       return filtered;
     },
 
+    // ── GESTIÓN DE FOTOS DE PACIENTES ("Nuestros Pacientes") ──
+    getPatientPhotos: function () {
+      try {
+        const raw = localStorage.getItem(PATIENT_PHOTOS_KEY);
+        if (!raw) {
+          localStorage.setItem(PATIENT_PHOTOS_KEY, JSON.stringify(DEFAULT_PATIENT_PHOTOS));
+          return DEFAULT_PATIENT_PHOTOS.slice();
+        }
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed) || parsed.length === 0) {
+          localStorage.setItem(PATIENT_PHOTOS_KEY, JSON.stringify(DEFAULT_PATIENT_PHOTOS));
+          return DEFAULT_PATIENT_PHOTOS.slice();
+        }
+        return parsed;
+      } catch (err) {
+        return DEFAULT_PATIENT_PHOTOS.slice();
+      }
+    },
+
+    fetchPatientPhotosAsync: async function () {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/clinical_cases?slug=eq.system-patient-photos`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+          }
+        });
+
+        if (!res.ok) {
+          return this.getPatientPhotos();
+        }
+
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0 && data[0].content) {
+          try {
+            const parsed = JSON.parse(data[0].content);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              localStorage.setItem(PATIENT_PHOTOS_KEY, JSON.stringify(parsed));
+              return parsed;
+            }
+          } catch (e) {}
+        }
+        return this.getPatientPhotos();
+      } catch (err) {
+        return this.getPatientPhotos();
+      }
+    },
+
+    savePatientPhoto: async function (photoData) {
+      if (!photoData || !photoData.url) {
+        throw new Error('La imagen del paciente es obligatoria.');
+      }
+
+      const photos = this.getPatientPhotos();
+      const targetId = photoData.id || 'pac-' + Date.now().toString(36) + '-' + Math.random().toString(36).substr(2, 4);
+
+      const newItem = {
+        id: targetId,
+        url: photoData.url,
+        caption: photoData.caption ? photoData.caption.trim() : 'Paciente EuroBraces Center'
+      };
+
+      const existingIndex = photos.findIndex(p => p.id === targetId);
+      if (existingIndex >= 0) {
+        photos[existingIndex] = newItem;
+      } else {
+        photos.unshift(newItem);
+      }
+
+      try {
+        localStorage.setItem(PATIENT_PHOTOS_KEY, JSON.stringify(photos));
+      } catch (e) {}
+
+      // Sincronización en Supabase
+      try {
+        const payload = {
+          slug: 'system-patient-photos',
+          title: 'System Patient Photos Data',
+          category: 'System',
+          excerpt: 'Persistencia de fotos de pacientes',
+          content: JSON.stringify(photos),
+          doctor: 'System',
+          doctor_role: 'System',
+          date: new Date().toISOString().split('T')[0],
+          read_time: '1 min',
+          before_img: '',
+          after_img: '',
+          cover_img: '',
+          tags: ['system'],
+          featured: false
+        };
+
+        await fetch(`${SUPABASE_URL}/rest/v1/clinical_cases`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
+          },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.warn('Nota: Guardado local de foto de paciente exitoso:', err);
+      }
+
+      return newItem;
+    },
+
+    deletePatientPhoto: async function (id) {
+      const photos = this.getPatientPhotos();
+      const filtered = photos.filter(p => p.id !== id);
+
+      try {
+        localStorage.setItem(PATIENT_PHOTOS_KEY, JSON.stringify(filtered));
+      } catch (e) {}
+
+      // Sincronización en Supabase
+      try {
+        const payload = {
+          slug: 'system-patient-photos',
+          title: 'System Patient Photos Data',
+          category: 'System',
+          excerpt: 'Persistencia de fotos de pacientes',
+          content: JSON.stringify(filtered),
+          doctor: 'System',
+          doctor_role: 'System',
+          date: new Date().toISOString().split('T')[0],
+          read_time: '1 min',
+          before_img: '',
+          after_img: '',
+          cover_img: '',
+          tags: ['system'],
+          featured: false
+        };
+
+        await fetch(`${SUPABASE_URL}/rest/v1/clinical_cases`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
+          },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.warn('Nota: Eliminado local de foto de paciente exitoso:', err);
+      }
+
+      return filtered;
+    },
+
     // ── GESTIÓN DE CASOS CLÍNICOS ──
     getCases: function () {
       try {
@@ -328,7 +493,7 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
           this.resetDefaults();
           return DEFAULT_CASES.slice();
         }
-        return parsed;
+        return parsed.filter(c => c.slug !== 'system-patient-photos' && c.category !== 'System');
       } catch (err) {
         return DEFAULT_CASES.slice();
       }
@@ -349,14 +514,15 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
 
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
-          const mapped = data.map(mapFromSupabase);
+          const cleanData = data.filter(c => c.slug !== 'system-patient-photos' && c.category !== 'System');
+          const mapped = cleanData.map(mapFromSupabase);
           try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(mapped));
           } catch (e) {}
 
           // Actualizar lista de categorías con las que vienen de Supabase
           const existingCats = this.getCategories();
-          const supabaseCats = data.map(c => c.category).filter(c => c && c !== 'Sin etiqueta');
+          const supabaseCats = cleanData.map(c => c.category).filter(c => c && c !== 'Sin etiqueta' && c !== 'System');
           const merged = Array.from(new Set([...existingCats, ...supabaseCats]));
           try {
             localStorage.setItem(CATEGORIES_KEY, JSON.stringify(merged));
