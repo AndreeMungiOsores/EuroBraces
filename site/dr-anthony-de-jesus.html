@@ -329,10 +329,11 @@
 
   function parseSimpleMarkdown(content) {
     if (!content) return '';
-    if (/<(h2|h3|p|ul|li|strong|em|span|div|a|iframe)/i.test(content)) {
-      return content;
+    let clean = content.replace(/<button[^>]*class="yt-block-delete-btn"[^>]*>[\s\S]*?<\/button>/gi, '');
+    if (/<(h2|h3|p|ul|li|strong|em|span|div|a|iframe)/i.test(clean)) {
+      return clean;
     }
-    return content
+    return clean
       .replace(/^### (.*$)/gim, '<h3>$1</h3>')
       .replace(/^## (.*$)/gim, '<h3>$1</h3>')
       .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
