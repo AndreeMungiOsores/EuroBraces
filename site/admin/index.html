@@ -64,6 +64,10 @@
         <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" style="vertical-align:-2px;margin-right:6px"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
         Fotos de Pacientes
       </button>
+      <button type="button" class="admin-nav__tab" id="tabDrAnthonyBtn" role="tab" aria-selected="false" data-view="dr-anthony">
+        <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" style="vertical-align:-2px;margin-right:6px"><path fill="currentColor" d="M12 2a5 5 0 100 10 5 5 0 000-10zm-7 18c0-3.87 3.13-7 7-7s7 3.13 7 7H5z"/></svg>
+        Dr. Anthony
+      </button>
     </div>
 
     <div class="admin-nav__actions">
@@ -145,6 +149,93 @@
       <div class="patients-admin-grid" id="patientsAdminGrid">
         <!-- Renderizado dinámico de tarjetas de pacientes -->
       </div>
+    </div>
+
+    <!-- Vista 3: Perfil Profesional del Dr. Anthony De Jesús -->
+    <div class="admin-view-panel" id="viewDrAnthonyPanel" style="display:none">
+      <div class="admin-toolbar" style="align-items:flex-start">
+        <div class="admin-toolbar__left">
+          <h2 style="margin:0 0 4px;font-size:1.15rem;font-weight:600;color:var(--navy-900)">Perfil Profesional del Dr. Anthony De Jesús</h2>
+          <div style="font-size:0.82rem;color:var(--ink-60)">Edita el contenido, especialidades, filosofía y galería de su sección pública.</div>
+        </div>
+
+        <div class="admin-toolbar__right">
+          <button type="submit" form="drAnthonyForm" class="btn-primary" id="saveDrAnthonyProfileBtn">
+            Guardar Cambios del Perfil
+          </button>
+        </div>
+      </div>
+
+      <form id="drAnthonyForm" style="background:#FFF;border:1px solid var(--border);border-radius:16px;padding:28px 32px;box-shadow:0 6px 24px rgba(16,23,40,0.05)">
+        <div style="display:grid;grid-template-columns:240px 1fr;gap:32px;margin-bottom:28px">
+          <!-- Foto de Perfil -->
+          <div>
+            <label style="font-weight:600;font-size:0.88rem;color:var(--navy-900);margin-bottom:8px;display:block">Fotografía de Perfil</label>
+            <div style="text-align:center">
+              <img id="drAdminPhotoPreview" src="../img/dr-anthony.jpg?v=3" alt="Foto del Dr. Anthony" style="width:180px;height:180px;border-radius:50%;object-fit:cover;border:3px solid var(--gold-500);margin-bottom:12px">
+              <input type="hidden" id="drAdminPhotoInput">
+              <input type="file" id="drAdminPhotoFileInput" accept="image/*" style="display:none">
+              <button type="button" class="btn-secondary" style="width:100%;font-size:0.8rem" onclick="document.getElementById('drAdminPhotoFileInput').click()">Cambiar Foto de Perfil</button>
+            </div>
+          </div>
+
+          <!-- Información Principal -->
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="form-group">
+              <label for="drAdminName">Nombre Completo *</label>
+              <input type="text" id="drAdminName" class="form-ctrl" placeholder="Ej. Dr. Anthony De Jesús" required>
+            </div>
+            <div class="form-group">
+              <label for="drAdminTitle">Especialidad y Subtítulo *</label>
+              <input type="text" id="drAdminTitle" class="form-ctrl" placeholder="Ej. Especialista en Ortodoncia | Ortodoncia Cráneo-Mandibular" required>
+            </div>
+            <div class="form-group">
+              <label for="drAdminPhilosophy">Filosofía Profesional</label>
+              <input type="text" id="drAdminPhilosophy" class="form-ctrl" placeholder="Ej. Diagnóstico preciso · Biomecánica inteligente · Función">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:20px">
+          <label for="drAdminShortBio">Resumen Ejecutivo / Biografía Corta *</label>
+          <textarea id="drAdminShortBio" class="form-ctrl" rows="3" placeholder="Breve introducción profesional..." required></textarea>
+        </div>
+
+        <div class="form-group" style="margin-bottom:20px">
+          <label for="drAdminAcademic">Formación Académica y Especialización (Markdown / HTML)</label>
+          <textarea id="drAdminAcademic" class="form-ctrl" rows="6" placeholder="Detalles de títulos, diplomados y estudios..."></textarea>
+        </div>
+
+        <div class="form-group" style="margin-bottom:20px">
+          <label for="drAdminClinical">Enfoque Clínico y Casos Complejos (Markdown / HTML)</label>
+          <textarea id="drAdminClinical" class="form-ctrl" rows="6" placeholder="Tipos de maloclusiones y técnicas avanzadas..."></textarea>
+        </div>
+
+        <div class="form-group" style="margin-bottom:20px">
+          <label for="drAdminTeaching">Docencia, Divulgación y Proyectos (Markdown / HTML)</label>
+          <textarea id="drAdminTeaching" class="form-ctrl" rows="5" placeholder="El Arte de Doblar, OrthoTube y conferencias..."></textarea>
+        </div>
+
+        <!-- Sección de Galería de Imágenes / Certificados del Doctor -->
+        <div style="border-top:1px solid var(--border);padding-top:24px;margin-top:24px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <div>
+              <h3 style="margin:0;font-size:1.05rem;color:var(--navy-900)">Galería & Fotografías del Doctor</h3>
+              <div style="font-size:0.8rem;color:var(--ink-60)">Sube fotos de eventos, conferencias, diplomas o atención clínica.</div>
+            </div>
+            <input type="file" id="drGalleryFileInput" accept="image/*" multiple style="display:none">
+            <button type="button" class="btn-secondary" onclick="document.getElementById('drGalleryFileInput').click()">+ Subir Fotos a la Galería</button>
+          </div>
+
+          <div class="patients-admin-grid" id="drAdminGalleryGrid">
+            <!-- Renderizado dinámico de tarjetas de galería del doctor -->
+          </div>
+        </div>
+
+        <div style="margin-top:28px;text-align:right">
+          <button type="submit" class="btn-primary" style="padding:12px 32px">Guardar Cambios del Perfil</button>
+        </div>
+      </form>
     </div>
   </main>
 </div>

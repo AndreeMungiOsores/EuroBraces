@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Dr. Anthony De Jesús · Especialista en Ortodoncia · EuroBraces Center</title>
+  <meta name="description" content="Conoce la trayectoria profesional, especialización en ortodoncia cráneo-mandibular, filosofía biomecánica y proyectos docentes del Dr. Anthony De Jesús en EuroBraces Center, Miraflores.">
+  <link rel="canonical" href="https://eurobraces.pe/dr-anthony-de-jesus.html">
+  <link rel="icon" type="image/png" href="img/logo-navy.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Estilos específicos para la sección del Doctor */
+    .dr-hero {
+      position: relative;
+      background: var(--navy-900);
+      color: var(--bone);
+      padding: 120px 0 70px;
+      overflow: hidden;
+    }
+    .dr-hero__grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    @media (max-width: 900px) {
+      .dr-hero__grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 32px;
+      }
+    }
+    .dr-hero__media {
+      position: relative;
+      width: 100%;
+      max-width: 340px;
+      margin: 0 auto;
+    }
+    .dr-hero__img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid var(--gold-500);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+      background: #08152C;
+    }
+    .dr-hero__badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 100px;
+      background: rgba(197, 162, 83, 0.15);
+      border: 1px solid var(--gold-500);
+      color: var(--gold-300);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .dr-hero__title {
+      font-family: var(--ff-display);
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      color: var(--bone);
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+    .dr-hero__sub {
+      font-size: 1.05rem;
+      color: var(--gold-300);
+      font-weight: 500;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+    .dr-hero__bio {
+      font-size: 0.98rem;
+      color: var(--ink-light);
+      line-height: 1.65;
+      margin-bottom: 24px;
+    }
+    .dr-philosophy-pill {
+      background: rgba(255, 255, 255, 0.06);
+      border-left: 3px solid var(--gold-500);
+      padding: 14px 18px;
+      border-radius: 0 10px 10px 0;
+      font-style: italic;
+      color: var(--bone-2);
+      font-size: 0.92rem;
+      margin-bottom: 28px;
+    }
+
+    /* Estilos del Contenido de Secciones */
+    .dr-content-sec {
+      padding: 80px 0;
+      background: #FAFAF8;
+    }
+    .dr-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 32px;
+      margin-top: 40px;
+    }
+    .dr-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 28px;
+      box-shadow: 0 6px 24px rgba(16, 23, 40, 0.04);
+      transition: transform 0.3s var(--ease), box-shadow 0.3s;
+    }
+    .dr-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(16, 23, 40, 0.08);
+    }
+    .dr-card__icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--navy-900);
+      color: var(--gold-400);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .dr-card__title {
+      font-family: var(--ff-display);
+      font-size: 1.4rem;
+      color: var(--navy-900);
+      margin-bottom: 16px;
+    }
+    .dr-card__body {
+      font-size: 0.94rem;
+      color: var(--ink-70);
+      line-height: 1.7;
+    }
+    .dr-card__body h3 {
+      font-size: 1.15rem;
+      color: var(--navy-900);
+      margin: 16px 0 8px;
+    }
+    .dr-card__body ul {
+      padding-left: 20px;
+      margin: 10px 0;
+    }
+    .dr-card__body li {
+      margin-bottom: 8px;
+    }
+    .dr-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+      margin-top: 32px;
+    }
+    .dr-gallery-card {
+      background: #FFF;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    }
+    .dr-gallery-card img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+    }
+    .dr-gallery-card figcaption {
+      padding: 12px 14px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--navy-900);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="scroll-rail"><span id="scrollBar"></span></div>
+
+<!-- ══════════ NAV ══════════ -->
+<header class="nav" id="nav">
+  <a class="nav__brand" href="index.html#top" aria-label="EuroBraces Center — inicio">
+    <img src="img/logo-navy.png" alt="" class="nav__mark">
+    <span class="nav__word">EuroBraces<em>Center</em></span>
+  </a>
+  <nav class="nav__links" id="navLinks">
+    <a href="index.html#diagnostico">Diagnóstico</a>
+    <a href="index.html#tratamientos">Tratamientos</a>
+    <a href="casos-clinicos.html">Casos Clínicos</a>
+    <a href="index.html#pacientes">Pacientes</a>
+    <a href="dr-anthony-de-jesus.html" style="color:var(--gold-300);font-weight:600">Dr. Anthony</a>
+    <a href="index.html#equipo">Equipo</a>
+    <a href="index.html#ubicacion">Ubicación</a>
+  </nav>
+  <a class="btn btn--ghost nav__cta" href="https://wa.me/51986186192?text=Hola%2C%20quiero%20una%20citas%20con%20el%20Dr.%20Anthony%20De%20Jes%C3%BAs" target="_blank" rel="noopener">Agenda tu evaluación</a>
+  <button class="nav__burger" id="burger" aria-label="Menú" aria-expanded="false"><i></i><i></i></button>
+</header>
+
+<main id="main-content">
+  <!-- ══════════ HERO DEL DOCTOR ══════════ -->
+  <section class="dr-hero">
+    <div class="grain" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="dr-hero__grid">
+        <div class="dr-hero__media">
+          <img id="drPhoto" src="img/dr-anthony.jpg?v=3" alt="Dr. Anthony De Jesús" class="dr-hero__img">
+        </div>
+        <div class="dr-hero__info">
+          <span class="dr-hero__badge">Especialista Principal</span>
+          <h1 class="dr-hero__title" id="drName">Dr. Anthony <i>De Jesús</i></h1>
+          <p class="dr-hero__sub" id="drTitle">Especialista en Ortodoncia | Ortodoncia Cráneo-Mandibular | Conferencista Internacional</p>
+          <p class="dr-hero__bio" id="drShortBio">
+            Odontólogo egresado de la Universidad Rómulo Gallegos con especialización en Ortodoncia por la Universidad Privada San Juan Bautista. Experto en la resolución clínica de casos de alta complejidad con enfoque biomecánico, funcional y 3D.
+          </p>
+          <div class="dr-philosophy-pill" id="drPhilosophy">
+            "Diagnóstico preciso · Biomecánica inteligente · Función · Experiencia clínica · Educación"
+          </div>
+          <div>
+            <a href="https://wa.me/51986186192?text=Hola%2C%20quisiera%20agendar%20una%20consulta%20con%20el%20Dr.%20Anthony%20De%20Jes%C3%BAs" class="btn btn--gold" target="_blank" rel="noopener">
+              Solicitar Consulta Especializada
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ SECCIÓN DETALLADA DEL CV ══════════ -->
+  <section class="dr-content-sec">
+    <div class="wrap">
+      <div class="sec-head" style="text-align:center;max-width:700px;margin:0 auto 40px">
+        <p class="eyebrow">Trayectoria y Competencias</p>
+        <h2 class="h2" style="color:var(--navy-900)">Excelencia en <i>Ortodoncia Clínica.</i></h2>
+        <p class="sec-head__sub">Integración de diagnóstico funcional, tomografía 3D y biomecánica avanzada para el tratamiento de maloclusiones complejas.</p>
+      </div>
+
+      <div class="dr-card-grid">
+        <!-- Tarjeta 1: Formación Académica -->
+        <article class="dr-card">
+          <div class="dr-card__icon">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+          </div>
+          <h3 class="dr-card__title">Formación Académica</h3>
+          <div class="dr-card__body" id="drAcademicBody">
+            <!-- Cargado dinámicamente -->
+          </div>
+        </article>
+
+        <!-- Tarjeta 2: Enfoque Clínico -->
+        <article class="dr-card">
+          <div class="dr-card__icon">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="dr-card__title">Enfoque Clínico Complejo</h3>
+          <div class="dr-card__body" id="drClinicalBody">
+            <!-- Cargado dinámicamente -->
+          </div>
+        </article>
+
+        <!-- Tarjeta 3: Docencia y Proyectos -->
+        <article class="dr-card">
+          <div class="dr-card__icon">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z"/></svg>
+          </div>
+          <h3 class="dr-card__title">Docencia & "OrthoTube"</h3>
+          <div class="dr-card__body" id="drTeachingBody">
+            <!-- Cargado dinámicamente -->
+          </div>
+        </article>
+      </div>
+
+      <!-- Galería de Certificados / Actividad Académica -->
+      <div style="margin-top:60px">
+        <h3 class="h2" style="color:var(--navy-900);font-size:1.6rem;text-align:center;margin-bottom:16px">Galería & <i>Actividad Profesional</i></h3>
+        <div class="dr-gallery-grid" id="drGalleryGrid">
+          <!-- Renderizado dinámico de galería -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ CTA ══════════ -->
+  <section class="cta">
+    <div class="grain" aria-hidden="true"></div>
+    <div class="wrap cta__inner reveal">
+      <h2>Agenda tu evaluación con el<br><i>Dr. Anthony De Jesús.</i></h2>
+      <a class="btn btn--gold btn--lg" href="https://wa.me/51986186192?text=Hola%2C%20quiero%20una%20evaluaci%C3%B3n%20con%20el%20Dr.%20Anthony%20De%20Jes%C3%BAs" target="_blank" rel="noopener">Solicitar Cita Directa</a>
+      <p>WhatsApp 986 186 192 · Elías Aguirre 126, Miraflores</p>
+    </div>
+  </section>
+</main>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="foot">
+  <div class="wrap foot__grid">
+    <a class="foot__logo" href="index.html#top" aria-label="EuroBraces Center — inicio">
+      <img src="img/logo-navy.png" alt="">
+      <span>EuroBraces<em>Center</em></span>
+    </a>
+    <nav class="foot__nav">
+      <a href="index.html#diagnostico">Diagnóstico</a><a href="index.html#tratamientos">Tratamientos</a>
+      <a href="casos-clinicos.html">Casos Clínicos</a><a href="index.html#pacientes">Pacientes</a>
+      <a href="dr-anthony-de-jesus.html">Dr. Anthony</a><a href="index.html#equipo">Equipo</a><a href="index.html#ubicacion">Ubicación</a>
+    </nav>
+    <p class="foot__legal">
+      © <span id="year"></span> EuroBraces Center · Elías Aguirre 126, Miraflores 15074, Lima — Perú<br>
+      <small>Las imágenes de casos son referenciales; los resultados varían según cada paciente.</small>
+    </p>
+  </div>
+</footer>
+
+<a class="wa" href="https://wa.me/51986186192?text=Hola%2C%20quiero%20una%20EVALUACI%C3%93N%20con%20el%20Dr.%20Anthony%20De%20Jes%C3%BAs" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23a8.2 8.2 0 0 1 8.24 8.24c0 4.54-3.7 8.23-8.24 8.23Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.15.16-.29.19-.53.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.71-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.12-.15.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.47c-.16 0-.43.06-.65.31-.23.24-.86.84-.86 2.05s.88 2.38 1 2.54c.13.16 1.74 2.65 4.2 3.72.59.25 1.05.4 1.4.52.59.18 1.13.16 1.55.1.47-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.11-.22-.17-.47-.29Z"/></svg>
+</a>
+
+<script src="js/blog-store.js"></script>
+<script>
+(function() {
+  'use strict';
+  const $ = selector => document.querySelector(selector);
+  const yearEl = $('#year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  function parseSimpleMarkdown(content) {
+    if (!content) return '';
+    if (/<(h2|h3|p|ul|li|strong|em|span)/i.test(content)) {
+      return content;
+    }
+    return content
+      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+      .replace(/^## (.*$)/gim, '<h3>$1</h3>')
+      .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+      .replace(/^\- (.*$)/gim, '<li>$1</li>')
+      .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
+      .split('\n\n')
+      .map(p => {
+        if (p.includes('<li>')) return `<ul>${p}</ul>`;
+        if (p.startsWith('<h3>') || p.startsWith('<h2>')) return p;
+        return `<p>${p.replace(/\n/g, '<br>')}</p>`;
+      })
+      .join('');
+  }
+
+  function renderProfile() {
+    if (!window.BlogStore) return;
+    const p = window.BlogStore.getDrAnthonyProfile();
+
+    if ($('#drPhoto')) $('#drPhoto').src = p.photoUrl || 'img/dr-anthony.jpg?v=3';
+    if ($('#drName')) $('#drName').innerHTML = p.name ? p.name.replace('De Jesús', '<i>De Jesús</i>') : 'Dr. Anthony <i>De Jesús</i>';
+    if ($('#drTitle')) $('#drTitle').textContent = p.title || '';
+    if ($('#drShortBio')) $('#drShortBio').textContent = p.shortBio || '';
+    if ($('#drPhilosophy')) $('#drPhilosophy').textContent = p.philosophy ? `"${p.philosophy}"` : '';
+
+    if ($('#drAcademicBody')) $('#drAcademicBody').innerHTML = parseSimpleMarkdown(p.academicContent);
+    if ($('#drClinicalBody')) $('#drClinicalBody').innerHTML = parseSimpleMarkdown(p.clinicalFocusContent);
+    if ($('#drTeachingBody')) $('#drTeachingBody').innerHTML = parseSimpleMarkdown(p.teachingContent);
+
+    const galleryEl = $('#drGalleryGrid');
+    if (galleryEl && Array.isArray(p.galleryPhotos)) {
+      galleryEl.innerHTML = p.galleryPhotos.map(item => {
+        const imgSrc = item.url.startsWith('data:') ? item.url : (item.url.startsWith('img/') ? item.url : item.url);
+        return `
+          <figure class="dr-gallery-card">
+            <img src="${imgSrc}" alt="${item.caption || 'Foto del Dr. Anthony'}" loading="lazy">
+            <figcaption>${item.caption || 'Dr. Anthony De Jesús'}</figcaption>
+          </figure>
+        `;
+      }).join('');
+    }
+  }
+
+  renderProfile();
+
+  if (window.BlogStore && typeof window.BlogStore.fetchDrAnthonyProfileAsync === 'function') {
+    window.BlogStore.fetchDrAnthonyProfileAsync().then(() => {
+      renderProfile();
+    }).catch(err => {
+      console.warn('Fallback a perfil local del Dr. Anthony:', err);
+    });
+  }
+})();
+</script>
+</body>
+</html>

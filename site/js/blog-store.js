@@ -13,6 +13,49 @@
   const STORAGE_KEY = 'eurobraces_clinical_cases';
   const CATEGORIES_KEY = 'eurobraces_categories';
   const PATIENT_PHOTOS_KEY = 'eurobraces_patient_photos';
+  const DR_ANTHONY_KEY = 'eurobraces_dr_anthony_profile';
+
+  /**
+   * Perfil inicial por defecto del Dr. Anthony De Jesús (Seed desde su CV)
+   */
+  const DEFAULT_DR_ANTHONY_PROFILE = {
+    name: 'Dr. Anthony De Jesús',
+    title: 'Especialista en Ortodoncia | Ortodoncia Cráneo-Mandibular | Conferencista Internacional',
+    shortBio: 'Odontólogo egresado de la Universidad Rómulo Gallegos con especialización en Ortodoncia por la Universidad Privada San Juan Bautista. Experto en la resolución clínica de casos de alta complejidad con enfoque biomecánico, funcional y 3D.',
+    philosophy: 'Diagnóstico preciso · Biomecánica inteligente · Función · Experiencia clínica · Educación',
+    photoUrl: 'img/dr-anthony.jpg?v=3',
+    academicContent: `### Formación Académica y Especialización
+
+- **Odontólogo** – Universidad Rómulo Gallegos.
+- **Especialización en Ortodoncia** – Universidad Privada San Juan Bautista.
+- **Diplomado Internacional en Ortodoncia Cráneo-Mandibular** – Con la Dra. Paola Caballero (posición mandibular, oclusión, ATM y planificación ortodóncica).
+- **Tomografía y Diagnóstico 3D** – Con el Dr. Luis Tapia (análisis de imágenes tridimensionales).
+- **Formación Internacional en Ortodoncia Cráneo-Mandibular y Filosofía MEAW/GEAW** – Con el Dr. Roberto Velásquez Torres y el Dr. Akiyoshi Shirasu.
+- **Entrenamiento en Microimplantes y Manejo de Sonrisa Gingival** – Con la Dra. Patricia Vergara Villarreal.
+- **Residencia Clínica en Ortodoncia (MEAW y Bioprogresiva de Ricketts)** – Bajo la tutoría del Dr. Luis Fernando Pérez Vargas.`,
+    clinicalFocusContent: `### Enfoque Clínico y Resolución de Casos Complejos
+
+Especialista en el diagnóstico integral y la resolución biomecánica de maloclusiones de alta complejidad:
+
+- Maloclusiones Clase II y Clase III severas.
+- Asimetrías dentofaciales y laterodesviaciones mandibulares.
+- Alteraciones severas del plano oclusal y dimensión vertical.
+- Mordida abierta anterior y colapso de arcada.
+- Ortodoncia Cráneo-Mandibular y manejo de la articulación temporomandibular (ATM).
+- Biomecánica avanzada con técnicas MEAW, GEAW, Bioprogresiva y MBT.
+- Anclaje esquelético avanzado con microimplantes (MARPE, Microtornillos).
+- Diagnóstico funcional 3D y tomografía tridimensional.`,
+    teachingContent: `### Docencia, Divulgación y Proyectos Académicos
+
+- **Conferencista Nacional e Internacional**: Expositor en congresos académicos compartiendo protocolos de resolución de casos complejos, manejo del plano oclusal y biomecánica avanzada.
+- **Creador y Speaker Principal de "El Arte de Doblar"**: Programa de formación profesional en ortodoncia enfocado en biomecánica aplicada, dobleces de arcos, MEAW, GEAW y estrategias clínicas para la resolución de maloclusiones complejas.
+- **Fundador de "OrthoTube"**: Canal educativo en YouTube dedicado a la divulgación científica y enseñanza clínica de la ortodoncia para odontólogos y especialistas de Latinoamérica.`,
+    galleryPhotos: [
+      { id: 'dr-g1', url: 'img/pac-3.jpg', caption: 'Conferencia y Docencia Clínica en Ortodoncia' },
+      { id: 'dr-g2', url: 'img/pac-1.jpg', caption: 'Programa Formativo El Arte de Doblar' },
+      { id: 'dr-g3', url: 'img/pac-4.jpg', caption: 'Atención y Diagnóstico Cráneo-Mandibular' }
+    ]
+  };
 
   /**
    * Fotos de pacientes iniciales por defecto (Seed).
@@ -204,6 +247,55 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
       }
     } catch (err) {
       console.warn('Nota: Sincronización diferida de fotos de pacientes:', err);
+    }
+  }
+
+  async function syncDrAnthonyProfileToSupabase(profile) {
+    try {
+      const payload = {
+        slug: 'system-dr-anthony',
+        title: profile.name || 'Dr. Anthony De Jesús',
+        category: 'System',
+        excerpt: profile.title || 'Especialista en Ortodoncia',
+        content: JSON.stringify(profile),
+        doctor: 'System',
+        doctor_role: 'System',
+        date: new Date().toISOString().split('T')[0],
+        read_time: '1 min',
+        before_img: '',
+        after_img: '',
+        cover_img: '',
+        tags: ['system'],
+        featured: false
+      };
+
+      const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/clinical_cases?slug=eq.system-dr-anthony`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: payload.title,
+          excerpt: payload.excerpt,
+          content: payload.content
+        })
+      });
+
+      if (!patchRes.ok || patchRes.status === 404) {
+        await fetch(`${SUPABASE_URL}/rest/v1/clinical_cases`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+      }
+    } catch (err) {
+      console.warn('Nota: Sincronización diferida del perfil del Dr. Anthony:', err);
     }
   }
 
@@ -483,6 +575,56 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
       return filtered;
     },
 
+    // ── GESTIÓN DEL PERFIL PROFESIONAL DEL DR. ANTHONY DE JESÚS ──
+    getDrAnthonyProfile: function () {
+      try {
+        const raw = localStorage.getItem(DR_ANTHONY_KEY);
+        if (!raw) return DEFAULT_DR_ANTHONY_PROFILE;
+        const parsed = JSON.parse(raw);
+        return { ...DEFAULT_DR_ANTHONY_PROFILE, ...parsed };
+      } catch (e) {
+        return DEFAULT_DR_ANTHONY_PROFILE;
+      }
+    },
+
+    fetchDrAnthonyProfileAsync: async function () {
+      try {
+        const url = `${SUPABASE_URL}/rest/v1/clinical_cases?slug=eq.system-dr-anthony&select=*`;
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data) && data.length > 0 && data[0].content) {
+            const profile = JSON.parse(data[0].content);
+            const merged = { ...DEFAULT_DR_ANTHONY_PROFILE, ...profile };
+            localStorage.setItem(DR_ANTHONY_KEY, JSON.stringify(merged));
+            return merged;
+          }
+        }
+      } catch (err) {
+        console.warn('Usando perfil del Dr. Anthony en caché local:', err);
+      }
+      return this.getDrAnthonyProfile();
+    },
+
+    saveDrAnthonyProfile: async function (profileData) {
+      const current = this.getDrAnthonyProfile();
+      const updated = { ...current, ...profileData };
+
+      try {
+        localStorage.setItem(DR_ANTHONY_KEY, JSON.stringify(updated));
+      } catch (e) {}
+
+      await syncDrAnthonyProfileToSupabase(updated);
+      return updated;
+    },
+
     // ── GESTIÓN DE CASOS CLÍNICOS ──
     getCases: function () {
       try {
@@ -496,7 +638,7 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
           this.resetDefaults();
           return DEFAULT_CASES.slice();
         }
-        return parsed.filter(c => c.slug !== 'system-patient-photos' && c.category !== 'System');
+        return parsed.filter(c => c.slug !== 'system-patient-photos' && c.slug !== 'system-dr-anthony' && c.category !== 'System');
       } catch (err) {
         return DEFAULT_CASES.slice();
       }
@@ -517,7 +659,7 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
 
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
-          const cleanData = data.filter(c => c.slug !== 'system-patient-photos' && c.category !== 'System');
+          const cleanData = data.filter(c => c.slug !== 'system-patient-photos' && c.slug !== 'system-dr-anthony' && c.category !== 'System');
           const mapped = cleanData.map(mapFromSupabase);
           try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(mapped));

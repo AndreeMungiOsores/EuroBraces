@@ -685,23 +685,36 @@
     }
   });
 
-  // ── 8. Conmutación de Pestañas (Casos Clínicos vs Fotos de Pacientes) ──
+  // ── 8. Conmutación de Pestañas (Casos Clínicos vs Fotos de Pacientes vs Dr. Anthony) ──
   const tabCasesBtn = $('#tabCasesBtn');
   const tabPatientsBtn = $('#tabPatientsBtn');
+  const tabDrAnthonyBtn = $('#tabDrAnthonyBtn');
   const viewCasesPanel = $('#viewCasesPanel');
   const viewPatientsPanel = $('#viewPatientsPanel');
+  const viewDrAnthonyPanel = $('#viewDrAnthonyPanel');
 
   function switchAdminTab(targetView) {
+    [tabCasesBtn, tabPatientsBtn, tabDrAnthonyBtn].forEach(btn => {
+      if (btn) {
+        btn.classList.remove('is-active');
+        btn.setAttribute('aria-selected', 'false');
+      }
+    });
+
+    [viewCasesPanel, viewPatientsPanel, viewDrAnthonyPanel].forEach(panel => {
+      if (panel) panel.style.display = 'none';
+    });
+
     if (targetView === 'patients') {
-      if (tabCasesBtn) { tabCasesBtn.classList.remove('is-active'); tabCasesBtn.setAttribute('aria-selected', 'false'); }
       if (tabPatientsBtn) { tabPatientsBtn.classList.add('is-active'); tabPatientsBtn.setAttribute('aria-selected', 'true'); }
-      if (viewCasesPanel) viewCasesPanel.style.display = 'none';
       if (viewPatientsPanel) viewPatientsPanel.style.display = 'block';
       renderPatientsGrid();
+    } else if (targetView === 'dr-anthony') {
+      if (tabDrAnthonyBtn) { tabDrAnthonyBtn.classList.add('is-active'); tabDrAnthonyBtn.setAttribute('aria-selected', 'true'); }
+      if (viewDrAnthonyPanel) viewDrAnthonyPanel.style.display = 'block';
+      renderDrAnthonyAdminForm();
     } else {
-      if (tabPatientsBtn) { tabPatientsBtn.classList.remove('is-active'); tabPatientsBtn.setAttribute('aria-selected', 'false'); }
       if (tabCasesBtn) { tabCasesBtn.classList.add('is-active'); tabCasesBtn.setAttribute('aria-selected', 'true'); }
-      if (viewPatientsPanel) viewPatientsPanel.style.display = 'none';
       if (viewCasesPanel) viewCasesPanel.style.display = 'block';
       renderTable();
     }
@@ -709,6 +722,7 @@
 
   if (tabCasesBtn) tabCasesBtn.addEventListener('click', () => switchAdminTab('cases'));
   if (tabPatientsBtn) tabPatientsBtn.addEventListener('click', () => switchAdminTab('patients'));
+  if (tabDrAnthonyBtn) tabDrAnthonyBtn.addEventListener('click', () => switchAdminTab('dr-anthony'));
 
   // ── 9. Renderizado y Gestión de Fotos de Pacientes (Con Selección Múltiple) ──
   const patientsAdminGrid = $('#patientsAdminGrid');
@@ -1066,6 +1080,162 @@
     });
   }
 
+  // ── 10. Gestión del Perfil del Dr. Anthony De Jesús ──
+  const drAnthonyForm = $('#drAnthonyForm');
+  const drAdminName = $('#drAdminName');
+  const drAdminTitle = $('#drAdminTitle');
+  const drAdminPhilosophy = $('#drAdminPhilosophy');
+  const drAdminShortBio = $('#drAdminShortBio');
+  const drAdminAcademic = $('#drAdminAcademic');
+  const drAdminClinical = $('#drAdminClinical');
+  const drAdminTeaching = $('#drAdminTeaching');
+  const drAdminPhotoPreview = $('#drAdminPhotoPreview');
+  const drAdminPhotoInput = $('#drAdminPhotoInput');
+  const drAdminPhotoFileInput = $('#drAdminPhotoFileInput');
+  const drGalleryFileInput = $('#drGalleryFileInput');
+  const drAdminGalleryGrid = $('#drAdminGalleryGrid');
+
+  let currentDrGallery = [];
+
+  function renderDrAnthonyAdminForm() {
+    if (!window.BlogStore) return;
+    const p = window.BlogStore.getDrAnthonyProfile();
+
+    if (drAdminName) drAdminName.value = p.name || '';
+    if (drAdminTitle) drAdminTitle.value = p.title || '';
+    if (drAdminPhilosophy) drAdminPhilosophy.value = p.philosophy || '';
+    if (drAdminShortBio) drAdminShortBio.value = p.shortBio || '';
+    if (drAdminAcademic) drAdminAcademic.value = p.academicContent || '';
+    if (drAdminClinical) drAdminClinical.value = p.clinicalFocusContent || '';
+    if (drAdminTeaching) drAdminTeaching.value = p.teachingContent || '';
+
+    if (drAdminPhotoPreview) drAdminPhotoPreview.src = p.photoUrl || '../img/dr-anthony.jpg?v=3';
+    if (drAdminPhotoInput) drAdminPhotoInput.value = p.photoUrl || '';
+
+    currentDrGallery = Array.isArray(p.galleryPhotos) ? [...p.galleryPhotos] : [];
+    renderDrGalleryAdminGrid();
+  }
+
+  function renderDrGalleryAdminGrid() {
+    if (!drAdminGalleryGrid) return;
+    if (currentDrGallery.length === 0) {
+      drAdminGalleryGrid.innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;padding:24px;background:#FFF;border-radius:12px;border:1px solid var(--border);color:var(--ink-60)">
+          No hay fotografías en la galería del Doctor. Haz clic en <strong>+ Subir Fotos a la Galería</strong>.
+        </div>
+      `;
+      return;
+    }
+
+    drAdminGalleryGrid.innerHTML = currentDrGallery.map(g => {
+      const imgSrc = g.url.startsWith('data:') ? g.url : (g.url.startsWith('img/') ? '../' + g.url : g.url);
+      return `
+        <div class="patient-card-admin">
+          <img src="${imgSrc}" class="patient-card-admin__img" alt="${g.caption || 'Foto del Dr. Anthony'}" onerror="this.src='../img/pac-1.jpg'">
+          <div class="patient-card-admin__body">
+            <span class="patient-card-admin__title" title="${g.caption || 'Galería Dr. Anthony'}">${g.caption || 'Dr. Anthony De Jesús'}</span>
+            <button type="button" class="action-btn action-btn--del del-dr-photo-btn" data-id="${g.id}">Eliminar</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    $$('.del-dr-photo-btn', drAdminGalleryGrid).forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        currentDrGallery = currentDrGallery.filter(item => item.id !== id);
+        renderDrGalleryAdminGrid();
+      });
+    });
+  }
+
+  // Upload handler para foto de perfil del Dr. Anthony
+  if (drAdminPhotoFileInput) {
+    drAdminPhotoFileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      try {
+        const base64 = await optimizeImageFile(file, 1000, 0.85);
+        if (drAdminPhotoInput) drAdminPhotoInput.value = base64;
+        if (drAdminPhotoPreview) drAdminPhotoPreview.src = base64;
+        showToast('Foto de perfil cargada y optimizada.', 'success');
+      } catch (err) {
+        showToast(err.message || 'Error al procesar foto de perfil.', 'error');
+      }
+      drAdminPhotoFileInput.value = '';
+    });
+  }
+
+  // Upload handler para galería del Dr. Anthony
+  if (drGalleryFileInput) {
+    drGalleryFileInput.addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files);
+      if (!files.length) return;
+
+      showToast(`Procesando ${files.length} fotos para la galería...`, 'info');
+      let added = 0;
+
+      for (const file of files) {
+        try {
+          const base64 = await optimizeImageFile(file, 1280, 0.82);
+          currentDrGallery.push({
+            id: 'dr-g-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
+            url: base64,
+            caption: 'Dr. Anthony De Jesús'
+          });
+          added++;
+        } catch (err) {
+          console.error('Error procesando foto de galería:', err);
+        }
+      }
+
+      if (added > 0) {
+        showToast(`${added} foto(s) agregada(s) a la galería.`, 'success');
+        renderDrGalleryAdminGrid();
+      }
+      drGalleryFileInput.value = '';
+    });
+  }
+
+  // Submit handler para el perfil del Dr. Anthony
+  if (drAnthonyForm) {
+    drAnthonyForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = $('#saveDrAnthonyProfileBtn') || drAnthonyForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn ? submitBtn.textContent : 'Guardar Cambios del Perfil';
+
+      try {
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Guardando...';
+        }
+
+        const profileData = {
+          name: drAdminName ? drAdminName.value.trim() : 'Dr. Anthony De Jesús',
+          title: drAdminTitle ? drAdminTitle.value.trim() : '',
+          philosophy: drAdminPhilosophy ? drAdminPhilosophy.value.trim() : '',
+          shortBio: drAdminShortBio ? drAdminShortBio.value.trim() : '',
+          academicContent: drAdminAcademic ? drAdminAcademic.value.trim() : '',
+          clinicalFocusContent: drAdminClinical ? drAdminClinical.value.trim() : '',
+          teachingContent: drAdminTeaching ? drAdminTeaching.value.trim() : '',
+          photoUrl: drAdminPhotoInput && drAdminPhotoInput.value ? drAdminPhotoInput.value : 'img/dr-anthony.jpg?v=3',
+          galleryPhotos: currentDrGallery
+        };
+
+        await window.BlogStore.saveDrAnthonyProfile(profileData);
+        showToast('Perfil del Dr. Anthony De Jesús guardado y sincronizado.', 'success');
+      } catch (err) {
+        showToast(err.message || 'Error al guardar el perfil del Dr. Anthony.', 'error');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+        }
+      }
+    });
+  }
+
   // Revalidación asíncrona con Supabase al abrir el dashboard
   if (window.BlogStore && typeof window.BlogStore.fetchCasesAsync === 'function') {
     window.BlogStore.fetchCasesAsync().then(() => {
@@ -1081,6 +1251,14 @@
     window.BlogStore.fetchPatientPhotosAsync().then(() => {
       if (sessionStorage.getItem(SESSION_KEY) === 'true' && tabPatientsBtn && tabPatientsBtn.classList.contains('is-active')) {
         renderPatientsGrid();
+      }
+    }).catch(() => {});
+  }
+
+  if (window.BlogStore && typeof window.BlogStore.fetchDrAnthonyProfileAsync === 'function') {
+    window.BlogStore.fetchDrAnthonyProfileAsync().then(() => {
+      if (sessionStorage.getItem(SESSION_KEY) === 'true' && tabDrAnthonyBtn && tabDrAnthonyBtn.classList.contains('is-active')) {
+        renderDrAnthonyAdminForm();
       }
     }).catch(() => {});
   }
