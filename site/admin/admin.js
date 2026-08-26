@@ -1227,6 +1227,48 @@
   if (closeYtModalBtn) closeYtModalBtn.addEventListener('click', closeYouTubeModal);
   if (cancelYtModalBtn) cancelYtModalBtn.addEventListener('click', closeYouTubeModal);
 
+  // Escuchar teclas Backspace y Delete para eliminación limpia y atómica de bloques de YouTube
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Backspace' && e.key !== 'Delete') return;
+
+    const activeEl = document.activeElement;
+    if (!activeEl || !activeEl.classList || !activeEl.classList.contains('wysiwyg-editor')) return;
+
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount) return;
+
+    const range = sel.getRangeAt(0);
+    let targetBlock = null;
+
+    if (range.commonAncestorContainer.nodeType === 1 && range.commonAncestorContainer.classList.contains('yt-editor-block')) {
+      targetBlock = range.commonAncestorContainer;
+    } else if (range.commonAncestorContainer.parentElement) {
+      targetBlock = range.commonAncestorContainer.parentElement.closest('.yt-editor-block');
+    }
+
+    if (!targetBlock && range.collapsed) {
+      const node = range.startContainer;
+      const offset = range.startOffset;
+
+      if (e.key === 'Backspace' && offset === 0) {
+        let prev = node.previousSibling || (node.parentElement ? node.parentElement.previousSibling : null);
+        if (prev && prev.classList && prev.classList.contains('yt-editor-block')) {
+          targetBlock = prev;
+        }
+      } else if (e.key === 'Delete') {
+        let next = node.nextSibling || (node.parentElement ? node.parentElement.nextSibling : null);
+        if (next && next.classList && next.classList.contains('yt-editor-block')) {
+          targetBlock = next;
+        }
+      }
+    }
+
+    if (targetBlock) {
+      e.preventDefault();
+      targetBlock.remove();
+    }
+  });
+
   if (youtubeForm) {
     youtubeForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -1236,15 +1278,17 @@
 
       if (!url) return;
       const videoId = extractYouTubeId(url);
-      let htmlToInsert = '';
+      let contentHtml = '';
 
       if (mode === 'embed' && videoId) {
-        htmlToInsert = `<div class="yt-embed-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${videoId}" title="${titleText}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+        contentHtml = `<div class="yt-embed-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${videoId}" title="${titleText}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
       } else if (mode === 'card' && videoId) {
-        htmlToInsert = `<p><a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener" class="yt-card-preview"><div class="yt-card-preview__thumb"><img src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" alt="${titleText}"><div class="yt-card-preview__play"><svg viewBox="0 0 24 24" width="24" height="24" fill="#FFF"><path d="M8 5v14l11-7z"/></svg></div></div><div class="yt-card-preview__info"><span class="yt-card-preview__title">${titleText}</span><span class="yt-card-preview__sub">Ver video en YouTube &rarr;</span></div></a></p>`;
+        contentHtml = `<p><a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener" class="yt-card-preview"><div class="yt-card-preview__thumb"><img src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" alt="${titleText}"><div class="yt-card-preview__play"><svg viewBox="0 0 24 24" width="24" height="24" fill="#FFF"><path d="M8 5v14l11-7z"/></svg></div></div><div class="yt-card-preview__info"><span class="yt-card-preview__title">${titleText}</span><span class="yt-card-preview__sub">Ver video en YouTube &rarr;</span></div></a></p>`;
       } else {
-        htmlToInsert = `<p><a href="${url}" target="_blank" rel="noopener" class="yt-link-badge"><svg viewBox="0 0 24 24" width="16" height="16" fill="#FF0000" style="vertical-align:-2px"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg><span>${titleText}</span></a></p>`;
+        contentHtml = `<p><a href="${url}" target="_blank" rel="noopener" class="yt-link-badge"><svg viewBox="0 0 24 24" width="16" height="16" fill="#FF0000" style="vertical-align:-2px"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg><span>${titleText}</span></a></p>`;
       }
+
+      const htmlToInsert = `<div class="yt-editor-block" contenteditable="false"><button type="button" class="yt-block-delete-btn" title="Eliminar contenido de YouTube" onclick="this.closest('.yt-editor-block').remove()">&times;</button>${contentHtml}</div>`;
 
       if (currentTargetEditor) {
         restoreCaretPosition();

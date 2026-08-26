@@ -1026,3 +1026,42 @@ input, select, textarea { font: inherit; color: inherit; }
   font-weight: 600;
 }
 
+/* ══════════ BLOQUE ATÓMICO Y BOTÓN DE ELIMINACIÓN DE YOUTUBE ══════════ */
+.yt-editor-block {
+  position: relative;
+  display: block;
+  margin: 14px 0;
+  user-select: none;
+}
+.wysiwyg-editor .yt-editor-block:hover {
+  outline: 2px dashed rgba(220, 38, 38, 0.4);
+  border-radius: 12px;
+}
+.yt-block-delete-btn {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #DC2626;
+  color: #FFFFFF;
+  border: 2px solid #FFFFFF;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  z-index: 20;
+  transition: transform 0.2s, background 0.2s;
+}
+.yt-block-delete-btn:hover {
+  background: #991B1B;
+  transform: scale(1.15);
+}
+:not(.wysiwyg-editor) .yt-block-delete-btn {
+  display: none !important;
+}
+
