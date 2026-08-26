@@ -840,9 +840,14 @@
     });
   }
 
+  const patientDropzone = $('#patientDropzone');
+  const patientSelectLabel = $('#patientSelectLabel');
+
   function openNewPatientModal() {
     if (patientForm) patientForm.reset();
     if (patientModalTitle) patientModalTitle.textContent = 'Agregar Fotos de Paciente';
+    if (patientSelectLabel) patientSelectLabel.textContent = 'Fotografía(s) del Paciente *';
+    if (patientDropzone) patientDropzone.style.display = 'block';
     if (patientPhotoIdInput) patientPhotoIdInput.value = '';
     if (patientImgUrlInput) patientImgUrlInput.value = '';
     if (patientPreview) { patientPreview.src = ''; patientPreview.style.display = 'none'; }
@@ -858,6 +863,8 @@
 
     if (patientForm) patientForm.reset();
     if (patientModalTitle) patientModalTitle.textContent = 'Editar Foto de Paciente';
+    if (patientSelectLabel) patientSelectLabel.textContent = 'Fotografía del Paciente';
+    if (patientDropzone) patientDropzone.style.display = 'none';
     if (patientPhotoIdInput) patientPhotoIdInput.value = item.id;
     if (patientImgUrlInput) patientImgUrlInput.value = item.url;
     if (patientCaptionInput) patientCaptionInput.value = item.caption || '';
@@ -867,6 +874,7 @@
       patientPreview.style.display = 'block';
     }
     if (patientModalBackdrop) patientModalBackdrop.classList.add('is-open');
+    if (patientCaptionInput) patientCaptionInput.focus();
   }
 
   function closePatientModal() {
