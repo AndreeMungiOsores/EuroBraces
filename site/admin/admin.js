@@ -673,13 +673,15 @@
     });
   }
 
-  // Cerrar modales con Escape
+  // Cerrar modales con Escape y cancelar modo selección
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       if (formModalBackdrop && formModalBackdrop.classList.contains('is-open')) closeFormModal();
       if (deleteModalBackdrop && deleteModalBackdrop.classList.contains('is-open')) closeDeleteModal();
       if (patientModalBackdrop && patientModalBackdrop.classList.contains('is-open')) closePatientModal();
       if (deletePatientModalBackdrop && deletePatientModalBackdrop.classList.contains('is-open')) closeDeletePatientModal();
+      if (deleteBatchPatientModalBackdrop && deleteBatchPatientModalBackdrop.classList.contains('is-open')) closeDeleteBatchPatientModal();
+      if (isMultiSelectMode) disableMultiSelectMode();
     }
   });
 
@@ -708,7 +710,7 @@
   if (tabCasesBtn) tabCasesBtn.addEventListener('click', () => switchAdminTab('cases'));
   if (tabPatientsBtn) tabPatientsBtn.addEventListener('click', () => switchAdminTab('patients'));
 
-  // ── 9. Renderizado y Gestión de Fotos de Pacientes ──
+  // ── 9. Renderizado y Gestión de Fotos de Pacientes (Con Selección Múltiple) ──
   const patientsAdminGrid = $('#patientsAdminGrid');
   const newPatientPhotoBtn = $('#newPatientPhotoBtn');
   const patientModalBackdrop = $('#patientModalBackdrop');
@@ -722,16 +724,73 @@
   const patientCaptionInput = $('#patientCaptionInput');
   const patientModalTitle = $('#patientModalTitle');
 
+  const enableMultiSelectBtn = $('#enableMultiSelectBtn');
+  const cancelMultiSelectBtn = $('#cancelMultiSelectBtn');
+  const deleteSelectedPatientsBtn = $('#deleteSelectedPatientsBtn');
+  const patientNormalActions = $('#patientNormalActions');
+  const patientMultiSelectActions = $('#patientMultiSelectActions');
+  const selectedCountBadge = $('#selectedCountBadge');
+
   const deletePatientModalBackdrop = $('#deletePatientModalBackdrop');
   const cancelDelPatientBtn = $('#cancelDelPatientBtn');
   const confirmDelPatientBtn = $('#confirmDelPatientBtn');
   let patientToDeleteId = null;
+
+  const deleteBatchPatientModalBackdrop = $('#deleteBatchPatientModalBackdrop');
+  const cancelDelBatchPatientBtn = $('#cancelDelBatchPatientBtn');
+  const confirmDelBatchPatientBtn = $('#confirmDelBatchPatientBtn');
+  const delBatchPatientModalText = $('#delBatchPatientModalText');
+
+  let isMultiSelectMode = false;
+  let selectedPatientIds = new Set();
+
+  function enableMultiSelectMode() {
+    isMultiSelectMode = true;
+    selectedPatientIds.clear();
+    if (patientNormalActions) patientNormalActions.style.display = 'none';
+    if (patientMultiSelectActions) patientMultiSelectActions.style.display = 'flex';
+    updateMultiSelectUI();
+    renderPatientsGrid();
+  }
+
+  function disableMultiSelectMode() {
+    isMultiSelectMode = false;
+    selectedPatientIds.clear();
+    if (patientMultiSelectActions) patientMultiSelectActions.style.display = 'none';
+    if (patientNormalActions) patientNormalActions.style.display = 'flex';
+    renderPatientsGrid();
+  }
+
+  function togglePatientSelection(id) {
+    if (selectedPatientIds.has(id)) {
+      selectedPatientIds.delete(id);
+    } else {
+      selectedPatientIds.add(id);
+    }
+    updateMultiSelectUI();
+    renderPatientsGrid();
+  }
+
+  function updateMultiSelectUI() {
+    const count = selectedPatientIds.size;
+    if (selectedCountBadge) {
+      selectedCountBadge.textContent = `${count} seleccionada${count === 1 ? '' : 's'}`;
+    }
+    if (deleteSelectedPatientsBtn) {
+      deleteSelectedPatientsBtn.disabled = count === 0;
+      deleteSelectedPatientsBtn.textContent = `Eliminar Seleccionadas (${count})`;
+    }
+  }
+
+  if (enableMultiSelectBtn) enableMultiSelectBtn.addEventListener('click', enableMultiSelectMode);
+  if (cancelMultiSelectBtn) cancelMultiSelectBtn.addEventListener('click', disableMultiSelectMode);
 
   function renderPatientsGrid() {
     if (!patientsAdminGrid || !window.BlogStore) return;
     const photos = window.BlogStore.getPatientPhotos();
 
     if (photos.length === 0) {
+      if (isMultiSelectMode) disableMultiSelectMode();
       patientsAdminGrid.innerHTML = `
         <div style="grid-column:1/-1;text-align:center;padding:48px 20px;background:#FFF;border-radius:12px;border:1px solid var(--border);color:var(--ink-60)">
           No hay fotografías de pacientes aún. Haz clic en <strong>+ Subir Foto de Paciente</strong> para agregar una.
@@ -741,32 +800,55 @@
     }
 
     patientsAdminGrid.innerHTML = photos.map(p => {
+      const isSelected = selectedPatientIds.has(p.id);
       const imgSrc = p.url.startsWith('data:') ? p.url : (p.url.startsWith('img/') ? '../' + p.url : p.url);
+
+      const checkboxHtml = isMultiSelectMode ? `
+        <div class="patient-card-admin__checkbox-wrap" aria-hidden="true">
+          ${isSelected ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>' : ''}
+        </div>
+      ` : '';
+
+      const actionsHtml = isMultiSelectMode ? '' : `
+        <div class="action-btns">
+          <button type="button" class="action-btn action-btn--edit edit-patient-btn" data-id="${p.id}" title="Editar leyenda o reemplazar foto">Editar</button>
+          <button type="button" class="action-btn action-btn--del del-patient-btn" data-id="${p.id}" title="Eliminar foto">Eliminar</button>
+        </div>
+      `;
+
       return `
-        <div class="patient-card-admin">
+        <div class="patient-card-admin ${isMultiSelectMode ? 'is-selectable' : ''} ${isSelected ? 'is-selected' : ''}" data-id="${p.id}">
+          ${checkboxHtml}
           <img src="${imgSrc}" class="patient-card-admin__img" alt="${p.caption || 'Paciente'}" onerror="this.src='../img/pac-1.jpg'">
           <div class="patient-card-admin__body">
             <span class="patient-card-admin__title" title="${p.caption || 'Paciente EuroBraces'}">${p.caption || 'Paciente EuroBraces'}</span>
-            <div class="action-btns">
-              <button type="button" class="action-btn action-btn--edit edit-patient-btn" data-id="${p.id}" title="Editar leyenda o reemplazar foto">Editar</button>
-              <button type="button" class="action-btn action-btn--del del-patient-btn" data-id="${p.id}" title="Eliminar foto">Eliminar</button>
-            </div>
+            ${actionsHtml}
           </div>
         </div>
       `;
     }).join('');
 
-    $$('.edit-patient-btn', patientsAdminGrid).forEach(btn => {
-      btn.addEventListener('click', () => {
-        openEditPatientModal(btn.dataset.id);
+    if (isMultiSelectMode) {
+      $$('.patient-card-admin', patientsAdminGrid).forEach(card => {
+        card.addEventListener('click', () => {
+          togglePatientSelection(card.dataset.id);
+        });
       });
-    });
+    } else {
+      $$('.edit-patient-btn', patientsAdminGrid).forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openEditPatientModal(btn.dataset.id);
+        });
+      });
 
-    $$('.del-patient-btn', patientsAdminGrid).forEach(btn => {
-      btn.addEventListener('click', () => {
-        openDeletePatientModal(btn.dataset.id);
+      $$('.del-patient-btn', patientsAdminGrid).forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openDeletePatientModal(btn.dataset.id);
+        });
       });
-    });
+    }
   }
 
   // Upload handler para fotos de paciente (soporta 1 foto con edición o múltiples fotos automáticas)
@@ -941,6 +1023,46 @@
       showToast('Foto de paciente eliminada correctamente.', 'success');
       closeDeletePatientModal();
       renderPatientsGrid();
+    });
+  }
+
+  // ── Modal y Gestión de Eliminación en Lote (Selección Múltiple) ──
+  function openDeleteBatchPatientModal() {
+    if (selectedPatientIds.size === 0) return;
+    const count = selectedPatientIds.size;
+    if (delBatchPatientModalText) {
+      delBatchPatientModalText.innerHTML = `¿Seguro que deseas eliminar las <strong>${count}</strong> foto(s) de paciente(s) seleccionada(s)?<br>Esta acción no se puede deshacer.`;
+    }
+    if (deleteBatchPatientModalBackdrop) deleteBatchPatientModalBackdrop.classList.add('is-open');
+  }
+
+  function closeDeleteBatchPatientModal() {
+    if (deleteBatchPatientModalBackdrop) deleteBatchPatientModalBackdrop.classList.remove('is-open');
+  }
+
+  if (deleteSelectedPatientsBtn) deleteSelectedPatientsBtn.addEventListener('click', openDeleteBatchPatientModal);
+  if (cancelDelBatchPatientBtn) cancelDelBatchPatientBtn.addEventListener('click', closeDeleteBatchPatientModal);
+
+  if (confirmDelBatchPatientBtn) {
+    confirmDelBatchPatientBtn.addEventListener('click', async () => {
+      if (selectedPatientIds.size === 0 || !window.BlogStore) return;
+      const idsArray = Array.from(selectedPatientIds);
+      const count = idsArray.length;
+
+      confirmDelBatchPatientBtn.disabled = true;
+      confirmDelBatchPatientBtn.textContent = 'Eliminando...';
+
+      try {
+        await window.BlogStore.deleteMultiplePatientPhotos(idsArray);
+        showToast(`${count} foto(s) de paciente eliminada(s) con éxito.`, 'success');
+        closeDeleteBatchPatientModal();
+        disableMultiSelectMode();
+      } catch (err) {
+        showToast(err.message || 'Error al eliminar fotos seleccionadas.', 'error');
+      } finally {
+        confirmDelBatchPatientBtn.disabled = false;
+        confirmDelBatchPatientBtn.textContent = 'Sí, eliminar todas';
+      }
     });
   }
 

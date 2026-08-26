@@ -465,6 +465,24 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
       return filtered;
     },
 
+    deleteMultiplePatientPhotos: async function (ids) {
+      if (!Array.isArray(ids) || ids.length === 0) {
+        return this.getPatientPhotos();
+      }
+      const idsSet = new Set(ids);
+      const photos = this.getPatientPhotos();
+      const filtered = photos.filter(p => !idsSet.has(p.id));
+
+      try {
+        localStorage.setItem(PATIENT_PHOTOS_KEY, JSON.stringify(filtered));
+      } catch (e) {}
+
+      // Sincronización en lote con Supabase
+      await syncPatientPhotosToSupabase(filtered);
+
+      return filtered;
+    },
+
     // ── GESTIÓN DE CASOS CLÍNICOS ──
     getCases: function () {
       try {

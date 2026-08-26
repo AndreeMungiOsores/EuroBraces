@@ -117,10 +117,28 @@
           <div style="font-size:0.82rem;color:var(--ink-60)">Gestiona las fotografías que se muestran en el carrusel de la página principal.</div>
         </div>
 
-        <div class="admin-toolbar__right">
-          <button class="btn-primary" id="newPatientPhotoBtn">
-            + Subir Foto de Paciente
-          </button>
+        <div class="admin-toolbar__right" style="display:flex;gap:10px;align-items:center">
+          <!-- Modo Normal -->
+          <div id="patientNormalActions" style="display:flex;gap:10px">
+            <button type="button" class="btn-secondary" id="enableMultiSelectBtn">
+              <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" style="vertical-align:-2px;margin-right:4px"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+              Seleccionar Fotos
+            </button>
+            <button type="button" class="btn-primary" id="newPatientPhotoBtn">
+              + Subir Foto de Paciente
+            </button>
+          </div>
+
+          <!-- Modo Selección Múltiple (Oculto por defecto) -->
+          <div id="patientMultiSelectActions" style="display:none;align-items:center;gap:12px">
+            <span id="selectedCountBadge" style="font-size:0.86rem;font-weight:600;color:var(--navy-900)">0 seleccionadas</span>
+            <button type="button" class="btn-danger" id="deleteSelectedPatientsBtn" disabled>
+              Eliminar Seleccionadas (0)
+            </button>
+            <button type="button" class="btn-secondary" id="cancelMultiSelectBtn">
+              Cancelar Selección
+            </button>
+          </div>
         </div>
       </div>
 
@@ -340,6 +358,22 @@
     <div class="admin-modal__foot" style="justify-content:center">
       <button type="button" class="btn-secondary" id="cancelDelPatientBtn">Cancelar</button>
       <button type="button" class="btn-danger" id="confirmDelPatientBtn">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ MODAL CONFIRMACIÓN ELIMINACIÓN MÚLTIPLE ══════════ -->
+<div class="modal-backdrop" id="deleteBatchPatientModalBackdrop" role="alertdialog" aria-modal="true" aria-labelledby="delBatchPatientModalTitle">
+  <div class="admin-modal" style="width:440px;text-align:center">
+    <div class="admin-modal__head" style="background:#B91C1C">
+      <h3 id="delBatchPatientModalTitle" style="color:#FFF">¿Eliminar Fotos Seleccionadas?</h3>
+    </div>
+    <div class="admin-modal__body">
+      <p id="delBatchPatientModalText">Esta acción removerá las fotos seleccionadas del carrusel de la página principal. ¿Deseas continuar?</p>
+    </div>
+    <div class="admin-modal__foot" style="justify-content:center">
+      <button type="button" class="btn-secondary" id="cancelDelBatchPatientBtn">Cancelar</button>
+      <button type="button" class="btn-danger" id="confirmDelBatchPatientBtn">Sí, eliminar todas</button>
     </div>
   </div>
 </div>
