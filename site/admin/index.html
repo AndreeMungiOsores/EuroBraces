@@ -69,6 +69,10 @@
         <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" style="vertical-align:-2px;margin-right:6px"><path fill="currentColor" d="M12 2a5 5 0 100 10 5 5 0 000-10zm-7 18c0-3.87 3.13-7 7-7s7 3.13 7 7H5z"/></svg>
         Dr. Anthony
       </button>
+      <button type="button" class="admin-nav__tab" id="tabReviewsBtn" role="tab" aria-selected="false" data-view="reviews">
+        <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" style="vertical-align:-2px;margin-right:6px"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+        Reseñas
+      </button>
     </div>
 
     <div class="admin-nav__actions">
@@ -306,6 +310,38 @@
         </div>
       </form>
     </div>
+
+    <!-- Vista 4: Opiniones de Google -->
+    <div class="admin-view-panel" id="viewReviewsPanel" style="display:none">
+      <div class="admin-toolbar">
+        <div class="admin-toolbar__left">
+          <h2 style="margin:0 0 4px;font-size:1.15rem;font-weight:600;color:var(--navy-900)">Opiniones ("Lo que dicen quienes ya confiaron en nosotros")</h2>
+          <div style="font-size:0.82rem;color:var(--ink-60)">Reseñas reales copiadas de la ficha de Google. Cada una enlaza a su original.</div>
+        </div>
+
+        <div class="admin-toolbar__right">
+          <button class="btn-primary" id="newReviewBtn">
+            + Agregar Opinión
+          </button>
+        </div>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Autor</th>
+              <th>Opinión</th>
+              <th>Antigüedad</th>
+              <th style="text-align:right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="reviewsTableBody">
+            <!-- Renderizado dinámico vía JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
   </main>
 </div>
 
@@ -532,6 +568,69 @@
     <div class="admin-modal__foot" style="justify-content:center">
       <button type="button" class="btn-secondary" id="cancelDelPatientBtn">Cancelar</button>
       <button type="button" class="btn-danger" id="confirmDelPatientBtn">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ MODAL AGREGAR / EDITAR OPINIÓN ══════════ -->
+<div class="modal-backdrop" id="reviewModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle">
+  <div class="admin-modal" style="max-width:560px">
+    <div class="admin-modal__head">
+      <h3 id="reviewModalTitle">Agregar Opinión</h3>
+      <button class="admin-modal__close" id="closeReviewModalBtn" aria-label="Cerrar">&times;</button>
+    </div>
+
+    <form id="reviewForm">
+      <input type="hidden" id="reviewId">
+
+      <div class="admin-modal__body">
+        <div class="form-group">
+          <label for="reviewAuthorInput">Autor de la opinión *</label>
+          <input type="text" id="reviewAuthorInput" class="form-ctrl" placeholder="Ej: Nicole" required>
+        </div>
+
+        <div class="form-group">
+          <label for="reviewTextInput">Texto de la opinión *</label>
+          <textarea id="reviewTextInput" class="form-ctrl" rows="4" placeholder="Copia el texto tal cual aparece en Google" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="reviewLinkInput">Enlace a la reseña original en Google *</label>
+          <input type="url" id="reviewLinkInput" class="form-ctrl" placeholder="https://share.google/..." required>
+          <div style="font-size:0.76rem;color:var(--ink-60);margin-top:4px">En la reseña, dentro de Google Maps: menú ⋮ → Compartir reseña.</div>
+        </div>
+
+        <div class="form-group">
+          <label for="reviewDateInput">Antigüedad (como la muestra Google) *</label>
+          <input type="text" id="reviewDateInput" class="form-ctrl" placeholder="Ej: hace 2 meses" required>
+        </div>
+
+        <div class="form-group" style="display:flex;align-items:center;gap:8px">
+          <input type="checkbox" id="reviewTranslatedInput" style="width:auto">
+          <label for="reviewTranslatedInput" style="margin:0">Es una reseña traducida por Google</label>
+        </div>
+      </div>
+
+      <div class="admin-modal__foot">
+        <button type="button" class="btn-secondary" id="cancelReviewBtn">Cancelar</button>
+        <button type="submit" class="btn-primary" id="saveReviewBtn">Guardar Opinión</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════ MODAL CONFIRMACIÓN ELIMINAR OPINIÓN ══════════ -->
+<div class="modal-backdrop" id="deleteReviewModalBackdrop" role="alertdialog" aria-modal="true" aria-labelledby="delReviewModalTitle">
+  <div class="admin-modal" style="width:420px;text-align:center">
+    <div class="admin-modal__head" style="background:#B91C1C">
+      <h3 id="delReviewModalTitle" style="color:#FFF">¿Eliminar Opinión?</h3>
+    </div>
+    <div class="admin-modal__body">
+      <p id="delReviewModalText">Esta acción quitará la opinión de la página principal. ¿Deseas continuar?</p>
+    </div>
+    <div class="admin-modal__foot" style="justify-content:center">
+      <button type="button" class="btn-secondary" id="cancelDelReviewBtn">Cancelar</button>
+      <button type="button" class="btn-danger" id="confirmDelReviewBtn">Sí, eliminar</button>
     </div>
   </div>
 </div>

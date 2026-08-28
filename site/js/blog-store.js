@@ -13,6 +13,7 @@
   const STORAGE_KEY = 'eurobraces_clinical_cases';
   const CATEGORIES_KEY = 'eurobraces_categories';
   const PATIENT_PHOTOS_KEY = 'eurobraces_patient_photos';
+  const GOOGLE_REVIEWS_KEY = 'eurobraces_google_reviews';
   const DR_ANTHONY_KEY = 'eurobraces_dr_anthony_profile';
 
   /**
@@ -43,6 +44,114 @@
     { id: 'pac-4', url: 'img/pac-4.jpg', caption: 'Paciente de EuroBraces Center' },
     { id: 'pac-5', url: 'img/pac-5.jpg', caption: 'Paciente en consulta EuroBraces' },
     { id: 'pac-2', url: 'img/pac-2.jpg', caption: 'Paciente de EuroBraces Center' }
+  ];
+
+  /**
+   * Opiniones reales de Google (Seed). Cada una enlaza a su reseña original en
+   * Google Maps mediante el enlace corto share.google que Google genera al compartir.
+   * No se marca con datos estructurados Review/AggregateRating: Google declaró
+   * inelegibles para el rich result de estrellas las reseñas que un negocio
+   * publica sobre sí mismo en su propio sitio, sin importar que sean reales.
+   * Las estrellas ya se muestran de forma legítima en la ficha de Google.
+   */
+  const DEFAULT_GOOGLE_REVIEWS = [
+    {
+      id: 'rev-nicole',
+      author: 'Nicole',
+      dateLabel: 'hace 1 mes',
+      rating: 5,
+      text: 'Llevo poco más de un año de tratamiento con el doctor Anthony y ya veo bastante avance a pesar de lo complejo de mi caso. La Dra. Belén también es muy atenta y siempre está dispuesta a resolver cualquier duda que uno tenga. Muy recomendado 😊!',
+      link: 'https://share.google/ssI9ONH6ydCvuKSHY'
+    },
+    {
+      id: 'rev-sonia',
+      author: 'Sonia Carrión',
+      dateLabel: 'hace 1 mes',
+      rating: 5,
+      text: 'En verdad muy agradecida, el tratamiento que estoy recibiendo es el método MEAW. Es un gran profesional que está a la vanguardia de los avances de la odontología. Tenemos la suerte de tener a un especialista en ortodoncia de nivel internacional.',
+      link: 'https://share.google/obrSynRaWENhN2HiB'
+    },
+    {
+      id: 'rev-stacey',
+      author: 'Stacey Rogers',
+      dateLabel: 'hace 1 año',
+      rating: 5,
+      translated: true,
+      text: 'Estábamos de viaje por Lima y necesitábamos extraerle las muelas del juicio a mi hijo, ya que tenía brackets. El Dr. Anthony nos ofreció desde el principio un precio excelente y fue muy atento y minucioso. Después de ver las radiografías nos dijo que no quería extraerle las muelas del juicio a mi hijo, ya que no estaban listas, y nos recomendó una nueva tecnología que ayudó enormemente con la sobremordida de mi hijo. Es muy minucioso, calculador y considerado en su enfoque, y muy amable. Recomiendo ampliamente su servicio.',
+      link: 'https://share.google/yIoIWQtunQdknKBHL'
+    },
+    {
+      id: 'rev-jair',
+      author: 'Jair Escalante',
+      dateLabel: 'hace 1 año',
+      rating: 5,
+      text: 'El Dr. Anthony es un excelente dentista. Explica todo de manera súper clara, lo que hace que uno se sienta tranquilo y bien atendido. Se nota que realmente se preocupa por sus pacientes y siempre está dispuesto a ayudar. Lo recomiendo al 100%!!',
+      link: 'https://share.google/4ObxY7ikl6aoWHn99'
+    },
+    {
+      id: 'rev-astrit',
+      author: 'Astrit De Jesús',
+      dateLabel: 'hace 2 años',
+      rating: 5,
+      text: 'Doctor Anthony De Jesús, excelente odontólogo, me he atendido con él durante años y su trabajo es 100% profesional, además cuenta con novedosas técnicas en cuanto a la ortodoncia. Lo recomendaría a todos mis conocidos. Si quieres conocer a un doctor que se tome el tiempo y la dedicación con cada uno de sus pacientes, el Dr. Anthony es el indicado.',
+      link: 'https://share.google/Py5hJVeIJYYGHwmvs'
+    },
+    {
+      id: 'rev-mely',
+      author: 'Mely HC',
+      dateLabel: 'hace 2 años',
+      rating: 5,
+      text: 'El Dr. Anthony es muy buen profesional, su trato es amable y agradable. Llevo 1 año atendiéndome con él y he visto cambios gigantescos con mi sonrisa, lo recomiendo al 100%.',
+      link: 'https://share.google/BzREL1dCmtZuXp8tR'
+    },
+    {
+      id: 'rev-eduardo',
+      author: 'Eduardo Chávez Jiménez',
+      dateLabel: 'hace 2 años',
+      rating: 5,
+      text: 'Doctor Anthony, muy buen profesional y sobre todo excelente persona. Durante el periodo de tu tratamiento no te sentirás solo, ya que el doctor siempre está para responder tus dudas. Su atención es de calidad, recomendadísimo.',
+      link: 'https://share.google/PLZJWiCFH6Vhjewfv'
+    },
+    {
+      id: 'rev-judi',
+      author: 'Judi Arévalo',
+      dateLabel: 'hace 2 años',
+      rating: 5,
+      text: 'Excelente trabajo! Mi sonrisa se ve mucho mejor que antes y conozco al doctor desde hace más de dos años. Cada vez que voy puedo hacerle todas las preguntas que tengo y las explicaciones son claras.',
+      link: 'https://share.google/u6cn4yINUh34QaKTd'
+    },
+    {
+      id: 'rev-yelita',
+      author: 'Yelita García',
+      dateLabel: 'hace 2 años',
+      rating: 5,
+      text: '5 estrellas para el mejor odontólogo! Un profesional excelente. Recomendado al 100%, un doctor muy profesional, empático y amigable. Lo mejor, de lo mejor!!!',
+      link: 'https://share.google/RAOjOK35MXD8c0sMg'
+    },
+    {
+      id: 'rev-andrea',
+      author: 'Andrea Montalván',
+      dateLabel: 'hace 1 año',
+      rating: 5,
+      text: 'Excelente Dr! Encantada con los resultados que he obtenido en poco tiempo en cuanto a ortodoncia 😍.',
+      link: 'https://share.google/ZPGcF2Smjly3BHNwc'
+    },
+    {
+      id: 'rev-san',
+      author: 'San Sadanori',
+      dateLabel: 'hace 2 años',
+      rating: 5,
+      text: 'Súper, archi-recomiendo al Dr. Anthony. Desde la primera consulta te das cuenta, en la forma de explicar las cosas, que realmente le apasiona su trabajo. Es un excelente profesional, amable y siempre atento a resolver dudas y dar recomendaciones. Gracias, doc!',
+      link: 'https://share.google/Jq7Oan9SFkGWy51op'
+    },
+    {
+      id: 'rev-antonio',
+      author: 'Antonio García',
+      dateLabel: 'hace 1 mes',
+      rating: 5,
+      text: 'Atención estupenda, profesional y cordial.',
+      link: 'https://share.google/9Iy14dgHIpO4Kp4El'
+    }
   ];
 
   /**
@@ -180,6 +289,60 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
     const words = text.trim().split(/\s+/).filter(Boolean).length;
     const minutes = Math.ceil(words / 180);
     return `${Math.max(1, minutes)} min`;
+  }
+
+  async function syncGoogleReviewsToSupabase(reviews) {
+    try {
+      const payload = {
+        slug: 'system-google-reviews',
+        title: 'System Google Reviews Data',
+        category: 'System',
+        excerpt: 'Persistencia de opiniones de Google',
+        content: JSON.stringify(reviews),
+        doctor: 'System',
+        doctor_role: 'System',
+        date: new Date().toISOString().split('T')[0],
+        read_time: '1 min',
+        before_img: '',
+        after_img: '',
+        cover_img: '',
+        tags: ['system'],
+        featured: false
+      };
+
+      const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/clinical_cases?slug=eq.system-google-reviews`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify({ content: JSON.stringify(reviews) })
+      });
+
+      let updatedRows = [];
+      if (patchRes.ok) {
+        try {
+          updatedRows = await patchRes.json();
+        } catch (e) {}
+      }
+
+      if (!Array.isArray(updatedRows) || updatedRows.length === 0) {
+        await fetch(`${SUPABASE_URL}/rest/v1/clinical_cases`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates,return=representation'
+          },
+          body: JSON.stringify(payload)
+        });
+      }
+    } catch (err) {
+      console.warn('Nota: Sincronización diferida de opiniones de Google:', err);
+    }
   }
 
   async function syncPatientPhotosToSupabase(photos) {
@@ -801,6 +964,101 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
 
       // Sincronización en lote con Supabase
       await syncPatientPhotosToSupabase(filtered);
+
+      return filtered;
+    },
+
+    // ── GESTIÓN DE OPINIONES DE GOOGLE ("Opiniones") ──
+    getGoogleReviews: function () {
+      try {
+        const raw = localStorage.getItem(GOOGLE_REVIEWS_KEY);
+        if (!raw) {
+          localStorage.setItem(GOOGLE_REVIEWS_KEY, JSON.stringify(DEFAULT_GOOGLE_REVIEWS));
+          return DEFAULT_GOOGLE_REVIEWS.slice();
+        }
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed) || parsed.length === 0) {
+          localStorage.setItem(GOOGLE_REVIEWS_KEY, JSON.stringify(DEFAULT_GOOGLE_REVIEWS));
+          return DEFAULT_GOOGLE_REVIEWS.slice();
+        }
+        return parsed;
+      } catch (err) {
+        return DEFAULT_GOOGLE_REVIEWS.slice();
+      }
+    },
+
+    fetchGoogleReviewsAsync: async function () {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/clinical_cases?slug=eq.system-google-reviews`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+          }
+        });
+
+        if (!res.ok) {
+          return this.getGoogleReviews();
+        }
+
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0 && data[0].content) {
+          try {
+            const parsed = JSON.parse(data[0].content);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              localStorage.setItem(GOOGLE_REVIEWS_KEY, JSON.stringify(parsed));
+              return parsed;
+            }
+          } catch (e) {}
+        }
+        return this.getGoogleReviews();
+      } catch (err) {
+        return this.getGoogleReviews();
+      }
+    },
+
+    saveGoogleReview: async function (reviewData) {
+      if (!reviewData || !reviewData.author || !reviewData.text) {
+        throw new Error('El autor y el texto de la opinión son obligatorios.');
+      }
+
+      const reviews = this.getGoogleReviews();
+      const targetId = reviewData.id || 'rev-' + Date.now().toString(36) + '-' + Math.random().toString(36).substr(2, 4);
+
+      const newItem = {
+        id: targetId,
+        author: reviewData.author.trim(),
+        dateLabel: (reviewData.dateLabel || '').trim() || 'Reciente',
+        rating: 5,
+        text: reviewData.text.trim(),
+        link: (reviewData.link || '').trim(),
+        translated: !!reviewData.translated
+      };
+
+      const existingIndex = reviews.findIndex(r => r.id === targetId);
+      if (existingIndex >= 0) {
+        reviews[existingIndex] = newItem;
+      } else {
+        reviews.unshift(newItem);
+      }
+
+      try {
+        localStorage.setItem(GOOGLE_REVIEWS_KEY, JSON.stringify(reviews));
+      } catch (e) {}
+
+      await syncGoogleReviewsToSupabase(reviews);
+
+      return newItem;
+    },
+
+    deleteGoogleReview: async function (id) {
+      const reviews = this.getGoogleReviews();
+      const filtered = reviews.filter(r => r.id !== id);
+
+      try {
+        localStorage.setItem(GOOGLE_REVIEWS_KEY, JSON.stringify(filtered));
+      } catch (e) {}
+
+      await syncGoogleReviewsToSupabase(filtered);
 
       return filtered;
     },

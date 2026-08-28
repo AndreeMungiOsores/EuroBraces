@@ -51,7 +51,7 @@
 <link rel="preload" as="image" href="img/hero-portada.webp" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=7">
+<link rel="stylesheet" href="css/style.css?v=8">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap"></noscript>
 <script>document.documentElement.classList.add('js');</script>
@@ -501,6 +501,191 @@
   </div>
 </section>
 
+<!-- ══════════ OPINIONES (Google) ══════════
+     Sin datos estructurados Review/AggregateRating a propósito: Google declaró
+     inelegibles para el rich result de estrellas las reseñas que un negocio
+     publica sobre sí mismo en su propio sitio (aunque sean reales y verificables).
+     Las estrellas ya se muestran de forma legítima en la ficha de Google Business
+     Profile; esta sección es para conversión en la web, no para posicionamiento. -->
+<section class="revs" id="opiniones">
+  <div class="wrap">
+    <div class="revs__header-row reveal">
+      <div>
+        <p class="eyebrow">Opiniones</p>
+        <h2 class="h2">Lo que dicen <i>quienes ya confiaron en nosotros.</i></h2>
+        <div class="revs__rating">
+          <span class="revs__stars" aria-hidden="true">★★★★★</span>
+          <strong>5.0</strong>
+          <span>· 23 opiniones en Google</span>
+        </div>
+      </div>
+      <div class="revs__controls" aria-label="Navegación de opiniones">
+        <button class="pacs__nav-btn pacs__nav-btn--prev" data-target="rail-resenas" aria-label="Ver opinión anterior">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        <button class="pacs__nav-btn pacs__nav-btn--next" data-target="rail-resenas" aria-label="Ver opinión siguiente">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="rail-container">
+    <div class="rail rail--reviews" id="rail-resenas" tabindex="0" role="region" aria-label="Opiniones de pacientes en Google">
+      <!-- Contenido base rastreable (mejora progresiva): JavaScript lo reemplaza con
+           las opiniones vigentes de BlogStore/Supabase; si el script o la API fallan,
+           Googlebot y los usuarios sin JS siguen viendo estas 12 opiniones reales. -->
+      <a class="review-card reveal" href="https://share.google/ssI9ONH6ydCvuKSHY" target="_blank" rel="noopener" aria-label="Leer la opinión original de Nicole en Google">
+        <div class="review-card__head">
+          <span class="review-card__stars" aria-hidden="true">★★★★★</span>
+          <svg class="review-card__g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47a5.54 5.54 0 0 1-2.4 3.63v3.02h3.88c2.27-2.09 3.58-5.17 3.58-8.89z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.02c-1.08.72-2.45 1.15-4.05 1.15-3.11 0-5.75-2.1-6.69-4.92H1.32v3.09A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.31 14.3A7.2 7.2 0 0 1 4.93 12c0-.8.14-1.57.38-2.3V6.61H1.32A12 12 0 0 0 0 12c0 1.94.46 3.77 1.32 5.39l3.99-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.32 6.61l3.99 3.09C6.25 6.86 8.89 4.75 12 4.75z"/></svg>
+        </div>
+        <blockquote class="review-card__text">Llevo poco más de un año de tratamiento con el doctor Anthony y ya veo bastante avance a pesar de lo complejo de mi caso. La Dra. Belén también es muy atenta y siempre está dispuesta a resolver cualquier duda que uno tenga. Muy recomendado 😊!</blockquote>
+        <footer class="review-card__foot">
+          <span class="review-card__author">Nicole</span>
+          <span class="review-card__date">hace 1 mes</span>
+        </footer>
+      </a>
+
+      <a class="review-card reveal" href="https://share.google/obrSynRaWENhN2HiB" target="_blank" rel="noopener" aria-label="Leer la opinión original de Sonia Carrión en Google">
+        <div class="review-card__head">
+          <span class="review-card__stars" aria-hidden="true">★★★★★</span>
+          <svg class="review-card__g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47a5.54 5.54 0 0 1-2.4 3.63v3.02h3.88c2.27-2.09 3.58-5.17 3.58-8.89z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.02c-1.08.72-2.45 1.15-4.05 1.15-3.11 0-5.75-2.1-6.69-4.92H1.32v3.09A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.31 14.3A7.2 7.2 0 0 1 4.93 12c0-.8.14-1.57.38-2.3V6.61H1.32A12 12 0 0 0 0 12c0 1.94.46 3.77 1.32 5.39l3.99-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.32 6.61l3.99 3.09C6.25 6.86 8.89 4.75 12 4.75z"/></svg>
+        </div>
+        <blockquote class="review-card__text">En verdad muy agradecida, el tratamiento que estoy recibiendo es el método MEAW. Es un gran profesional que está a la vanguardia de los avances de la odontología. Tenemos la suerte de tener a un especialista en ortodoncia de nivel internacional.</blockquote>
+        <footer class="review-card__foot">
+          <span class="review-card__author">Sonia Carrión</span>
+          <span class="review-card__date">hace 1 mes</span>
+        </footer>
+      </a>
+
+      <a class="review-card reveal" href="https://share.google/yIoIWQtunQdknKBHL" target="_blank" rel="noopener" aria-label="Leer la opinión original de Stacey Rogers en Google">
+        <div class="review-card__head">
+          <span class="review-card__stars" aria-hidden="true">★★★★★</span>
+          <svg class="review-card__g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47a5.54 5.54 0 0 1-2.4 3.63v3.02h3.88c2.27-2.09 3.58-5.17 3.58-8.89z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.02c-1.08.72-2.45 1.15-4.05 1.15-3.11 0-5.75-2.1-6.69-4.92H1.32v3.09A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.31 14.3A7.2 7.2 0 0 1 4.93 12c0-.8.14-1.57.38-2.3V6.61H1.32A12 12 0 0 0 0 12c0 1.94.46 3.77 1.32 5.39l3.99-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.32 6.61l3.99 3.09C6.25 6.86 8.89 4.75 12 4.75z"/></svg>
+        </div>
+        <blockquote class="review-card__text">Estábamos de viaje por Lima y necesitábamos extraerle las muelas del juicio a mi hijo, ya que tenía brackets. El Dr. Anthony nos ofreció desde el principio un precio excelente y fue muy atento y minucioso. Después de ver las radiografías nos dijo que no quería extraerle las muelas del juicio a mi hijo, ya que no estaban listas, y nos recomendó una nueva tecnología que ayudó enormemente con la sobremordida de mi hijo. Es muy minucioso, calculador y considerado en su enfoque, y muy amable. Recomiendo ampliamente su servicio.</blockquote>
+        <footer class="review-card__foot">
+          <span class="review-card__author">Stacey Rogers</span>
+          <span class="review-card__date">hace 1 año · reseña traducida por Google</span>
+        </footer>
+      </a>
+
+      <a class="review-card reveal" href="https://share.google/4ObxY7ikl6aoWHn99" target="_blank" rel="noopener" aria-label="Leer la opinión original de Jair Escalante en Google">
+        <div class="review-card__head">
+          <span class="review-card__stars" aria-hidden="true">★★★★★</span>
+          <svg class="review-card__g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47a5.54 5.54 0 0 1-2.4 3.63v3.02h3.88c2.27-2.09 3.58-5.17 3.58-8.89z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.02c-1.08.72-2.45 1.15-4.05 1.15-3.11 0-5.75-2.1-6.69-4.92H1.32v3.09A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.31 14.3A7.2 7.2 0 0 1 4.93 12c0-.8.14-1.57.38-2.3V6.61H1.32A12 12 0 0 0 0 12c0 1.94.46 3.77 1.32 5.39l3.99-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.32 6.61l3.99 3.09C6.25 6.86 8.89 4.75 12 4.75z"/></svg>
+        </div>
+        <blockquote class="review-card__text">El Dr. Anthony es un excelente dentista. Explica todo de manera súper clara, lo que hace que uno se sienta tranquilo y bien atendido. Se nota que realmente se preocupa por sus pacientes y siempre está dispuesto a ayudar. Lo recomiendo al 100%!!</blockquote>
+        <footer class="review-card__foot">
+          <span class="review-card__author">Jair Escalante</span>
+          <span class="review-card__date">hace 1 año</span>
+        </footer>
+      </a>
+
+      <a class="review-card reveal" href="https://share.google/Py5hJVeIJYYGHwmvs" target="_blank" rel="noopener" aria-label="Leer la opinión original de Astrit De Jesús en Google">
+        <div class="review-card__head">
+          <span class="review-card__stars" aria-hidden="true">★★★★★</span>
+          <svg class="review-card__g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47a5.54 5.54 0 0 1-2.4 3.63v3.02h3.88c2.27-2.09 3.58-5.17 3.58-8.89z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.02c-1.08.72-2.45 1.15-4.05 1.15-3.11 0-5.75-2.1-6.69-4.92H1.32v3.09A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.31 14.3A7.2 7.2 0 0 1 4.93 12c0-.8.14-1.57.38-2.3V6.61H1.32A12 12 0 0 0 0 12c0 1.94.46 3.77 1.32 5.39l3.99-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.32 6.61l3.99 3.09C6.25 6.86 8.89 4.75 12 4.75z"/></svg>
+        </div>
+        <blockquote class="review-card__text">Doctor Anthony De Jesús, excelente odontólogo, me he atendido con él durante años y su trabajo es 100% profesional, además cuenta con novedosas técnicas en cuanto a la ortodoncia. Lo recomendaría a todos mis conocidos. Si quieres conocer a un doctor que se tome el tiempo y la dedicación con cada uno de sus pacientes, el Dr. Anthony es el indicado.</blockquote>
+        <footer class="review-card__foot">
+          <span class="review-card__author">Astrit De Jesús</span>
+          <span class="review-card__date">hace 2 años</span>
+        </footer>
+      </a>
+
+      <a class="review-card reveal" href="https://share.google/BzREL1dCmtZuXp8tR" target="_blank" rel="noopener" aria-label="Leer la opinión original de Mely HC en Google">
+        <div class="review-card__head">
+          <span class="review-card__stars" aria-hidden="true">★★★★★</span>
+          <svg class="review-card__g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47a5.54 5.54 0 0 1-2.4 3.63v3.02h3.88c2.27-2.09 3.58-5.17 3.58-8.89z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.02c-1.08.72-2.45 1.15-4.05 1.15-3.11 0-5.75-2.1-6.69-4.92H1.32v3.09A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.31 14.3A7.2 7.2 0 0 1 4.93 12c0-.8.14-1.57.38-2.3V6.61H1.32A12 12 0 0 0 0 12c0 1.94.46 3.77 1.32 5.39l3.99-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.32 6.61l3.99 3.09C6.25 6.86 8.89 4.75 12 4.75z"/></svg>
+        </div>
+        <blockquote class="review-card__text">El Dr. Anthony es muy buen profesional, su trato es amable y agradable. Llevo 1 año atendiéndome con él y he visto cambios gigantescos con mi sonrisa, lo recomiendo al 100%.</blockquote>
+        <footer class="review-card__foot">
+          <span class="review-card__author">Mely HC</span>
+          <span class="review-card__date">hace 2 años</span>
+        </footer>
+      </a>
+
+      <a class="review-card reveal" href="https://share.google/PLZJWiCFH6Vhjewfv" target="_blank" rel="noopener" aria-label="Leer la opinión original de Eduardo Chávez Jiménez en Google">
+        <div class="review-card__head">
+          <span class="review-card__stars" aria-hidden="true">★★★★★</span>
+          <svg class="review-card__g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47a5.54 5.54 0 0 1-2.4 3.63v3.02h3.88c2.27-2.09 3.58-5.17 3.58-8.89z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.02c-1.08.72-2.45 1.15-4.05 1.15-3.11 0-5.75-2.1-6.69-4.92H1.32v3.09A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.31 14.3A7.2 7.2 0 0 1 4.93 12c0-.8.14-1.57.38-2.3V6.61H1.32A12 12 0 0 0 0 12c0 1.94.46 3.77 1.32 5.39l3.99-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.32 6.61l3.99 3.09C6.25 6.86 8.89 4.75 12 4.75z"/></svg>
+        </div>
+        <blockquote class="review-card__text">Doctor Anthony, muy buen profesional y sobre todo excelente persona. Durante el periodo de tu tratamiento no te sentirás solo, ya que el doctor siempre está para responder tus dudas. Su atención es de calidad, recomendadísimo.</blockquote>
+        <footer class="review-card__foot">
+          <span class="review-card__author">Eduardo Chávez Jiménez</span>
+          <span class="review-card__date">hace 2 años</span>
+        </footer>
+      </a>
+
+      <a class="review-card reveal" href="https://share.google/u6cn4yINUh34QaKTd" target="_blank" rel="noopener" aria-label="Leer la opinión original de Judi Arévalo en Google">
+        <div class="review-card__head">
+          <span class="review-card__stars" aria-hidden="true">★★★★★</span>
+          <svg class="review-card__g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47a5.54 5.54 0 0 1-2.4 3.63v3.02h3.88c2.27-2.09 3.58-5.17 3.58-8.89z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.02c-1.08.72-2.45 1.15-4.05 1.15-3.11 0-5.75-2.1-6.69-4.92H1.32v3.09A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.31 14.3A7.2 7.2 0 0 1 4.93 12c0-.8.14-1.57.38-2.3V6.61H1.32A12 12 0 0 0 0 12c0 1.94.46 3.77 1.32 5.39l3.99-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.32 6.61l3.99 3.09C6.25 6.86 8.89 4.75 12 4.75z"/></svg>
+        </div>
+        <blockquote class="review-card__text">Excelente trabajo! Mi sonrisa se ve mucho mejor que antes y conozco al doctor desde hace más de dos años. Cada vez que voy puedo hacerle todas las preguntas que tengo y las explicaciones son claras.</blockquote>
+        <footer class="review-card__foot">
+          <span class="review-card__author">Judi Arévalo</span>
+          <span class="review-card__date">hace 2 años</span>
+        </footer>
+      </a>
+
+      <a class="review-card reveal" href="https://share.google/RAOjOK35MXD8c0sMg" target="_blank" rel="noopener" aria-label="Leer la opinión original de Yelita García en Google">
+        <div class="review-card__head">
+          <span class="review-card__stars" aria-hidden="true">★★★★★</span>
+          <svg class="review-card__g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47a5.54 5.54 0 0 1-2.4 3.63v3.02h3.88c2.27-2.09 3.58-5.17 3.58-8.89z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.02c-1.08.72-2.45 1.15-4.05 1.15-3.11 0-5.75-2.1-6.69-4.92H1.32v3.09A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.31 14.3A7.2 7.2 0 0 1 4.93 12c0-.8.14-1.57.38-2.3V6.61H1.32A12 12 0 0 0 0 12c0 1.94.46 3.77 1.32 5.39l3.99-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.32 6.61l3.99 3.09C6.25 6.86 8.89 4.75 12 4.75z"/></svg>
+        </div>
+        <blockquote class="review-card__text">5 estrellas para el mejor odontólogo! Un profesional excelente. Recomendado al 100%, un doctor muy profesional, empático y amigable. Lo mejor, de lo mejor!!!</blockquote>
+        <footer class="review-card__foot">
+          <span class="review-card__author">Yelita García</span>
+          <span class="review-card__date">hace 2 años</span>
+        </footer>
+      </a>
+
+      <a class="review-card reveal" href="https://share.google/ZPGcF2Smjly3BHNwc" target="_blank" rel="noopener" aria-label="Leer la opinión original de Andrea Montalván en Google">
+        <div class="review-card__head">
+          <span class="review-card__stars" aria-hidden="true">★★★★★</span>
+          <svg class="review-card__g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47a5.54 5.54 0 0 1-2.4 3.63v3.02h3.88c2.27-2.09 3.58-5.17 3.58-8.89z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.02c-1.08.72-2.45 1.15-4.05 1.15-3.11 0-5.75-2.1-6.69-4.92H1.32v3.09A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.31 14.3A7.2 7.2 0 0 1 4.93 12c0-.8.14-1.57.38-2.3V6.61H1.32A12 12 0 0 0 0 12c0 1.94.46 3.77 1.32 5.39l3.99-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.32 6.61l3.99 3.09C6.25 6.86 8.89 4.75 12 4.75z"/></svg>
+        </div>
+        <blockquote class="review-card__text">Excelente Dr! Encantada con los resultados que he obtenido en poco tiempo en cuanto a ortodoncia 😍.</blockquote>
+        <footer class="review-card__foot">
+          <span class="review-card__author">Andrea Montalván</span>
+          <span class="review-card__date">hace 1 año</span>
+        </footer>
+      </a>
+
+      <a class="review-card reveal" href="https://share.google/Jq7Oan9SFkGWy51op" target="_blank" rel="noopener" aria-label="Leer la opinión original de San Sadanori en Google">
+        <div class="review-card__head">
+          <span class="review-card__stars" aria-hidden="true">★★★★★</span>
+          <svg class="review-card__g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47a5.54 5.54 0 0 1-2.4 3.63v3.02h3.88c2.27-2.09 3.58-5.17 3.58-8.89z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.02c-1.08.72-2.45 1.15-4.05 1.15-3.11 0-5.75-2.1-6.69-4.92H1.32v3.09A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.31 14.3A7.2 7.2 0 0 1 4.93 12c0-.8.14-1.57.38-2.3V6.61H1.32A12 12 0 0 0 0 12c0 1.94.46 3.77 1.32 5.39l3.99-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.32 6.61l3.99 3.09C6.25 6.86 8.89 4.75 12 4.75z"/></svg>
+        </div>
+        <blockquote class="review-card__text">Súper, archi-recomiendo al Dr. Anthony. Desde la primera consulta te das cuenta, en la forma de explicar las cosas, que realmente le apasiona su trabajo. Es un excelente profesional, amable y siempre atento a resolver dudas y dar recomendaciones. Gracias, doc!</blockquote>
+        <footer class="review-card__foot">
+          <span class="review-card__author">San Sadanori</span>
+          <span class="review-card__date">hace 2 años</span>
+        </footer>
+      </a>
+
+      <a class="review-card reveal" href="https://share.google/9Iy14dgHIpO4Kp4El" target="_blank" rel="noopener" aria-label="Leer la opinión original de Antonio García en Google">
+        <div class="review-card__head">
+          <span class="review-card__stars" aria-hidden="true">★★★★★</span>
+          <svg class="review-card__g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47a5.54 5.54 0 0 1-2.4 3.63v3.02h3.88c2.27-2.09 3.58-5.17 3.58-8.89z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.02c-1.08.72-2.45 1.15-4.05 1.15-3.11 0-5.75-2.1-6.69-4.92H1.32v3.09A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.31 14.3A7.2 7.2 0 0 1 4.93 12c0-.8.14-1.57.38-2.3V6.61H1.32A12 12 0 0 0 0 12c0 1.94.46 3.77 1.32 5.39l3.99-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.32 6.61l3.99 3.09C6.25 6.86 8.89 4.75 12 4.75z"/></svg>
+        </div>
+        <blockquote class="review-card__text">Atención estupenda, profesional y cordial.</blockquote>
+        <footer class="review-card__foot">
+          <span class="review-card__author">Antonio García</span>
+          <span class="review-card__date">hace 1 mes</span>
+        </footer>
+      </a>
+    </div>
+  </div>
+
+  <div class="wrap revs__footer">
+    <a class="btn btn--gold" href="https://maps.google.com/?cid=4967172387234962248" target="_blank" rel="noopener">Ver las 23 opiniones en Google</a>
+  </div>
+</section>
+
 <!-- ══════════ EQUIPO ══════════ -->
 <section class="team" id="equipo">
   <div class="grain" aria-hidden="true"></div>
@@ -704,7 +889,7 @@
     </a>
     <nav class="foot__nav">
       <a href="#diagnostico">Diagnóstico</a><a href="#tratamientos">Tratamientos</a>
-      <a href="casos-clinicos.html">Casos Clínicos</a><a href="#pacientes">Pacientes</a>
+      <a href="casos-clinicos.html">Casos Clínicos</a><a href="#pacientes">Pacientes</a><a href="#opiniones">Opiniones</a>
       <a href="#equipo">Equipo</a><a href="dr-anthony-de-jesus.html">Dr. Anthony De Jesús</a><a href="#preguntas-frecuentes">Preguntas frecuentes</a><a href="#ubicacion">Ubicación</a>
     </nav>
     <!-- Perfiles oficiales: enlaces reales que confirman el "sameAs" de los datos

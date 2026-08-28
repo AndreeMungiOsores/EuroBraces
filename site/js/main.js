@@ -246,13 +246,49 @@
     }).catch(() => {});
   }
 
+  /* ══════════════════════════════════════════
+     OPINIONES — Google
+     ══════════════════════════════════════════ */
+  const railResenas = $('#rail-resenas');
+  const GOOGLE_G_SVG = '<svg class="review-card__g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47a5.54 5.54 0 0 1-2.4 3.63v3.02h3.88c2.27-2.09 3.58-5.17 3.58-8.89z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.02c-1.08.72-2.45 1.15-4.05 1.15-3.11 0-5.75-2.1-6.69-4.92H1.32v3.09A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.31 14.3A7.2 7.2 0 0 1 4.93 12c0-.8.14-1.57.38-2.3V6.61H1.32A12 12 0 0 0 0 12c0 1.94.46 3.77 1.32 5.39l3.99-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.32 6.61l3.99 3.09C6.25 6.86 8.89 4.75 12 4.75z"/></svg>';
+
+  function renderGoogleReviews() {
+    if (!railResenas || !window.BlogStore) return;
+    const reviews = window.BlogStore.getGoogleReviews();
+    if (!Array.isArray(reviews) || reviews.length === 0) return;
+
+    railResenas.innerHTML = reviews.map(r => {
+      const dateLabel = r.translated ? `${r.dateLabel} · reseña traducida por Google` : r.dateLabel;
+      return `
+        <a class="review-card reveal in" href="${r.link || 'https://maps.google.com/?cid=4967172387234962248'}" target="_blank" rel="noopener" aria-label="Leer la opinión original de ${r.author} en Google">
+          <div class="review-card__head">
+            <span class="review-card__stars" aria-hidden="true">★★★★★</span>
+            ${GOOGLE_G_SVG}
+          </div>
+          <blockquote class="review-card__text">${r.text}</blockquote>
+          <footer class="review-card__foot">
+            <span class="review-card__author">${r.author}</span>
+            <span class="review-card__date">${dateLabel}</span>
+          </footer>
+        </a>
+      `;
+    }).join('');
+  }
+
+  renderGoogleReviews();
+  if (window.BlogStore && typeof window.BlogStore.fetchGoogleReviewsAsync === 'function') {
+    window.BlogStore.fetchGoogleReviewsAsync().then(() => {
+      renderGoogleReviews();
+    }).catch(() => {});
+  }
+
   $$('.pacs__nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const targetId = btn.dataset.target;
       const rail = $(`#${targetId}`);
       if (!rail) return;
 
-      const firstCard = rail.querySelector('.pac-card');
+      const firstCard = rail.firstElementChild;
       const cardWidth = firstCard ? firstCard.offsetWidth + 24 : rail.clientWidth * 0.75;
       const isNext = btn.classList.contains('pacs__nav-btn--next');
 
