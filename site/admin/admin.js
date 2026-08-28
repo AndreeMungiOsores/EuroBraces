@@ -796,6 +796,8 @@
       if (patientModalBackdrop && patientModalBackdrop.classList.contains('is-open')) closePatientModal();
       if (deletePatientModalBackdrop && deletePatientModalBackdrop.classList.contains('is-open')) closeDeletePatientModal();
       if (deleteBatchPatientModalBackdrop && deleteBatchPatientModalBackdrop.classList.contains('is-open')) closeDeleteBatchPatientModal();
+      if (reviewModalBackdrop && reviewModalBackdrop.classList.contains('is-open')) closeReviewModal();
+      if (deleteReviewModalBackdrop && deleteReviewModalBackdrop.classList.contains('is-open')) closeDeleteReviewModal();
       if (isMultiSelectMode) disableMultiSelectMode();
     }
   });
@@ -804,19 +806,21 @@
   const tabCasesBtn = $('#tabCasesBtn');
   const tabPatientsBtn = $('#tabPatientsBtn');
   const tabDrAnthonyBtn = $('#tabDrAnthonyBtn');
+  const tabReviewsBtn = $('#tabReviewsBtn');
   const viewCasesPanel = $('#viewCasesPanel');
   const viewPatientsPanel = $('#viewPatientsPanel');
   const viewDrAnthonyPanel = $('#viewDrAnthonyPanel');
+  const viewReviewsPanel = $('#viewReviewsPanel');
 
   function switchAdminTab(targetView) {
-    [tabCasesBtn, tabPatientsBtn, tabDrAnthonyBtn].forEach(btn => {
+    [tabCasesBtn, tabPatientsBtn, tabDrAnthonyBtn, tabReviewsBtn].forEach(btn => {
       if (btn) {
         btn.classList.remove('is-active');
         btn.setAttribute('aria-selected', 'false');
       }
     });
 
-    [viewCasesPanel, viewPatientsPanel, viewDrAnthonyPanel].forEach(panel => {
+    [viewCasesPanel, viewPatientsPanel, viewDrAnthonyPanel, viewReviewsPanel].forEach(panel => {
       if (panel) panel.style.display = 'none';
     });
 
@@ -828,6 +832,10 @@
       if (tabDrAnthonyBtn) { tabDrAnthonyBtn.classList.add('is-active'); tabDrAnthonyBtn.setAttribute('aria-selected', 'true'); }
       if (viewDrAnthonyPanel) viewDrAnthonyPanel.style.display = 'block';
       renderDrAnthonyAdminForm();
+    } else if (targetView === 'reviews') {
+      if (tabReviewsBtn) { tabReviewsBtn.classList.add('is-active'); tabReviewsBtn.setAttribute('aria-selected', 'true'); }
+      if (viewReviewsPanel) viewReviewsPanel.style.display = 'block';
+      renderReviewsTable();
     } else {
       if (tabCasesBtn) { tabCasesBtn.classList.add('is-active'); tabCasesBtn.setAttribute('aria-selected', 'true'); }
       if (viewCasesPanel) viewCasesPanel.style.display = 'block';
@@ -838,6 +846,7 @@
   if (tabCasesBtn) tabCasesBtn.addEventListener('click', () => switchAdminTab('cases'));
   if (tabPatientsBtn) tabPatientsBtn.addEventListener('click', () => switchAdminTab('patients'));
   if (tabDrAnthonyBtn) tabDrAnthonyBtn.addEventListener('click', () => switchAdminTab('dr-anthony'));
+  if (tabReviewsBtn) tabReviewsBtn.addEventListener('click', () => switchAdminTab('reviews'));
 
   // ── 9. Renderizado y Gestión de Fotos de Pacientes (Con Selección Múltiple) ──
   const patientsAdminGrid = $('#patientsAdminGrid');
@@ -1191,6 +1200,156 @@
       } finally {
         confirmDelBatchPatientBtn.disabled = false;
         confirmDelBatchPatientBtn.textContent = 'Sí, eliminar todas';
+      }
+    });
+  }
+
+  // ── 9.5. Gestión de Opiniones de Google ("Opiniones") ──
+  const reviewsTableBody = $('#reviewsTableBody');
+  const newReviewBtn = $('#newReviewBtn');
+  const reviewModalBackdrop = $('#reviewModalBackdrop');
+  const closeReviewModalBtn = $('#closeReviewModalBtn');
+  const cancelReviewBtn = $('#cancelReviewBtn');
+  const reviewForm = $('#reviewForm');
+  const reviewModalTitle = $('#reviewModalTitle');
+  const reviewIdInput = $('#reviewId');
+  const reviewAuthorInput = $('#reviewAuthorInput');
+  const reviewTextInput = $('#reviewTextInput');
+  const reviewLinkInput = $('#reviewLinkInput');
+  const reviewDateInput = $('#reviewDateInput');
+  const reviewTranslatedInput = $('#reviewTranslatedInput');
+
+  const deleteReviewModalBackdrop = $('#deleteReviewModalBackdrop');
+  const cancelDelReviewBtn = $('#cancelDelReviewBtn');
+  const confirmDelReviewBtn = $('#confirmDelReviewBtn');
+  let reviewToDeleteId = null;
+
+  function renderReviewsTable() {
+    if (!window.BlogStore || !reviewsTableBody) return;
+    const reviews = window.BlogStore.getGoogleReviews();
+
+    if (reviews.length === 0) {
+      reviewsTableBody.innerHTML = `
+        <tr>
+          <td colspan="4" style="text-align:center;padding:40px 20px;color:var(--ink-60)">
+            No hay opiniones aún. Haz clic en <strong>+ Agregar Opinión</strong> para copiar una desde Google.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    reviewsTableBody.innerHTML = reviews.map(r => `
+      <tr>
+        <td><strong style="color:var(--navy-900)">${r.author}</strong></td>
+        <td>
+          <div style="font-size:.82rem;color:var(--ink-60);max-width:420px">${(r.text || '').substring(0, 110)}${(r.text || '').length > 110 ? '…' : ''}</div>
+        </td>
+        <td style="white-space:nowrap">${r.dateLabel || ''}</td>
+        <td style="text-align:right">
+          <div class="action-btns" style="justify-content:flex-end">
+            ${r.link ? `<a href="${r.link}" target="_blank" rel="noopener" class="action-btn action-btn--view" title="Ver reseña original en Google">Ver original</a>` : ''}
+            <button type="button" class="action-btn action-btn--edit review-edit-btn" data-id="${r.id}" title="Editar opinión">Editar</button>
+            <button type="button" class="action-btn action-btn--del review-del-btn" data-id="${r.id}" title="Eliminar opinión">Eliminar</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+
+    $$('.review-edit-btn', reviewsTableBody).forEach(btn => {
+      btn.addEventListener('click', () => openEditReviewModal(btn.dataset.id));
+    });
+    $$('.review-del-btn', reviewsTableBody).forEach(btn => {
+      btn.addEventListener('click', () => openDeleteReviewModal(btn.dataset.id));
+    });
+  }
+
+  function openNewReviewModal() {
+    if (reviewForm) reviewForm.reset();
+    if (reviewIdInput) reviewIdInput.value = '';
+    if (reviewModalTitle) reviewModalTitle.textContent = 'Agregar Opinión';
+    if (reviewModalBackdrop) reviewModalBackdrop.classList.add('is-open');
+  }
+
+  function openEditReviewModal(id) {
+    const reviews = window.BlogStore.getGoogleReviews();
+    const review = reviews.find(r => r.id === id);
+    if (!review) return;
+
+    if (reviewIdInput) reviewIdInput.value = review.id;
+    if (reviewAuthorInput) reviewAuthorInput.value = review.author || '';
+    if (reviewTextInput) reviewTextInput.value = review.text || '';
+    if (reviewLinkInput) reviewLinkInput.value = review.link || '';
+    if (reviewDateInput) reviewDateInput.value = review.dateLabel || '';
+    if (reviewTranslatedInput) reviewTranslatedInput.checked = !!review.translated;
+    if (reviewModalTitle) reviewModalTitle.textContent = 'Editar Opinión';
+    if (reviewModalBackdrop) reviewModalBackdrop.classList.add('is-open');
+  }
+
+  function closeReviewModal() {
+    if (reviewModalBackdrop) reviewModalBackdrop.classList.remove('is-open');
+  }
+
+  if (newReviewBtn) newReviewBtn.addEventListener('click', openNewReviewModal);
+  if (closeReviewModalBtn) closeReviewModalBtn.addEventListener('click', closeReviewModal);
+  if (cancelReviewBtn) cancelReviewBtn.addEventListener('click', closeReviewModal);
+  if (reviewModalBackdrop) {
+    reviewModalBackdrop.addEventListener('click', e => {
+      if (e.target === reviewModalBackdrop) closeReviewModal();
+    });
+  }
+
+  if (reviewForm) {
+    reviewForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const submitBtn = reviewForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn ? submitBtn.textContent : 'Guardar Opinión';
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Guardando...'; }
+
+      try {
+        await window.BlogStore.saveGoogleReview({
+          id: reviewIdInput.value || undefined,
+          author: reviewAuthorInput.value,
+          text: reviewTextInput.value,
+          link: reviewLinkInput.value,
+          dateLabel: reviewDateInput.value,
+          translated: reviewTranslatedInput.checked
+        });
+        closeReviewModal();
+        renderReviewsTable();
+        showToast('Opinión guardada con éxito.', 'success');
+      } catch (err) {
+        showToast(err.message || 'Error al guardar la opinión.', 'error');
+      } finally {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalText; }
+      }
+    });
+  }
+
+  function openDeleteReviewModal(id) {
+    reviewToDeleteId = id;
+    if (deleteReviewModalBackdrop) deleteReviewModalBackdrop.classList.add('is-open');
+  }
+
+  function closeDeleteReviewModal() {
+    reviewToDeleteId = null;
+    if (deleteReviewModalBackdrop) deleteReviewModalBackdrop.classList.remove('is-open');
+  }
+
+  if (cancelDelReviewBtn) cancelDelReviewBtn.addEventListener('click', closeDeleteReviewModal);
+  if (confirmDelReviewBtn) {
+    confirmDelReviewBtn.addEventListener('click', async () => {
+      if (!reviewToDeleteId) return;
+      confirmDelReviewBtn.disabled = true;
+      try {
+        await window.BlogStore.deleteGoogleReview(reviewToDeleteId);
+        closeDeleteReviewModal();
+        renderReviewsTable();
+        showToast('Opinión eliminada.', 'success');
+      } catch (err) {
+        showToast(err.message || 'Error al eliminar la opinión.', 'error');
+      } finally {
+        confirmDelReviewBtn.disabled = false;
       }
     });
   }
