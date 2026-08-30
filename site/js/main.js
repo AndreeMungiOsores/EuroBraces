@@ -55,37 +55,17 @@
 
   /* ══════════════════════════════════════════
      DIAGNÓSTICO — selector + comparador antes/después
+     Los motivos de consulta vienen de BlogStore (editable desde el panel);
+     el HTML de origen trae los 6 por defecto como respaldo rastreable.
      ══════════════════════════════════════════ */
-  const CASES = {
-    apinados:     { t: 'Dientes apiñados',       d: 'Cuando no hay suficiente espacio en la arcada.' },
-    espacios:     { t: 'Espacios entre dientes', d: 'Separaciones visibles al sonreír.' },
-    desalineados: { t: 'Dientes desalineados',   d: 'Posición irregular de las piezas.' },
-    mordida:      { t: 'Mordida abierta',        d: 'Tus dientes no cierran por completo.', c: 'Imagen de referencia: Clínica Manzanera' },
-    pieza:        { t: 'Falta de una pieza',     d: 'La armonía también se puede recuperar.' },
-    manchas:      { t: 'Manchas o desgaste',     d: 'Tu sonrisa puede recuperar brillo y forma.' }
-  };
-
-  const tabs   = $$('.diag__list button');
+  const diagList = $('.diag__list');
   const before = $('#cmpBefore'), after = $('#cmpAfter');
   const title  = $('#cmpTitle'),  desc  = $('#cmpDesc'), credit = $('#cmpCredit');
   const cmp    = $('#compare'),   handle = $('#cmpHandle');
 
-  function selectCase(key) {
-    const c = CASES[key];
-    if (!c || !before || !after) return;
-    before.src = `img/ba-${key}-antes.jpg`;
-    after.src  = `img/ba-${key}-despues.jpg`;
-    if (title) title.textContent = c.t;
-    if (desc) desc.textContent  = c.d;
-    if (credit) {
-      credit.hidden = !c.c;
-      credit.textContent = c.c || '';
-    }
-    tabs.forEach(b => b.setAttribute('aria-selected', String(b.dataset.case === key)));
-    setSplit(50);
-  }
-  tabs.forEach(b => b.addEventListener('click', () => selectCase(b.dataset.case)));
-
+  // Declarado antes de applyDiagnosticCase(): se llama de forma síncrona al
+  // cargar (no dentro de un evento), así que setSplit() necesita `split` ya
+  // inicializada para no caer en la zona muerta temporal del `let`.
   let split = 50;
   function setSplit(pct) {
     if (!before || !handle) return;
@@ -93,6 +73,53 @@
     before.style.clipPath = `inset(0 ${100 - split}% 0 0)`;
     handle.style.left  = split + '%';
     handle.setAttribute('aria-valuenow', Math.round(split));
+  }
+
+  function applyDiagnosticCase(c) {
+    if (!c || !before || !after) return;
+    before.src = c.beforeImg;
+    after.src  = c.afterImg;
+    before.onerror = () => { before.onerror = null; before.src = 'img/caso1-progreso.jpg'; };
+    after.onerror  = () => { after.onerror  = null; after.src  = 'img/caso1-progreso.jpg'; };
+    if (title) title.textContent = c.label;
+    if (desc) desc.textContent  = c.description;
+    if (credit) {
+      credit.hidden = !c.credit;
+      credit.textContent = c.credit || '';
+    }
+    $$('.diag__list button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.case === c.id)));
+    setSplit(50);
+  }
+
+  let diagUserSelected = false;
+
+  function renderDiagnosticTabs() {
+    if (!diagList || !window.BlogStore) return;
+    const cases = window.BlogStore.getDiagnosticCases();
+    if (!Array.isArray(cases) || cases.length === 0) return;
+
+    diagList.innerHTML = cases.map((c, i) => `
+      <li><button role="tab" aria-selected="false" data-case="${c.id}"><i>${String(i + 1).padStart(2, '0')}</i><span>${c.label}</span></button></li>
+    `).join('');
+
+    $$('.diag__list button').forEach(b => {
+      b.addEventListener('click', () => {
+        diagUserSelected = true;
+        const found = cases.find(c => c.id === b.dataset.case);
+        applyDiagnosticCase(found);
+      });
+    });
+
+    // No pisar la pestaña que el usuario ya eligió si esto se re-renderiza
+    // porque terminó de llegar el catálogo vigente desde Supabase.
+    if (!diagUserSelected) applyDiagnosticCase(cases[0]);
+  }
+
+  renderDiagnosticTabs();
+  if (window.BlogStore && typeof window.BlogStore.fetchDiagnosticCasesAsync === 'function') {
+    window.BlogStore.fetchDiagnosticCasesAsync().then(() => {
+      renderDiagnosticTabs();
+    }).catch(() => {});
   }
 
   if (cmp && handle) {

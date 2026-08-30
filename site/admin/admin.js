@@ -798,6 +798,8 @@
       if (deleteBatchPatientModalBackdrop && deleteBatchPatientModalBackdrop.classList.contains('is-open')) closeDeleteBatchPatientModal();
       if (reviewModalBackdrop && reviewModalBackdrop.classList.contains('is-open')) closeReviewModal();
       if (deleteReviewModalBackdrop && deleteReviewModalBackdrop.classList.contains('is-open')) closeDeleteReviewModal();
+      if (diagModalBackdrop && diagModalBackdrop.classList.contains('is-open')) closeDiagModal();
+      if (deleteDiagModalBackdrop && deleteDiagModalBackdrop.classList.contains('is-open')) closeDeleteDiagModal();
       if (isMultiSelectMode) disableMultiSelectMode();
     }
   });
@@ -807,20 +809,22 @@
   const tabPatientsBtn = $('#tabPatientsBtn');
   const tabDrAnthonyBtn = $('#tabDrAnthonyBtn');
   const tabReviewsBtn = $('#tabReviewsBtn');
+  const tabDiagBtn = $('#tabDiagBtn');
   const viewCasesPanel = $('#viewCasesPanel');
   const viewPatientsPanel = $('#viewPatientsPanel');
   const viewDrAnthonyPanel = $('#viewDrAnthonyPanel');
   const viewReviewsPanel = $('#viewReviewsPanel');
+  const viewDiagPanel = $('#viewDiagPanel');
 
   function switchAdminTab(targetView) {
-    [tabCasesBtn, tabPatientsBtn, tabDrAnthonyBtn, tabReviewsBtn].forEach(btn => {
+    [tabCasesBtn, tabPatientsBtn, tabDrAnthonyBtn, tabReviewsBtn, tabDiagBtn].forEach(btn => {
       if (btn) {
         btn.classList.remove('is-active');
         btn.setAttribute('aria-selected', 'false');
       }
     });
 
-    [viewCasesPanel, viewPatientsPanel, viewDrAnthonyPanel, viewReviewsPanel].forEach(panel => {
+    [viewCasesPanel, viewPatientsPanel, viewDrAnthonyPanel, viewReviewsPanel, viewDiagPanel].forEach(panel => {
       if (panel) panel.style.display = 'none';
     });
 
@@ -836,6 +840,10 @@
       if (tabReviewsBtn) { tabReviewsBtn.classList.add('is-active'); tabReviewsBtn.setAttribute('aria-selected', 'true'); }
       if (viewReviewsPanel) viewReviewsPanel.style.display = 'block';
       renderReviewsTable();
+    } else if (targetView === 'diagnostic') {
+      if (tabDiagBtn) { tabDiagBtn.classList.add('is-active'); tabDiagBtn.setAttribute('aria-selected', 'true'); }
+      if (viewDiagPanel) viewDiagPanel.style.display = 'block';
+      renderDiagnosticTable();
     } else {
       if (tabCasesBtn) { tabCasesBtn.classList.add('is-active'); tabCasesBtn.setAttribute('aria-selected', 'true'); }
       if (viewCasesPanel) viewCasesPanel.style.display = 'block';
@@ -847,6 +855,7 @@
   if (tabPatientsBtn) tabPatientsBtn.addEventListener('click', () => switchAdminTab('patients'));
   if (tabDrAnthonyBtn) tabDrAnthonyBtn.addEventListener('click', () => switchAdminTab('dr-anthony'));
   if (tabReviewsBtn) tabReviewsBtn.addEventListener('click', () => switchAdminTab('reviews'));
+  if (tabDiagBtn) tabDiagBtn.addEventListener('click', () => switchAdminTab('diagnostic'));
 
   // ── 9. Renderizado y Gestión de Fotos de Pacientes (Con Selección Múltiple) ──
   const patientsAdminGrid = $('#patientsAdminGrid');
@@ -1350,6 +1359,245 @@
         showToast(err.message || 'Error al eliminar la opinión.', 'error');
       } finally {
         confirmDelReviewBtn.disabled = false;
+      }
+    });
+  }
+
+  // ── 9.6. Gestión de Motivos de Consulta ("¿Qué tratamiento necesita tu sonrisa?") ──
+  const diagTableBody = $('#diagTableBody');
+  const newDiagBtn = $('#newDiagBtn');
+  const diagCountHint = $('#diagCountHint');
+  const diagModalBackdrop = $('#diagModalBackdrop');
+  const closeDiagModalBtn = $('#closeDiagModalBtn');
+  const cancelDiagBtn = $('#cancelDiagBtn');
+  const diagForm = $('#diagForm');
+  const diagModalTitle = $('#diagModalTitle');
+  const diagIdInput = $('#diagId');
+  const diagLabelInput = $('#diagLabelInput');
+  const diagDescInput = $('#diagDescInput');
+  const diagCreditInput = $('#diagCreditInput');
+  const diagBeforeImgUrl = $('#diagBeforeImgUrl');
+  const diagBeforeFileInput = $('#diagBeforeFileInput');
+  const diagBeforePreview = $('#diagBeforePreview');
+  const diagAfterImgUrl = $('#diagAfterImgUrl');
+  const diagAfterFileInput = $('#diagAfterFileInput');
+  const diagAfterPreview = $('#diagAfterPreview');
+
+  const deleteDiagModalBackdrop = $('#deleteDiagModalBackdrop');
+  const cancelDelDiagBtn = $('#cancelDelDiagBtn');
+  const confirmDelDiagBtn = $('#confirmDelDiagBtn');
+  let diagToDeleteId = null;
+
+  function diagImgSrc(url) {
+    if (!url) return '';
+    if (url.startsWith('data:') || url.startsWith('http')) return url;
+    return url.startsWith('img/') ? '../' + url : url;
+  }
+
+  function renderDiagnosticTable() {
+    if (!window.BlogStore || !diagTableBody) return;
+    const cases = window.BlogStore.getDiagnosticCases();
+    const max = window.BlogStore.maxDiagnosticCases || 8;
+
+    if (newDiagBtn) newDiagBtn.disabled = cases.length >= max;
+    if (diagCountHint) {
+      diagCountHint.textContent = cases.length >= max
+        ? `Llegaste al máximo de ${max} motivos. Elimina uno para agregar otro.`
+        : `${cases.length} de ${max} motivos. Cada uno con su foto de antes y de después.`;
+    }
+
+    if (cases.length === 0) {
+      diagTableBody.innerHTML = `
+        <tr>
+          <td colspan="6" style="text-align:center;padding:40px 20px;color:var(--ink-60)">
+            No hay motivos de consulta aún. Haz clic en <strong>+ Agregar Motivo</strong> para crear el primero.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    diagTableBody.innerHTML = cases.map((c, i) => `
+      <tr>
+        <td><img src="${diagImgSrc(c.beforeImg)}" class="table-thumb" alt="Antes" onerror="this.src='../img/caso1-progreso.jpg'"></td>
+        <td><img src="${diagImgSrc(c.afterImg)}" class="table-thumb" alt="Después" onerror="this.src='../img/caso1-progreso.jpg'"></td>
+        <td><strong style="color:var(--navy-900)">${c.label}</strong></td>
+        <td><div style="font-size:.82rem;color:var(--ink-60);max-width:260px">${c.description || ''}</div></td>
+        <td style="white-space:nowrap">
+          <button type="button" class="action-btn diag-up-btn" data-id="${c.id}" title="Mover arriba" ${i === 0 ? 'disabled' : ''}>&uarr;</button>
+          <button type="button" class="action-btn diag-down-btn" data-id="${c.id}" title="Mover abajo" ${i === cases.length - 1 ? 'disabled' : ''}>&darr;</button>
+        </td>
+        <td style="text-align:right">
+          <div class="action-btns" style="justify-content:flex-end">
+            <button type="button" class="action-btn action-btn--edit diag-edit-btn" data-id="${c.id}" title="Editar motivo">Editar</button>
+            <button type="button" class="action-btn action-btn--del diag-del-btn" data-id="${c.id}" title="Eliminar motivo">Eliminar</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+
+    $$('.diag-edit-btn', diagTableBody).forEach(btn => {
+      btn.addEventListener('click', () => openEditDiagModal(btn.dataset.id));
+    });
+    $$('.diag-del-btn', diagTableBody).forEach(btn => {
+      btn.addEventListener('click', () => openDeleteDiagModal(btn.dataset.id));
+    });
+    $$('.diag-up-btn', diagTableBody).forEach(btn => {
+      btn.addEventListener('click', async () => {
+        await window.BlogStore.reorderDiagnosticCase(btn.dataset.id, 'up');
+        renderDiagnosticTable();
+      });
+    });
+    $$('.diag-down-btn', diagTableBody).forEach(btn => {
+      btn.addEventListener('click', async () => {
+        await window.BlogStore.reorderDiagnosticCase(btn.dataset.id, 'down');
+        renderDiagnosticTable();
+      });
+    });
+  }
+
+  function resetDiagPreviews() {
+    if (diagBeforePreview) { diagBeforePreview.src = ''; diagBeforePreview.style.display = 'none'; }
+    if (diagAfterPreview) { diagAfterPreview.src = ''; diagAfterPreview.style.display = 'none'; }
+    if (diagBeforeImgUrl) diagBeforeImgUrl.value = '';
+    if (diagAfterImgUrl) diagAfterImgUrl.value = '';
+  }
+
+  function openNewDiagModal() {
+    const cases = window.BlogStore.getDiagnosticCases();
+    const max = window.BlogStore.maxDiagnosticCases || 8;
+    if (cases.length >= max) {
+      showToast(`Ya hay ${max} motivos de consulta, el máximo permitido. Elimina uno para agregar otro.`, 'error');
+      return;
+    }
+    if (diagForm) diagForm.reset();
+    if (diagIdInput) diagIdInput.value = '';
+    resetDiagPreviews();
+    if (diagModalTitle) diagModalTitle.textContent = 'Agregar Motivo de Consulta';
+    if (diagModalBackdrop) diagModalBackdrop.classList.add('is-open');
+  }
+
+  function openEditDiagModal(id) {
+    const cases = window.BlogStore.getDiagnosticCases();
+    const item = cases.find(c => c.id === id);
+    if (!item) return;
+
+    if (diagIdInput) diagIdInput.value = item.id;
+    if (diagLabelInput) diagLabelInput.value = item.label || '';
+    if (diagDescInput) diagDescInput.value = item.description || '';
+    if (diagCreditInput) diagCreditInput.value = item.credit || '';
+
+    if (diagBeforeImgUrl) diagBeforeImgUrl.value = item.beforeImg || '';
+    if (diagBeforePreview) {
+      diagBeforePreview.src = diagImgSrc(item.beforeImg);
+      diagBeforePreview.style.display = item.beforeImg ? 'block' : 'none';
+    }
+    if (diagAfterImgUrl) diagAfterImgUrl.value = item.afterImg || '';
+    if (diagAfterPreview) {
+      diagAfterPreview.src = diagImgSrc(item.afterImg);
+      diagAfterPreview.style.display = item.afterImg ? 'block' : 'none';
+    }
+
+    if (diagModalTitle) diagModalTitle.textContent = 'Editar Motivo de Consulta';
+    if (diagModalBackdrop) diagModalBackdrop.classList.add('is-open');
+  }
+
+  function closeDiagModal() {
+    if (diagModalBackdrop) diagModalBackdrop.classList.remove('is-open');
+  }
+
+  if (newDiagBtn) newDiagBtn.addEventListener('click', openNewDiagModal);
+  if (closeDiagModalBtn) closeDiagModalBtn.addEventListener('click', closeDiagModal);
+  if (cancelDiagBtn) cancelDiagBtn.addEventListener('click', closeDiagModal);
+  if (diagModalBackdrop) {
+    diagModalBackdrop.addEventListener('click', e => {
+      if (e.target === diagModalBackdrop) closeDiagModal();
+    });
+  }
+
+  if (diagBeforeFileInput) {
+    diagBeforeFileInput.addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        const imageUrl = await prepareImage(file, { nameHint: 'motivo-antes' });
+        diagBeforeImgUrl.value = imageUrl;
+        diagBeforePreview.src = imageUrl;
+        diagBeforePreview.style.display = 'block';
+      } catch (err) {
+        showToast(err.message || 'Error al procesar la foto.', 'error');
+      }
+      diagBeforeFileInput.value = '';
+    });
+  }
+
+  if (diagAfterFileInput) {
+    diagAfterFileInput.addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        const imageUrl = await prepareImage(file, { nameHint: 'motivo-despues' });
+        diagAfterImgUrl.value = imageUrl;
+        diagAfterPreview.src = imageUrl;
+        diagAfterPreview.style.display = 'block';
+      } catch (err) {
+        showToast(err.message || 'Error al procesar la foto.', 'error');
+      }
+      diagAfterFileInput.value = '';
+    });
+  }
+
+  if (diagForm) {
+    diagForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const submitBtn = diagForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn ? submitBtn.textContent : 'Guardar Motivo';
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Guardando...'; }
+
+      try {
+        await window.BlogStore.saveDiagnosticCase({
+          id: diagIdInput.value || undefined,
+          label: diagLabelInput.value,
+          description: diagDescInput.value,
+          beforeImg: diagBeforeImgUrl.value,
+          afterImg: diagAfterImgUrl.value,
+          credit: diagCreditInput.value
+        });
+        closeDiagModal();
+        renderDiagnosticTable();
+        showToast('Motivo de consulta guardado con éxito.', 'success');
+      } catch (err) {
+        showToast(err.message || 'Error al guardar el motivo de consulta.', 'error');
+      } finally {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalText; }
+      }
+    });
+  }
+
+  function openDeleteDiagModal(id) {
+    diagToDeleteId = id;
+    if (deleteDiagModalBackdrop) deleteDiagModalBackdrop.classList.add('is-open');
+  }
+
+  function closeDeleteDiagModal() {
+    diagToDeleteId = null;
+    if (deleteDiagModalBackdrop) deleteDiagModalBackdrop.classList.remove('is-open');
+  }
+
+  if (cancelDelDiagBtn) cancelDelDiagBtn.addEventListener('click', closeDeleteDiagModal);
+  if (confirmDelDiagBtn) {
+    confirmDelDiagBtn.addEventListener('click', async () => {
+      if (!diagToDeleteId) return;
+      confirmDelDiagBtn.disabled = true;
+      try {
+        await window.BlogStore.deleteDiagnosticCase(diagToDeleteId);
+        closeDeleteDiagModal();
+        renderDiagnosticTable();
+        showToast('Motivo de consulta eliminado.', 'success');
+      } catch (err) {
+        showToast(err.message || 'Error al eliminar el motivo de consulta.', 'error');
+      } finally {
+        confirmDelDiagBtn.disabled = false;
       }
     });
   }

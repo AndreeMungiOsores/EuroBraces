@@ -69,9 +69,16 @@
         <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" style="vertical-align:-2px;margin-right:6px"><path fill="currentColor" d="M12 2a5 5 0 100 10 5 5 0 000-10zm-7 18c0-3.87 3.13-7 7-7s7 3.13 7 7H5z"/></svg>
         Dr. Anthony
       </button>
-      <button type="button" class="admin-nav__tab" id="tabReviewsBtn" role="tab" aria-selected="false" data-view="reviews">
+      <!-- Oculto a pedido: la función sigue completa (datos, panel, seccion publica),
+           solo se retira el acceso desde la barra de pestañas. Quitar style="display:none"
+           para reactivarlo. -->
+      <button type="button" class="admin-nav__tab" id="tabReviewsBtn" role="tab" aria-selected="false" data-view="reviews" style="display:none">
         <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" style="vertical-align:-2px;margin-right:6px"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
         Reseñas
+      </button>
+      <button type="button" class="admin-nav__tab" id="tabDiagBtn" role="tab" aria-selected="false" data-view="diagnostic">
+        <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" style="vertical-align:-2px;margin-right:6px"><path fill="currentColor" d="M9 3v2H7V3H5v2H3v14a2 2 0 002 2h4v-6h6v6h4a2 2 0 002-2V5h-2V3h-2v2h-2V3h-2v2H9V3zM12 9a2 2 0 110 4 2 2 0 010-4z"/></svg>
+        Diagnóstico
       </button>
     </div>
 
@@ -80,7 +87,12 @@
         <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
         Ver Web Pública
       </a>
-      <button class="admin-nav__link" id="migrateImagesBtn" type="button"
+      <!-- Oculto a pedido: la migracion ya corrio (0 registros con base64) y toda
+           subida nueva va directo a Supabase Storage, asi que ya no hace falta a
+           la vista. El boton sigue funcional como red de seguridad si alguna
+           subida cae a base64 por un fallo puntual; quitar style="display:none"
+           para reactivarlo. -->
+      <button class="admin-nav__link" id="migrateImagesBtn" type="button" style="display:none"
               title="Sube a Supabase Storage las fotos que quedaron incrustadas en base64 dentro de los registros">
         <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96ZM14 13v4h-4v-4H7l5-5 5 5h-3Z"/></svg>
         <span id="migrateImagesLabel">Migrar imágenes</span>
@@ -337,6 +349,40 @@
             </tr>
           </thead>
           <tbody id="reviewsTableBody">
+            <!-- Renderizado dinámico vía JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Vista 5: Motivos de Consulta (Diagnóstico) -->
+    <div class="admin-view-panel" id="viewDiagPanel" style="display:none">
+      <div class="admin-toolbar">
+        <div class="admin-toolbar__left">
+          <h2 style="margin:0 0 4px;font-size:1.15rem;font-weight:600;color:var(--navy-900)">Motivos de Consulta ("¿Qué tratamiento necesita tu sonrisa?")</h2>
+          <div id="diagCountHint" style="font-size:0.82rem;color:var(--ink-60)">Hasta 8 motivos. Cada uno con su foto de antes y de después.</div>
+        </div>
+
+        <div class="admin-toolbar__right">
+          <button class="btn-primary" id="newDiagBtn">
+            + Agregar Motivo
+          </button>
+        </div>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th style="width:70px">Antes</th>
+              <th style="width:70px">Después</th>
+              <th>Motivo</th>
+              <th>Descripción</th>
+              <th style="width:90px">Orden</th>
+              <th style="text-align:right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="diagTableBody">
             <!-- Renderizado dinámico vía JavaScript -->
           </tbody>
         </table>
@@ -631,6 +677,81 @@
     <div class="admin-modal__foot" style="justify-content:center">
       <button type="button" class="btn-secondary" id="cancelDelReviewBtn">Cancelar</button>
       <button type="button" class="btn-danger" id="confirmDelReviewBtn">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ MODAL AGREGAR / EDITAR MOTIVO DE CONSULTA ══════════ -->
+<div class="modal-backdrop" id="diagModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="diagModalTitle">
+  <div class="admin-modal" style="max-width:560px">
+    <div class="admin-modal__head">
+      <h3 id="diagModalTitle">Agregar Motivo de Consulta</h3>
+      <button class="admin-modal__close" id="closeDiagModalBtn" aria-label="Cerrar">&times;</button>
+    </div>
+
+    <form id="diagForm">
+      <input type="hidden" id="diagId">
+
+      <div class="admin-modal__body">
+        <div class="form-group">
+          <label for="diagLabelInput">Motivo de consulta *</label>
+          <input type="text" id="diagLabelInput" class="form-ctrl" placeholder="Ej: Dientes apiñados" required>
+        </div>
+
+        <div class="form-group">
+          <label for="diagDescInput">Descripción breve *</label>
+          <input type="text" id="diagDescInput" class="form-ctrl" placeholder="Ej: Cuando no hay suficiente espacio en la arcada." required>
+        </div>
+
+        <div class="form-grid-3" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="form-group">
+            <label>Foto de Antes *</label>
+            <div class="file-upload-row">
+              <input type="hidden" id="diagBeforeImgUrl">
+              <input type="file" id="diagBeforeFileInput" accept="image/*" style="display:none">
+              <button type="button" class="btn-secondary" style="width:100%;justify-content:center" onclick="document.getElementById('diagBeforeFileInput').click()">Subir Imagen</button>
+            </div>
+            <img id="diagBeforePreview" class="file-upload-preview" src="" alt="Vista previa Antes" style="display:none;margin-top:8px">
+          </div>
+
+          <div class="form-group">
+            <label>Foto de Después *</label>
+            <div class="file-upload-row">
+              <input type="hidden" id="diagAfterImgUrl">
+              <input type="file" id="diagAfterFileInput" accept="image/*" style="display:none">
+              <button type="button" class="btn-secondary" style="width:100%;justify-content:center" onclick="document.getElementById('diagAfterFileInput').click()">Subir Imagen</button>
+            </div>
+            <img id="diagAfterPreview" class="file-upload-preview" src="" alt="Vista previa Después" style="display:none;margin-top:8px">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="diagCreditInput">Crédito de la imagen (Opcional)</label>
+          <input type="text" id="diagCreditInput" class="form-ctrl" placeholder="Ej: Imagen de referencia: Clínica Manzanera">
+          <div style="font-size:0.76rem;color:var(--ink-60);margin-top:4px">Úsalo solo si la foto no es de un caso propio; se muestra como atribución bajo el comparador.</div>
+        </div>
+      </div>
+
+      <div class="admin-modal__foot">
+        <button type="button" class="btn-secondary" id="cancelDiagBtn">Cancelar</button>
+        <button type="submit" class="btn-primary" id="saveDiagBtn">Guardar Motivo</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════ MODAL CONFIRMACIÓN ELIMINAR MOTIVO DE CONSULTA ══════════ -->
+<div class="modal-backdrop" id="deleteDiagModalBackdrop" role="alertdialog" aria-modal="true" aria-labelledby="delDiagModalTitle">
+  <div class="admin-modal" style="width:420px;text-align:center">
+    <div class="admin-modal__head" style="background:#B91C1C">
+      <h3 id="delDiagModalTitle" style="color:#FFF">¿Eliminar Motivo de Consulta?</h3>
+    </div>
+    <div class="admin-modal__body">
+      <p id="delDiagModalText">Esta acción quitará esta pestaña del comparador en la página principal. ¿Deseas continuar?</p>
+    </div>
+    <div class="admin-modal__foot" style="justify-content:center">
+      <button type="button" class="btn-secondary" id="cancelDelDiagBtn">Cancelar</button>
+      <button type="button" class="btn-danger" id="confirmDelDiagBtn">Sí, eliminar</button>
     </div>
   </div>
 </div>

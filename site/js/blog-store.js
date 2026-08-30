@@ -14,6 +14,8 @@
   const CATEGORIES_KEY = 'eurobraces_categories';
   const PATIENT_PHOTOS_KEY = 'eurobraces_patient_photos';
   const GOOGLE_REVIEWS_KEY = 'eurobraces_google_reviews';
+  const DIAGNOSTIC_CASES_KEY = 'eurobraces_diagnostic_cases';
+  const MAX_DIAGNOSTIC_CASES = 8;
   const DR_ANTHONY_KEY = 'eurobraces_dr_anthony_profile';
 
   /**
@@ -54,6 +56,61 @@
    * publica sobre sí mismo en su propio sitio, sin importar que sean reales.
    * Las estrellas ya se muestran de forma legítima en la ficha de Google.
    */
+  /**
+   * Motivos de consulta del comparador "¿Qué tratamiento necesita tu sonrisa?" (Seed).
+   * El orden del array es el orden en que se muestran las pestañas.
+   */
+  const DEFAULT_DIAGNOSTIC_CASES = [
+    {
+      id: 'apinados',
+      label: 'Dientes apiñados',
+      description: 'Cuando no hay suficiente espacio en la arcada.',
+      beforeImg: 'img/ba-apinados-antes.jpg',
+      afterImg: 'img/ba-apinados-despues.jpg',
+      credit: ''
+    },
+    {
+      id: 'espacios',
+      label: 'Espacios entre dientes',
+      description: 'Separaciones visibles al sonreír.',
+      beforeImg: 'img/ba-espacios-antes.jpg',
+      afterImg: 'img/ba-espacios-despues.jpg',
+      credit: ''
+    },
+    {
+      id: 'desalineados',
+      label: 'Dientes desalineados',
+      description: 'Posición irregular de las piezas.',
+      beforeImg: 'img/ba-desalineados-antes.jpg',
+      afterImg: 'img/ba-desalineados-despues.jpg',
+      credit: ''
+    },
+    {
+      id: 'mordida',
+      label: 'Mordida abierta',
+      description: 'Tus dientes no cierran por completo.',
+      beforeImg: 'img/ba-mordida-antes.jpg',
+      afterImg: 'img/ba-mordida-despues.jpg',
+      credit: 'Imagen de referencia: Clínica Manzanera'
+    },
+    {
+      id: 'pieza',
+      label: 'Falta de una pieza',
+      description: 'La armonía también se puede recuperar.',
+      beforeImg: 'img/ba-pieza-antes.jpg',
+      afterImg: 'img/ba-pieza-despues.jpg',
+      credit: ''
+    },
+    {
+      id: 'manchas',
+      label: 'Manchas o desgaste',
+      description: 'Tu sonrisa puede recuperar brillo y forma.',
+      beforeImg: 'img/ba-manchas-antes.jpg',
+      afterImg: 'img/ba-manchas-despues.jpg',
+      credit: ''
+    }
+  ];
+
   const DEFAULT_GOOGLE_REVIEWS = [
     {
       id: 'rev-nicole',
@@ -289,6 +346,60 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
     const words = text.trim().split(/\s+/).filter(Boolean).length;
     const minutes = Math.ceil(words / 180);
     return `${Math.max(1, minutes)} min`;
+  }
+
+  async function syncDiagnosticCasesToSupabase(cases) {
+    try {
+      const payload = {
+        slug: 'system-diagnostic-cases',
+        title: 'System Diagnostic Cases Data',
+        category: 'System',
+        excerpt: 'Persistencia de motivos de consulta',
+        content: JSON.stringify(cases),
+        doctor: 'System',
+        doctor_role: 'System',
+        date: new Date().toISOString().split('T')[0],
+        read_time: '1 min',
+        before_img: '',
+        after_img: '',
+        cover_img: '',
+        tags: ['system'],
+        featured: false
+      };
+
+      const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/clinical_cases?slug=eq.system-diagnostic-cases`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify({ content: JSON.stringify(cases) })
+      });
+
+      let updatedRows = [];
+      if (patchRes.ok) {
+        try {
+          updatedRows = await patchRes.json();
+        } catch (e) {}
+      }
+
+      if (!Array.isArray(updatedRows) || updatedRows.length === 0) {
+        await fetch(`${SUPABASE_URL}/rest/v1/clinical_cases`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates,return=representation'
+          },
+          body: JSON.stringify(payload)
+        });
+      }
+    } catch (err) {
+      console.warn('Nota: Sincronización diferida de motivos de consulta:', err);
+    }
   }
 
   async function syncGoogleReviewsToSupabase(reviews) {
@@ -966,6 +1077,138 @@ Se restableció la competencia labial y la eficiencia masticatoria con estabilid
       await syncPatientPhotosToSupabase(filtered);
 
       return filtered;
+    },
+
+    // ── GESTIÓN DE MOTIVOS DE CONSULTA ("¿Qué tratamiento necesita tu sonrisa?") ──
+    maxDiagnosticCases: MAX_DIAGNOSTIC_CASES,
+
+    getDiagnosticCases: function () {
+      try {
+        const raw = localStorage.getItem(DIAGNOSTIC_CASES_KEY);
+        if (!raw) {
+          localStorage.setItem(DIAGNOSTIC_CASES_KEY, JSON.stringify(DEFAULT_DIAGNOSTIC_CASES));
+          return DEFAULT_DIAGNOSTIC_CASES.slice();
+        }
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed) || parsed.length === 0) {
+          localStorage.setItem(DIAGNOSTIC_CASES_KEY, JSON.stringify(DEFAULT_DIAGNOSTIC_CASES));
+          return DEFAULT_DIAGNOSTIC_CASES.slice();
+        }
+        return parsed;
+      } catch (err) {
+        return DEFAULT_DIAGNOSTIC_CASES.slice();
+      }
+    },
+
+    fetchDiagnosticCasesAsync: async function () {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/clinical_cases?slug=eq.system-diagnostic-cases`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+          }
+        });
+
+        if (!res.ok) {
+          return this.getDiagnosticCases();
+        }
+
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0 && data[0].content) {
+          try {
+            const parsed = JSON.parse(data[0].content);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              localStorage.setItem(DIAGNOSTIC_CASES_KEY, JSON.stringify(parsed));
+              return parsed;
+            }
+          } catch (e) {}
+        }
+        return this.getDiagnosticCases();
+      } catch (err) {
+        return this.getDiagnosticCases();
+      }
+    },
+
+    saveDiagnosticCase: async function (caseData) {
+      if (!caseData || !caseData.label || !caseData.description) {
+        throw new Error('El motivo de consulta y la descripción son obligatorios.');
+      }
+      if (!caseData.beforeImg || !caseData.afterImg) {
+        throw new Error('Las fotos de antes y después son obligatorias.');
+      }
+
+      const cases = this.getDiagnosticCases();
+      const isNew = !caseData.id || !cases.some(c => c.id === caseData.id);
+
+      if (isNew && cases.length >= MAX_DIAGNOSTIC_CASES) {
+        throw new Error(`Ya hay ${MAX_DIAGNOSTIC_CASES} motivos de consulta, el máximo permitido. Elimina uno para agregar otro.`);
+      }
+
+      let targetId = caseData.id;
+      if (isNew) {
+        const base = slugify(caseData.label) || 'motivo';
+        targetId = base;
+        let n = 2;
+        while (cases.some(c => c.id === targetId)) {
+          targetId = `${base}-${n++}`;
+        }
+      }
+
+      const newItem = {
+        id: targetId,
+        label: caseData.label.trim(),
+        description: caseData.description.trim(),
+        beforeImg: caseData.beforeImg,
+        afterImg: caseData.afterImg,
+        credit: (caseData.credit || '').trim()
+      };
+
+      const existingIndex = cases.findIndex(c => c.id === targetId);
+      if (existingIndex >= 0) {
+        cases[existingIndex] = newItem;
+      } else {
+        cases.push(newItem);
+      }
+
+      try {
+        localStorage.setItem(DIAGNOSTIC_CASES_KEY, JSON.stringify(cases));
+      } catch (e) {}
+
+      await syncDiagnosticCasesToSupabase(cases);
+
+      return newItem;
+    },
+
+    deleteDiagnosticCase: async function (id) {
+      const cases = this.getDiagnosticCases();
+      const filtered = cases.filter(c => c.id !== id);
+
+      try {
+        localStorage.setItem(DIAGNOSTIC_CASES_KEY, JSON.stringify(filtered));
+      } catch (e) {}
+
+      await syncDiagnosticCasesToSupabase(filtered);
+
+      return filtered;
+    },
+
+    reorderDiagnosticCase: async function (id, direction) {
+      const cases = this.getDiagnosticCases();
+      const idx = cases.findIndex(c => c.id === id);
+      if (idx < 0) return cases;
+
+      const swapWith = direction === 'up' ? idx - 1 : idx + 1;
+      if (swapWith < 0 || swapWith >= cases.length) return cases;
+
+      [cases[idx], cases[swapWith]] = [cases[swapWith], cases[idx]];
+
+      try {
+        localStorage.setItem(DIAGNOSTIC_CASES_KEY, JSON.stringify(cases));
+      } catch (e) {}
+
+      await syncDiagnosticCasesToSupabase(cases);
+
+      return cases;
     },
 
     // ── GESTIÓN DE OPINIONES DE GOOGLE ("Opiniones") ──
