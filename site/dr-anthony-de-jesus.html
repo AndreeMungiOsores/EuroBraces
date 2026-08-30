@@ -575,6 +575,39 @@
   const yearEl = $('#year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+  // Esta página no carga js/main.js (tiene su propio script inline), así que
+  // necesita su propia copia de este bloque estándar — igual que
+  // casos-clinicos.html. Sin esto el nav se queda fijo y transparente todo
+  // el scroll: su texto claro, pensado para el hero oscuro, se vuelve
+  // ilegible sobre las secciones de fondo claro de la página.
+  const burger = $('#burger');
+  const navLinks = $('#navLinks');
+  if (burger && navLinks) {
+    burger.addEventListener('click', () => {
+      const open = navLinks.classList.toggle('open');
+      burger.classList.toggle('open', open);
+      burger.setAttribute('aria-expanded', String(open));
+    });
+  }
+
+  const nav = $('#nav');
+  if (nav) {
+    const handleNavScroll = () => {
+      nav.classList.toggle('is-stuck', window.scrollY > 40);
+    };
+    window.addEventListener('scroll', handleNavScroll, { passive: true });
+    handleNavScroll();
+  }
+
+  const scrollBar = $('#scrollBar');
+  if (scrollBar) {
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = h > 0 ? (window.scrollY / h) * 100 : 0;
+      scrollBar.style.width = pct + '%';
+    }, { passive: true });
+  }
+
   function parseSimpleMarkdown(content) {
     if (!content) return '';
     let clean = content.replace(/<button[^>]*class="yt-block-delete-btn"[^>]*>[\s\S]*?<\/button>/gi, '');
