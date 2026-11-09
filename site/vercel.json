@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/casos/:slug", "destination": "/api/caso?slug=:slug" },
+    { "source": "/sitemap-casos.xml", "destination": "/api/sitemap-casos" }
+  ]
+}
