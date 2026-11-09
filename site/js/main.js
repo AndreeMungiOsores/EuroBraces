@@ -168,7 +168,8 @@
   function renderHomeCases() {
     const container = $('#homeCasesGrid');
     if (!container || !window.BlogStore) return;
-    const allCases = window.BlogStore.getCases();
+    // Los casos de ejemplo (seed) no tienen página: solo se muestran los de Supabase (id UUID).
+    const allCases = window.BlogStore.getCases().filter(c => /^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(String(c.id)));
     const latestCases = allCases.slice(0, 2);
     if (!latestCases.length) return;
 
@@ -226,7 +227,7 @@
       }
 
       return `
-        <article class="case-card reveal in" onclick="window.location.href='casos-clinicos.html?caso=${c.slug || c.id}'" style="cursor:pointer" tabindex="0" role="link" aria-label="Ver caso clínico: ${c.title}">
+        <article class="case-card reveal in" onclick="window.location.href='/casos/${encodeURIComponent(c.slug)}'" style="cursor:pointer" tabindex="0" role="link" aria-label="Ver caso clínico: ${c.title}">
           <header class="case-card__head">
             <span class="case-card__num">${caseNum}</span>
             <span class="case-card__type">${c.doctor || 'EuroBraces Center'}</span>
@@ -234,7 +235,7 @@
           </header>
           ${mediaHtml}
           <footer class="case-card__foot">
-            <h4>${c.title}</h4>
+            <h4><a href="/casos/${encodeURIComponent(c.slug)}">${c.title}</a></h4>
             <p>${rawExcerpt}</p>
           </footer>
         </article>

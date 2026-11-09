@@ -1,4 +1,12 @@
 {
+  "redirects": [
+    {
+      "source": "/casos-clinicos.html",
+      "has": [{ "type": "query", "key": "caso", "value": "(?<slug>.+)" }],
+      "destination": "/casos/:slug",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     { "source": "/casos/:slug", "destination": "/api/caso?slug=:slug" },
     { "source": "/sitemap-casos.xml", "destination": "/api/sitemap-casos" }

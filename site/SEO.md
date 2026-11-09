@@ -92,15 +92,26 @@ Aparte: las respuestas del FAQ deberían pasar por revisión clínica antes de p
 
 ---
 
-## 3. Casos clínicos: cómo se resolvió la indexación
+## 3. Casos clínicos: una página por caso
 
-El catálogo se renderiza con JavaScript desde Supabase y cada caso se abre en un modal cambiando la URL a `?caso=<slug>`. Eso plantea dos problemas y cada uno tiene su solución:
+Cada caso publicado en el panel tiene su propia URL indexable: `https://www.eurobraces.com/casos/<slug>`.
 
-**El rastreador podría no ver nada.** Si el script o la API fallan, la página quedaba vacía. Ahora `#blogGrid` trae cuatro casos reales escritos en el HTML de origen — título, resumen, autor, fecha e imágenes. JavaScript los reemplaza con el catálogo vivo cuando carga; si no carga, Google igual encuentra 1 100 palabras de contenido clínico real.
+**Cómo funciona.** Los casos viven en Supabase y el sitio no tiene paso de build, así que la página la genera una función de Vercel (`api/caso.js`) cada vez que alguien la pide. Lee el caso, lo convierte en HTML completo y lo devuelve ya renderizado, con su propio `<title>`, descripción, **canonical a sí misma**, Open Graph, datos estructurados (`Article` + `BreadcrumbList`, con el doctor como autor por `@id`), fotos y casos relacionados. Se cachea 5 minutos en el borde de Vercel: un caso nuevo o editado se ve en la web en unos minutos, sin desplegar nada.
 
-**Las URLs `?caso=` serían contenido duplicado.** Todas compartían título, descripción e imagen con el listado. Ahora `js/seo-casos.js` actualiza `<title>`, `description` y Open Graph al abrir un caso y los restaura al cerrar, de modo que compartir un caso por WhatsApp muestra ese caso. El `canonical` **no** se toca a propósito: sigue apuntando a `/casos-clinicos.html` para que Google consolide todas las variantes en una sola URL en vez de indexar cinco páginas casi idénticas.
+| Pieza | Para qué sirve |
+|---|---|
+| `api/caso.js` + `api/_lib/` | Genera `/casos/<slug>`. Devuelve 404 real si el caso no existe. |
+| `api/sitemap-casos.js` | `/sitemap-casos.xml`: lista todos los casos (con sus fotos) y se actualiza solo. Declarado en `robots.txt`. |
+| `vercel.json` | Reescribe `/casos/:slug` a la función y redirige (301) las URLs antiguas `/casos-clinicos.html?caso=<slug>`. |
+| `js/seo-casos.js` | `ItemList` del listado, apuntando a las URLs nuevas. |
 
-Por la misma razón, `robots.txt` **no** bloquea `?caso=`. Bloquearlas impediría que Google leyera el canonical y acabarían como *"Detectada, actualmente sin indexar"*.
+**Seguridad.** La tabla `clinical_cases` se puede escribir con la clave pública, así que la función trata todo como no confiable: el HTML del caso pasa por una lista blanca de etiquetas y atributos (sin scripts, manejadores `on*`, `javascript:` ni estilos peligrosos) y las imágenes solo se aceptan desde el Storage del proyecto o `/img/`.
+
+**HTML base del listado.** `casos-clinicos.html` y los dos casos de la portada traen escritos los casos reales, con enlace a su página, para que se vean sin JavaScript. Si se publican casos nuevos, ese HTML base queda desactualizado hasta regenerarlo (el listado en vivo sí se actualiza solo). Los casos de ejemplo de `blog-store.js` (ids que no son UUID) ya no se muestran porque no tienen página.
+
+**Slugs.** Se generan del título y pueden ser larguísimos (varios casos pasan de 90 caracteres). Funcionan, pero conviene usar títulos no tan extensos al crear casos nuevos.
+
+> Pendiente en Search Console: enviar `sitemap-casos.xml` (Sitemaps → añadir) y, si se quiere acelerar, solicitar indexación de 2–3 casos.
 
 ---
 

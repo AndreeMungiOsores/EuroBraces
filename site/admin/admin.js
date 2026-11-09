@@ -273,7 +273,7 @@
           <td style="white-space:nowrap">${formattedDate}</td>
           <td style="text-align:right">
             <div class="action-btns" style="justify-content:flex-end">
-              <a href="../casos-clinicos.html?caso=${c.slug || c.id}" target="_blank" class="action-btn action-btn--view" title="Ver en web">Ver</a>
+              <a href="/casos/${c.slug}" target="_blank" class="action-btn action-btn--view" title="Ver en web">Ver</a>
               <button type="button" class="action-btn action-btn--edit" data-id="${c.id}" title="Editar caso">Editar</button>
               <button type="button" class="action-btn action-btn--del" data-id="${c.id}" title="Eliminar caso">Eliminar</button>
             </div>

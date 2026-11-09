@@ -13,9 +13,9 @@ Allow: /css/
 Allow: /js/
 Allow: /img/
 
-# Nota: las URLs con ?caso= NO se bloquean a propósito. Se dejan rastrear para que
-# Google lea su <link rel="canonical"> y las consolide en /casos-clinicos.html.
-# Bloquearlas impediría leer ese canonical y generaría "Detectada, actualmente sin indexar".
+# Cada caso clínico tiene su página propia en /casos/<slug> (generada en servidor).
+# Las URLs antiguas /casos-clinicos.html?caso=<slug> redirigen (301) a ella y no se bloquean,
+# para que Google pueda seguir el redirect.
 
 # Rastreadores de IA / respuestas generativas — permitidos (visibilidad en AI Overviews)
 User-agent: Google-Extended
@@ -34,3 +34,4 @@ User-agent: ClaudeBot
 Allow: /
 
 Sitemap: https://www.eurobraces.com/sitemap.xml
+Sitemap: https://www.eurobraces.com/sitemap-casos.xml
